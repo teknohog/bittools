@@ -36,11 +36,11 @@ def timeprint(time):
     # This is used more generally, so provide the number as a number,
     # and the unit separately
 
-    if time > 86400:
+    if time >= 86400:
         return [time / 86400, "d"]
-    elif time > 3600:
+    elif time >= 3600:
         return [time / 3600, "h"]
-    elif time > 60:
+    elif time >= 60:
         return [time / 60, "min"]
     else:
         return [time, "s"]
