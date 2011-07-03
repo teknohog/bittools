@@ -81,34 +81,6 @@ def ReadLines(file):
     File.close()
     return contents
 
-parser = OptionParser()
-
-parser.add_option("-a", "--allinfo", dest="allinfo", action="store_true", default=False, help="Print complete getinfo")
-
-parser.add_option("-c", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
-
-parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
-
-parser.add_option("-l", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
-
-parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
-
-parser.add_option("-s", "--sendto", dest="sendto", help="Send bitcoins to this address, followed by the amount")
-
-parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
-
-parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind at port 8332")
-
-(options, args) = parser.parse_args()
-
-if len(options.url) > 0:
-    url = options.url
-else:
-    settings = parse_config("~/.bitcoin/bitcoin.conf")
-    url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:8332/"
-
-s = ServiceProxy(url)
-
 def listreceived():
     rec = s.listreceivedbyaccount()
 
@@ -157,6 +129,34 @@ def send(address, amount):
             print("Send failed")
     else:
         print("Confirmation failed, not sending.")
+
+parser = OptionParser()
+
+parser.add_option("-a", "--allinfo", dest="allinfo", action="store_true", default=False, help="Print complete getinfo")
+
+parser.add_option("-c", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
+
+parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
+
+parser.add_option("-l", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
+
+parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
+
+parser.add_option("-s", "--sendto", dest="sendto", help="Send bitcoins to this address, followed by the amount")
+
+parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
+
+parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind at port 8332")
+
+(options, args) = parser.parse_args()
+
+if len(options.url) > 0:
+    url = options.url
+else:
+    settings = parse_config("~/.bitcoin/bitcoin.conf")
+    url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:8332/"
+
+s = ServiceProxy(url)
 
 if options.listreceived:
     listreceived()
