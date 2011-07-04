@@ -11,8 +11,8 @@ system. This is aimed at Gentoo Linux, where the system-wide
 compilation options are automatically found. For other unices, you may
 want to specify some options in the script.
 
-At minimum, the INSTALLDIR location near the beginning of the script
-should be edited to your taste.
+At minimum, the BASEDIR and INSTALLDIR locations near the beginning of
+the script should be edited to your taste.
 
 Requires: openssl, boost and db, in addition to usual development
 tools.

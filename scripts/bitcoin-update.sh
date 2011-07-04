@@ -14,6 +14,7 @@
 # moved from svn to git on 2011-04-29, releases not implemented for now
 # https://github.com/bitcoin/bitcoin
 
+BASEDIR=~/sources
 INSTALLDIR=~/distr.projects/bitcoin-git/
 
 CHECKOUT=false
@@ -50,8 +51,6 @@ fi
 
 # find the latest version
 DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail -n1`
-
-BASEDIR=~/sources
 
 # svn 251 / bitcoin 0.3.21 no more has INCLUDEPATHS, so merge this
 # with optimizations
