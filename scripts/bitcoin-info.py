@@ -27,10 +27,10 @@ def printlength(s):
     # get rid of newlines for the printable length calculation
     return len(s.replace("\n", ""))
 
-def prettyprint(array):
+def prettyprint(array, delimiter=""):
     width = max(map(lambda x: printlength(x[0]), array)) + 1
     for i in array:
-        print(i[0] + ":" + " "*(width - printlength(i[0])) + str(i[1]))
+        print(i[0] + delimiter + " "*(width - printlength(i[0])) + str(i[1]))
 
 def timeprint(time):
     # This is used more generally, so provide the number as a number,
