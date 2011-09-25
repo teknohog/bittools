@@ -107,6 +107,10 @@ def listtransactions():
         prettyprint(output)
 
 def send(address, amount):
+    # Double check the amount and address -- the command line may be
+    # split over two lines, making the amount less obvious
+    print("About to send BTC " + str(amount) + " to " + address)
+
     # Warn of potential dupes
     trans = s.listtransactions()
     if len(trans) > 0:
