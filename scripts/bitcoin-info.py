@@ -46,11 +46,13 @@ def timeprint(time):
         return [time, "s"]
 
 def block_coins(blocks):
-    # Initially 50 coins per block, halved every 210000 blocks
-
-    c = 210000.0
-    p = ceil(blocks / c)
-    return 50 * 0.5**(p - 1)
+    if options.namecoin:
+        return 50
+    else:
+        # Initially 50 bitcoins per block, halved every 210000 blocks
+        c = 210000.0
+        p = ceil(blocks / c)
+        return 50 * 0.5**(p - 1)
 
 def parse_config(conffile):
     # config file parsing shamelessly adapted from jgarzik's pyminer, as
@@ -109,7 +111,7 @@ def listtransactions():
 def send(address, amount):
     # Double check the amount and address -- the command line may be
     # split over two lines, making the amount less obvious
-    print("About to send BTC " + str(amount) + " to " + address)
+    print("About to send " + currency + " " + str(amount) + " to " + address)
 
     # Warn of potential dupes
     trans = s.listtransactions()
@@ -144,21 +146,38 @@ parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mi
 
 parser.add_option("-l", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
+parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind instead, and display payouts accordingly")
+
 parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
 
-parser.add_option("-s", "--sendto", dest="sendto", help="Send bitcoins to this address, followed by the amount")
+parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this address, followed by the amount")
 
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
 
-parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind at port 8332")
+parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind")
 
 (options, args) = parser.parse_args()
+
+if options.namecoin:
+    currency = "NMC"
+else:
+    currency = "BTC"
 
 if len(options.url) > 0:
     url = options.url
 else:
-    settings = parse_config("~/.bitcoin/bitcoin.conf")
-    url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:8332/"
+    if options.namecoin:
+        configfile = "~/.namecoin/bitcoin.conf"
+    else:
+        configfile = "~/.bitcoin/bitcoin.conf"
+
+    settings = parse_config(configfile)
+
+    if not 'rpcport' in settings.keys():
+        # Default for both bitcoind and namecoind
+        settings['rpcport'] = "8332"
+
+    url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:" + settings['rpcport'] + "/"
 
 s = ServiceProxy(url)
 
@@ -207,8 +226,9 @@ if hashrate > 0:
 
     output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
 
-    btcrate = block_coins(blocks) / tp[0]
-    output.append(["Average payout", str(btcrate) + " BTC/" + tp[1]])
+    coinrate = block_coins(blocks) / tp[0]
+
+    output.append(["Average payout", str(coinrate) + " " + currency + "/" + tp[1]])
 
 # Target rate is 6 blocks per hour, diff adjusted every 14 days
 fortnight = 6 * 24 * 14
