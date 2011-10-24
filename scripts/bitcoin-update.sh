@@ -2,7 +2,7 @@
 
 # by teknohog at iki.fi
 
-# Builds a dynamically linked bitcoin daemon.
+# Builds a dynamically linked bitcoin or namecoin daemon.
 
 # Requires: openssl, boost and db, in addition to usual development
 # tools.
@@ -14,19 +14,29 @@
 # moved from svn to git on 2011-04-29, releases not implemented for now
 # https://github.com/bitcoin/bitcoin
 
-BASEDIR=~/sources
-INSTALLDIR=~/distr.projects/bitcoin-git/
-
 CHECKOUT=false
 FORCE=false
+NAMECOIN=false
 REVISION=""
-while getopts cfgr: opt; do
+while getopts cfnr: opt; do
     case "$opt" in
 	c) CHECKOUT=true ;;
 	f) FORCE=true ;;
+	n) NAMECOIN=true ;;
 	r) REVISION=$OPTARG ;;
     esac
 done
+
+if $NAMECOIN; then
+    PROJECT=namecoin
+    GITURL=https://github.com/vinced/namecoin.git
+else
+    PROJECT=bitcoin
+    GITURL=https://github.com/bitcoin/bitcoin.git
+fi
+
+BASEDIR=~/sources
+INSTALLDIR=~/distr.projects/$PROJECT-git/
 
 # On Gentoo, compiler options are automatically found. Otherwise they
 # can be specified manually below.
@@ -57,22 +67,22 @@ DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail 
 #INCLUDEPATHS="-I/usr/include -I$DB_INCPATH"
 CFLAGS="$CFLAGS -I/usr/include -I$DB_INCPATH"
 
-BINARY=bitcoind
+BINARY=${PROJECT}d
 
-if $CHECKOUT || [ ! -d $BASEDIR/bitcoin ]; then
+if $CHECKOUT || [ ! -d $BASEDIR/$PROJECT ]; then
     if [ -n "$REVISION" ]; then
 	REVISION=@$REVISION
     fi
     cd $BASEDIR
-    rm -rf bitcoin
-    git clone https://github.com/bitcoin/bitcoin.git || exit
-    cd bitcoin
+    rm -rf $PROJECT
+    git clone $GITURL || exit
+    cd $PROJECT
 else
     if [ -n "$REVISION" ]; then
 	REVISION="-r $REVISION"
     fi
 
-    cd $BASEDIR/bitcoin
+    cd $BASEDIR/$PROJECT
 
     # Do not build if there is no source update, but force build from
     # command line if wanted anyway
