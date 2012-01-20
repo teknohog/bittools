@@ -200,21 +200,24 @@ if options.allinfo:
 else:
     keys = ["balance", "difficulty", "testnet"]
 
-output = []
-for key in keys:
-    output.append([key, info[key]])
-
-prettyprint(output)
-
 if options.diff:
     diff = float(options.diff)
 else:
     diff = info["difficulty"]
 
+output = []
+for key in keys:
+    output.append([key, info[key]])
+
 if options.hashrate:
     hashrate = float(options.hashrate)
+    # No point in printing this, if supplied manually
 else:
-    hashrate = info["hashespersec"]
+    hashrate = s.gethashespersec()
+    if options.allinfo:
+        output.append(["hashespersec", hashrate])
+
+prettyprint(output)
 
 blocks = info["blocks"]
 
