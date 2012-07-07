@@ -33,8 +33,8 @@ using credentials found in ~/.bitcoin/bitcoin.conf.
 The script is fairly self-documenting with the -h or --help option.
 
 
-Examples
---------
+Info examples
+-------------
 
 One aim of this script was to provide shorthand commands and output
 for some common tasks. For example, instead of writing
@@ -58,7 +58,39 @@ Average payout:              0.975058051238 BTC/d
 
 Next difficulty expected in: 3.47916666667 d
 
-Besides getting information out, there is also a function for sending
-transactions. It presents a warning if you have recently sent to the
-same address, and asks for confirmation in a random way to reduce
-accidents.
+
+Sending BTC
+-----------
+
+bitcoin-info -s address amount
+
+It presents a warning if you have recently sent to the same address,
+and asks for confirmation in a random way to reduce accidents.
+
+
+Exporting and importing private keys
+------------------------------------
+
+bitcoin-info.py -e prints out the private key of each address,
+followed by the account (label) on the same line. After saving to a file
+(for example: bitcoin-info.py -e > keyfile) these can be imported to
+another wallet using bitcoin-info.py -i keyfile.
+
+This is an advanced feature which may break things, so remember to
+back up your wallets first.
+
+However, nothing is destroyed on the export side. You can access the
+same addresses on both wallets after a succesful import.
+
+Also note that bitcoind takes several minutes to import one
+address. It probably depends on many factors such as the number of
+transactions.
+
+I chose to export all addresses, because I mainly use this for merging
+wallets (deleting the source wallet afterwards). However, the import
+side is easy to control by editing the keyfile.
+
+Why merge wallets instead of simply sending BTC?
+
+* Avoid transaction fees
+* Keep the receiving addresses alive

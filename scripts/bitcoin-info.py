@@ -83,6 +83,46 @@ def ReadLines(file):
     File.close()
     return contents
 
+def exportkeys():
+    accounts = s.listaccounts()
+    
+    l = []
+
+    for acc in accounts:
+        addresses = s.getaddressesbyaccount(acc)
+        for addr in addresses:
+            privkey = s.dumpprivkey(addr)
+            l.append([privkey, acc])
+            
+    prettyprint(l)
+
+def importkeys(file):
+    lines = ReadLines(file)
+
+    for line in lines:
+        # Account names may contain spaces, so split only once to get the key
+        l = line.split(" ", 1)
+        privkey = l[0]
+
+        lineno = lines.index(line) + 1
+
+        if len(privkey) != 52:
+            print("Invalid private key %s on line %i ignored" % (privkey, lineno))
+            continue
+
+        if len(l) > 1:
+            # There is always a trailing newline to remove; other
+            # leading/trailing spaces will be removed too, which
+            # should be ok
+            acc = l[1].strip()
+            s.importprivkey(privkey, acc)
+        else:
+            # No account specified, which is also allowed
+            s.importprivkey(privkey)
+
+        # bitcoind takes time to import a key, so give some progress indication
+        print("Key # %i imported" % lineno)
+
 def listreceived():
     rec = s.listreceivedbyaccount()
 
@@ -144,6 +184,10 @@ parser.add_option("-c", "--confirmations", dest="min_confirm", default=1, help="
 
 parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
 
+parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
+
+parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys for formatting)")
+
 parser.add_option("-l", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
 parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind instead, and display payouts accordingly")
@@ -180,6 +224,14 @@ else:
     url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:" + settings['rpcport'] + "/"
 
 s = ServiceProxy(url)
+
+if options.export:
+    exportkeys()
+    sys.exit()
+
+if options.importfile:
+    importkeys(options.importfile)
+    sys.exit()
 
 if options.listreceived:
     listreceived()
