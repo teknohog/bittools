@@ -49,8 +49,12 @@ def block_coins(blocks):
     if options.namecoin:
         return 50
     else:
-        # Initially 50 bitcoins per block, halved every 210000 blocks
-        c = 210000.0
+        if options.litecoin:
+            c = 840000.0
+        else:
+            # Initially 50 bitcoins per block, halved every 210000 blocks
+            c = 210000.0
+
         p = ceil(blocks / c)
         return 50 * 0.5**(p - 1)
 
@@ -188,9 +192,11 @@ parser.add_option("-e", "--exportkeys", dest="export", action="store_true", defa
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys for formatting)")
 
-parser.add_option("-l", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
+parser.add_option("--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
-parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind instead, and display payouts accordingly")
+parser.add_option("-l", "--litecoin", dest="litecoin", action="store_true", default=False, help="Connect to litecoind")
+
+parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind")
 
 parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
 
@@ -202,7 +208,9 @@ parser.add_option("-u", "--url", dest="url", default="", help="Connect to a diff
 
 (options, args) = parser.parse_args()
 
-if options.namecoin:
+if options.litecoin:
+    currency = "LTC"
+elif options.namecoin:
     currency = "NMC"
 else:
     currency = "BTC"
@@ -210,7 +218,9 @@ else:
 if len(options.url) > 0:
     url = options.url
 else:
-    if options.namecoin:
+    if options.litecoin:
+        configfile = "~/.litecoin/litecoin.conf"
+    elif options.namecoin:
         configfile = "~/.namecoin/bitcoin.conf"
     else:
         configfile = "~/.bitcoin/bitcoin.conf"
@@ -285,11 +295,17 @@ if hashrate > 0:
 
     output.append(["Average payout", str(coinrate) + " " + currency + "/" + tp[1]])
 
-# Target rate is 6 blocks per hour, diff adjusted every 14 days
-fortnight = 6 * 24 * 14
+# Bitcoin and namecoin: Target rate is 6 blocks per hour, diff
+# adjusted every 14 days. Same constant for litecoin, even if blocks
+# come in faster.
+adjustblocks = 6 * 24 * 14
 
-time = (fortnight - blocks % fortnight) / 6. * 3600
+if options.litecoin:
+    blocksperhour = 24.
+else:
+    blocksperhour = 6.
 
+time = (adjustblocks - blocks % adjustblocks) / blocksperhour * 3600
 tp = timeprint(time)
 output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
 

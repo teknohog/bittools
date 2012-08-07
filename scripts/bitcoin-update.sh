@@ -18,16 +18,20 @@ CHECKOUT=false
 FORCE=false
 NAMECOIN=false
 REVISION=""
-while getopts cfnr: opt; do
+while getopts cflnr: opt; do
     case "$opt" in
 	c) CHECKOUT=true ;;
 	f) FORCE=true ;;
+	l) LITECOIN=true ;;
 	n) NAMECOIN=true ;;
 	r) REVISION=$OPTARG ;;
     esac
 done
 
-if $NAMECOIN; then
+if $LITECOIN; then
+    PROJECT=litecoin
+    GITURL=https://github.com/litecoin-project/litecoin.git
+elif $NAMECOIN; then
     PROJECT=namecoin
     GITURL=https://github.com/vinced/namecoin.git
 else
