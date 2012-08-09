@@ -16,29 +16,32 @@
 
 CHECKOUT=false
 FORCE=false
-LITECOIN=false
-NAMECOIN=false
+PROJECT=bitcoin
 REVISION=""
 while getopts cflnr: opt; do
     case "$opt" in
 	c) CHECKOUT=true ;;
 	f) FORCE=true ;;
-	l) LITECOIN=true ;;
-	n) NAMECOIN=true ;;
+	l) PROJECT=litecoin ;;
+	n) PROJECT=namecoin ;;
 	r) REVISION=$OPTARG ;;
     esac
 done
 
-if $LITECOIN; then
-    PROJECT=litecoin
-    GITURL=https://github.com/litecoin-project/litecoin.git
-elif $NAMECOIN; then
-    PROJECT=namecoin
-    GITURL=https://github.com/vinced/namecoin.git
-else
-    PROJECT=bitcoin
-    GITURL=https://github.com/bitcoin/bitcoin.git
-fi
+case $PROJECT in
+    bitcoin)
+	GITURL=https://github.com/bitcoin/bitcoin.git
+	;;
+    litecoin)
+	GITURL=https://github.com/litecoin-project/litecoin.git	
+	;;
+    namecoin)
+	GITURL=https://github.com/vinced/namecoin.git
+	;;
+    *)
+	exit
+	;;
+esac
 
 BASEDIR=~/sources
 INSTALLDIR=~/distr.projects/$PROJECT-git/
