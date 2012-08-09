@@ -16,6 +16,7 @@
 
 CHECKOUT=false
 FORCE=false
+LITECOIN=false
 NAMECOIN=false
 REVISION=""
 while getopts cflnr: opt; do
