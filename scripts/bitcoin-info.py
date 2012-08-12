@@ -221,7 +221,7 @@ else:
     if options.litecoin:
         configfile = "~/.litecoin/litecoin.conf"
     elif options.namecoin:
-        configfile = "~/.namecoin/bitcoin.conf"
+        configfile = "~/.namecoin/namecoin.conf"
     else:
         configfile = "~/.bitcoin/bitcoin.conf"
 

@@ -36,7 +36,7 @@ case $PROJECT in
 	GITURL=https://github.com/litecoin-project/litecoin.git	
 	;;
     namecoin)
-	GITURL=https://github.com/vinced/namecoin.git
+	GITURL=https://github.com/namecoin/namecoin.git
 	;;
     *)
 	exit
