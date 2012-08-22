@@ -110,7 +110,7 @@ def importkeys(file):
 
         lineno = lines.index(line) + 1
 
-        if len(privkey) != 52:
+        if len(privkey) not in [51, 52]:
             print("Invalid private key %s on line %i ignored" % (privkey, lineno))
             continue
 
