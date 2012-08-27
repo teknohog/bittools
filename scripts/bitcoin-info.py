@@ -127,6 +127,16 @@ def importkeys(file):
         # bitcoind takes time to import a key, so give some progress indication
         print("Key # %i imported" % lineno)
 
+def listaccounts():
+    acc = s.listaccounts()
+
+    if len(acc) > 0:
+        output = []
+        for item in acc:
+            output.append([item, acc[item]])
+    
+        prettyprint(output)
+
 def listreceived():
     rec = s.listreceivedbyaccount()
 
@@ -182,7 +192,11 @@ def send(address, amount):
 
 parser = OptionParser()
 
+parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_true", default=False, help="List accounts with balances")
+
 parser.add_option("-a", "--allinfo", dest="allinfo", action="store_true", default=False, help="Print complete getinfo")
+
+parser.add_option("-b", "--byaccount", dest="byaccount", action="store_true", default=False, help="List addresses by the given account")
 
 parser.add_option("-c", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
 
@@ -190,13 +204,15 @@ parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mi
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
-parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys for formatting)")
-
-parser.add_option("--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
+parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
 
 parser.add_option("-l", "--litecoin", dest="litecoin", action="store_true", default=False, help="Connect to litecoind")
 
+parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", default=False, help="Get new address, optionally for the given account")
+
 parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind")
+
+parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
 parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
 
@@ -235,6 +251,11 @@ else:
 
 s = ServiceProxy(url)
 
+if options.byaccount:
+    for addr in s.getaddressesbyaccount(args[0]):
+        print(addr)
+    sys.exit()
+
 if options.export:
     exportkeys()
     sys.exit()
@@ -243,8 +264,16 @@ if options.importfile:
     importkeys(options.importfile)
     sys.exit()
 
+if options.listaccounts:
+    listaccounts()
+    sys.exit()
+
 if options.listreceived:
     listreceived()
+    sys.exit()
+
+if options.newaddress:
+    print(s.getnewaddress(args[0]))
     sys.exit()
 
 if options.sendto:
