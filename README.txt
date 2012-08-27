@@ -1,6 +1,8 @@
-bittools -- command line tools for Bitcoin daemon users
+bittools -- command line tools for Bitcoin/Namecoin/Litecoin daemon users
 
 by Risto A. Paju / teknohog
+BTC: 1HkL2iLLQe3KJuNCgKPc8ViZs83NJyyQDM
+LTC: LMuSoipjtRtPwD8VFyKypUTt6nXQHH8zW2
 
 
 bitcoin-update.sh
