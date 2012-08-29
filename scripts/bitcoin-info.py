@@ -243,9 +243,13 @@ else:
 
     settings = parse_config(configfile)
 
+    # Use default port numbers
     if not 'rpcport' in settings.keys():
-        # Default for both bitcoind and namecoind
-        settings['rpcport'] = "8332"
+        if options.litecoin:
+            settings['rpcport'] = "9332"
+        else:
+            # both bitcoind and namecoind use this
+            settings['rpcport'] = "8332"
 
     url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:" + settings['rpcport'] + "/"
 
