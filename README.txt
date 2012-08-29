@@ -20,8 +20,8 @@ Requires: openssl, boost and db, in addition to usual development
 tools.
 
 
-bitcoin-info.py
-===============
+coinfo.py
+=========
 
 A simplified command-line interface to some of the functions of
 bitcoind. To communicate with the daemon it uses python-jsonrpc which
@@ -44,13 +44,13 @@ for some common tasks. For example, instead of writing
 $ ./bitcoind listtransactions
 
 which is easy to mess up, as there is often no tab completion for
-options, you can write bitcoin-info.py -t. And instead of a messy
-output of pure JSON, you get a compact list of dates, accounts and
-amounts. With a warning if the transaction is not yet verified.
+options, you can write coinfo.py -t. And instead of a messy output of
+pure JSON, you get a compact list of dates, accounts and amounts. With
+a warning if the transaction is not yet verified.
 
 Another example of such information is the hashrate calculator:
 
-$ bitcoin-info.py -r 1337e6
+$ coinfo.py -r 1337e6
 balance:    xxxx
 difficulty: 1379192.28823
 testnet:    False
@@ -64,7 +64,7 @@ Next difficulty expected in: 3.47916666667 d
 Sending BTC
 -----------
 
-bitcoin-info -s address amount
+coinfo.py -s address amount
 
 It presents a warning if you have recently sent to the same address,
 and asks for confirmation in a random way to reduce accidents.
@@ -73,10 +73,10 @@ and asks for confirmation in a random way to reduce accidents.
 Exporting and importing private keys
 ------------------------------------
 
-bitcoin-info.py -e prints out the private key of each address,
-followed by the account (label) on the same line. After saving to a file
-(for example: bitcoin-info.py -e > keyfile) these can be imported to
-another wallet using bitcoin-info.py -i keyfile.
+coinfo.py -e prints out the private key of each address, followed by
+the account (label) on the same line. After saving to a file (for
+example: coinfo.py -e > keyfile) these can be imported to another
+wallet using coinfo.py -i keyfile.
 
 This is an advanced feature which may break things, so remember to
 back up your wallets first.
@@ -92,7 +92,7 @@ I chose to export all addresses, because I mainly use this for merging
 wallets (deleting the source wallet afterwards). However, the import
 side is easy to control by editing the keyfile.
 
-Why merge wallets instead of simply sending BTC?
+Why merge wallets instead of simply sending coins?
 
 * Avoid transaction fees
 * Keep the receiving addresses alive
