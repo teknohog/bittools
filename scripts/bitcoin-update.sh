@@ -18,12 +18,13 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 REVISION=""
-while getopts cflnr: opt; do
+while getopts cflnpr: opt; do
     case "$opt" in
 	c) CHECKOUT=true ;;
 	f) FORCE=true ;;
 	l) PROJECT=litecoin ;;
 	n) PROJECT=namecoin ;;
+	p) PROJECT=ppcoin ;;
 	r) REVISION=$OPTARG ;;
     esac
 done
@@ -37,6 +38,9 @@ case $PROJECT in
 	;;
     namecoin)
 	GITURL=https://github.com/namecoin/namecoin.git
+	;;
+    ppcoin)
+	GITURL=https://github.com/ppcoin/ppcoin.git
 	;;
     *)
 	exit

@@ -212,6 +212,8 @@ parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", 
 
 parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind")
 
+parser.add_option("-p", "--ppcoin", dest="ppcoin", action="store_true", default=False, help="Connect to ppcoind")
+
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
 parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
@@ -228,6 +230,8 @@ if options.litecoin:
     currency = "LTC"
 elif options.namecoin:
     currency = "NMC"
+elif options.ppcoin:
+    currency = "PPC"
 else:
     currency = "BTC"
 
@@ -238,6 +242,8 @@ else:
         configfile = "~/.litecoin/litecoin.conf"
     elif options.namecoin:
         configfile = "~/.namecoin/namecoin.conf"
+    elif options.ppcoin:
+        configfile = "~/.ppcoin/ppcoin.conf"
     else:
         configfile = "~/.bitcoin/bitcoin.conf"
 
@@ -247,6 +253,8 @@ else:
     if not 'rpcport' in settings.keys():
         if options.litecoin:
             settings['rpcport'] = "9332"
+        elif options.ppcoin:
+            settings['rpcport'] = "9902"
         else:
             # both bitcoind and namecoind use this
             settings['rpcport'] = "8332"
@@ -324,7 +332,13 @@ if hashrate > 0:
 
     output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
 
-    coinrate = block_coins(blocks) / tp[0]
+    if options.ppcoin:
+        # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
+        # "The block reward for a work block is sqrt(sqrt(9999^4 /
+        # difficulty)), rounded down to the next cent boundary."
+        coinrate = int(999900. / diff**0.25) / (100 * tp[0])
+    else:
+        coinrate = block_coins(blocks) / tp[0]
 
     output.append(["Average payout", str(coinrate) + " " + currency + "/" + tp[1]])
 
