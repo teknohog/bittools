@@ -53,9 +53,16 @@ INSTALLDIR=~/distr.projects/$PROJECT-git/
 # On Gentoo, compiler options are automatically found. Otherwise they
 # can be specified manually below.
 
-if [ -f /etc/make.conf ]; then
+for FILE in /etc/portage/make.conf /etc/make.conf; do
+    if [ -f $FILE ]; then
+	MAKECONF=$FILE
+	break
+    fi
+done
+
+if [ -f $MAKECONF ]; then
     for i in CFLAGS FEATURES MAKEOPTS; do
-	eval "`grep ^$i= /etc/make.conf`"
+	eval "`grep ^$i= $MAKECONF`"
     done
     
     CCACHE=""
