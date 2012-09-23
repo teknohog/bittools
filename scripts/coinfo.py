@@ -344,17 +344,18 @@ if hashrate > 0:
 
 # Bitcoin and namecoin: Target rate is 6 blocks per hour, diff
 # adjusted every 14 days. Same constant for litecoin, even if blocks
-# come in faster.
-adjustblocks = 6 * 24 * 14
+# come in faster. PPCoin has a dynamic adjustment without fixed intervals.
+if not options.ppcoin:
+    adjustblocks = 6 * 24 * 14
+    
+    if options.litecoin:
+        blocksperhour = 24.
+    else:
+        blocksperhour = 6.
 
-if options.litecoin:
-    blocksperhour = 24.
-else:
-    blocksperhour = 6.
-
-time = (adjustblocks - blocks % adjustblocks) / blocksperhour * 3600
-tp = timeprint(time)
-output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
+    time = (adjustblocks - blocks % adjustblocks) / blocksperhour * 3600
+    tp = timeprint(time)
+    output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
 
 errors = info["errors"]
 if len(errors) > 0:
