@@ -361,4 +361,5 @@ errors = info["errors"]
 if len(errors) > 0:
     output.append(["\nError", errors])
 
-prettyprint(output)
+if len(output) > 0:
+    prettyprint(output)
