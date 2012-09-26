@@ -196,7 +196,7 @@ parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_tru
 
 parser.add_option("-a", "--allinfo", dest="allinfo", action="store_true", default=False, help="Print complete getinfo")
 
-parser.add_option("-b", "--byaccount", dest="byaccount", action="store_true", default=False, help="List addresses by the given account")
+parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
 parser.add_option("-c", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
 
@@ -264,7 +264,7 @@ else:
 s = ServiceProxy(url)
 
 if options.byaccount:
-    for addr in s.getaddressesbyaccount(args[0]):
+    for addr in s.getaddressesbyaccount(options.byaccount):
         print(addr)
     sys.exit()
 
