@@ -50,11 +50,12 @@ def block_coins(blocks):
         return 50
     else:
         if options.litecoin:
-            c = 840000.0 - 1
+            c = 840000.0 - 2
         else:
             # Initially 50 bitcoins per block, halved every 210000
-            # blocks; block number 210000 is the first with 25 BTC, so - 1
-            c = 210000.0 - 1
+            # blocks; block number 210000 is the first with 25 BTC, so
+            # we need -2 to get the _next_ block reward.
+            c = 210000.0 - 2
 
         p = ceil(blocks / c)
         return 50 * 0.5**(p - 1)
