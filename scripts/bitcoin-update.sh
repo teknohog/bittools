@@ -81,9 +81,6 @@ fi
 # find the latest version
 DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail -n1`
 
-# svn 251 / bitcoin 0.3.21 no more has INCLUDEPATHS, so merge this
-# with optimizations
-#INCLUDEPATHS="-I/usr/include -I$DB_INCPATH"
 CFLAGS="$CFLAGS -I/usr/include -I$DB_INCPATH"
 
 BINARY=${PROJECT}d
@@ -121,12 +118,6 @@ sed -i 's/-O2/\$(OPTFLAGS)/g' Makefile
 sed -i 's/g++/\$(CXX)/g' Makefile
 sed -i 's/Bstatic/Bdynamic/g' Makefile
 
-# forum: "Remove that. Else the SHA256_Transform will return the initstate."
-sed -i 's/-DCRYPTOPP_DISABLE_SSE2//g' Makefile
-
-# compiler memory hogging? seems to hog with or without
-#sed -i 's/-O3//g' Makefile
-
 # *sigh* everyone uses x86?
 if [ -z "`echo $MACHTYPE | grep 86`" ]; then
     sed -i 's/-msse2//g' Makefile
@@ -134,27 +125,19 @@ if [ -z "`echo $MACHTYPE | grep 86`" ]; then
     sed -i 's/-march=amdfam10//g' Makefile
 fi    
 
-# march conflict and/or -march=atom bug with gcc 4.5.1? This is a
-# segfault in libstdc++, which was compiled for core2, so the conflict
-# may lie there. With gcc 4.5.2, the problem persists; it only crashes
-# when mining, though, with this line in debug:
-# CPUID 6c65746e family 6, model 28, stepping 10, fUseSSE2=1
-if [ -n "`echo $CFLAGS | grep atom`" ]; then
-    sed -i 's/-march=amdfam10//g' Makefile
-    CFLAGS=${CFLAGS//march=atom/march=core2}
-#    CFLAGS=${CFLAGS//mtune=atom/mtune=core2}
+# leveldb is broken by multi-part compiler names like
+# "ccache distcc g++"
+#sed -i 's/CXX=$(CXX)/CXX="$(CXX)"/' leveldb/Makefile
+# The scripts need more fixing, so disable ccache/distcc for now
+if [ $PROJECT == "bitcoin" ]; then
+    CXX="$MACHTYPE-g++"
+    MAKEOPTS="-j2"
 fi
-
-# This might help for PPC et al, but it probably requires all the
-# libraries in little-endian form as well... not impossible with
-# static linking, though the libraries must be built separately
-
-# sed -i 's/\$(OPTFLAGS)/\$(OPTFLAGS) -mlittle-endian/g' Makefile
 
 # disable upnp by setting the variable to null (nothing, not zero)
 make clean
 nice make $MAKEOPTS CXX="$CXX" OPTFLAGS="$CFLAGS" USE_UPNP= \
-    INCLUDEPATHS="$INCLUDEPATHS" $BINARY || exit
+    $BINARY || exit
 
 if [ ! -d $INSTALLDIR ]; then
     mkdir -p $INSTALLDIR
