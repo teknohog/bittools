@@ -18,7 +18,8 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 REVISION=""
-while getopts cflnpr: opt; do
+UPNP=
+while getopts cflnpr:u opt; do
     case "$opt" in
 	c) CHECKOUT=true ;;
 	f) FORCE=true ;;
@@ -26,6 +27,7 @@ while getopts cflnpr: opt; do
 	n) PROJECT=namecoin ;;
 	p) PROJECT=ppcoin ;;
 	r) REVISION=$OPTARG ;;
+	u) UPNP=1 ;;
     esac
 done
 
@@ -134,9 +136,8 @@ if [ $PROJECT == "bitcoin" ]; then
     MAKEOPTS="-j2"
 fi
 
-# disable upnp by setting the variable to null (nothing, not zero)
 make clean
-nice make $MAKEOPTS CXX="$CXX" OPTFLAGS="$CFLAGS" USE_UPNP= \
+nice make $MAKEOPTS CXX="$CXX" OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP \
     $BINARY || exit
 
 if [ ! -d $INSTALLDIR ]; then
