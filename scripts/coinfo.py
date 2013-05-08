@@ -46,19 +46,13 @@ def timeprint(time):
         return [time, "s"]
 
 def block_coins(blocks):
-    if options.namecoin:
+    if coin == "namecoin":
         return 50
     else:
-        if options.litecoin:
-            c = 840000.0 - 2
-        else:
-            # Initially 50 bitcoins per block, halved every 210000
-            # blocks; block number 210000 is the first with 25 BTC, so
-            # we need -2 to get the _next_ block reward.
-            c = 210000.0 - 2
+        c = blockhalve[coin] - 2
 
         p = ceil(blocks / c)
-        return 50 * 0.5**(p - 1)
+        return initcoins[coin] * 0.5**(p - 1)
 
 def parse_config(conffile):
     # config file parsing shamelessly adapted from jgarzik's pyminer, as
@@ -167,7 +161,7 @@ def listtransactions():
 def send(address, amount):
     # Double check the amount and address -- the command line may be
     # split over two lines, making the amount less obvious
-    print("About to send " + currency + " " + str(amount) + " to " + address)
+    print("About to send " + currency[coin] + " " + str(amount) + " to " + address)
 
     # Warn of potential dupes
     trans = s.listtransactions()
@@ -200,7 +194,9 @@ parser.add_option("-a", "--allinfo", dest="allinfo", action="store_true", defaul
 
 parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
-parser.add_option("-c", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
+parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
+
+parser.add_option("-C", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
 
 parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
 
@@ -208,13 +204,13 @@ parser.add_option("-e", "--exportkeys", dest="export", action="store_true", defa
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
 
-parser.add_option("-l", "--litecoin", dest="litecoin", action="store_true", default=False, help="Connect to litecoind")
+parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
 
 parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", default=False, help="Get new address, optionally for the given account")
 
-parser.add_option("-n", "--namecoin", dest="namecoin", action="store_true", default=False, help="Connect to namecoind")
+parser.add_option("-n", "--namecoin", action="store_const", const="namecoin", dest="coin", default="bitcoin", help="Connect to namecoind")
 
-parser.add_option("-p", "--ppcoin", dest="ppcoin", action="store_true", default=False, help="Connect to ppcoind")
+parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="coin", default="bitcoin", help="Connect to ppcoind")
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
@@ -228,38 +224,62 @@ parser.add_option("-u", "--url", dest="url", default="", help="Connect to a diff
 
 (options, args) = parser.parse_args()
 
-if options.litecoin:
-    currency = "LTC"
-elif options.namecoin:
-    currency = "NMC"
-elif options.ppcoin:
-    currency = "PPC"
-else:
-    currency = "BTC"
+coin = options.coin
+
+# coin-dependent constants
+currency = {
+    "bitcoin": "BTC",
+    "chncoin": "CNC",
+    "litecoin": "LTC",
+    "namecoin": "NMC",
+    "ppcoin": "PPC",
+}
+
+blockhalve = {
+    "bitcoin": 210000.0,
+    "chncoin": 2628000.0,
+    "litecoin": 840000.0,
+    "namecoin": 210000.0,
+}
+
+blocksperhour = {
+    "bitcoin": 6.,
+    "chncoin": 60.,
+    "litecoin": 24.,
+    "namecoin": 6.,
+}
+
+adjustblocks = {
+    "bitcoin": 2016,
+    "chncoin": 5040,
+    "litecoin": 2016,
+    "namecoin": 2016,
+}
+
+initcoins = {
+    "bitcoin": 50,
+    "chncoin": 88,
+    "namecoin": 50,
+}
+
+rpcport = {
+    "bitcoin": "8332",
+    "chncoin": "8108",
+    "litecoin": "9332",
+    "namecoin": "8332",
+    "ppcoin": "9902",
+}
 
 if len(options.url) > 0:
     url = options.url
 else:
-    if options.litecoin:
-        configfile = "~/.litecoin/litecoin.conf"
-    elif options.namecoin:
-        configfile = "~/.namecoin/namecoin.conf"
-    elif options.ppcoin:
-        configfile = "~/.ppcoin/ppcoin.conf"
-    else:
-        configfile = "~/.bitcoin/bitcoin.conf"
+    configfile = "~/." + coin + "/" + coin + ".conf"
 
     settings = parse_config(configfile)
 
     # Use default port numbers
     if not 'rpcport' in settings.keys():
-        if options.litecoin:
-            settings['rpcport'] = "9332"
-        elif options.ppcoin:
-            settings['rpcport'] = "9902"
-        else:
-            # both bitcoind and namecoind use this
-            settings['rpcport'] = "8332"
+        settings['rpcport'] = rpcport[coin]
 
     url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:" + settings['rpcport'] + "/"
 
@@ -334,7 +354,7 @@ if hashrate > 0:
 
     output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
 
-    if options.ppcoin:
+    if coin == "ppcoin":
         # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
         # "The block reward for a work block is sqrt(sqrt(9999^4 /
         # difficulty)), rounded down to the next cent boundary."
@@ -342,20 +362,12 @@ if hashrate > 0:
     else:
         coinrate = block_coins(blocks) / tp[0]
 
-    output.append(["Average payout", str(coinrate) + " " + currency + "/" + tp[1]])
+    output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
 
-# Bitcoin and namecoin: Target rate is 6 blocks per hour, diff
-# adjusted every 14 days. Same constant for litecoin, even if blocks
-# come in faster. PPCoin has a dynamic adjustment without fixed intervals.
-if not options.ppcoin:
-    adjustblocks = 6 * 24 * 14
-    
-    if options.litecoin:
-        blocksperhour = 24.
-    else:
-        blocksperhour = 6.
+# PPCoin has a dynamic adjustment without fixed intervals.
+if coin != "ppcoin":
 
-    time = (adjustblocks - blocks % adjustblocks) / blocksperhour * 3600
+    time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / blocksperhour[coin] * 3600
     tp = timeprint(time)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
 

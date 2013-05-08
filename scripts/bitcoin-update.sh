@@ -19,8 +19,9 @@ FORCE=false
 PROJECT=bitcoin
 REVISION=""
 UPNP=
-while getopts cflnpr:u opt; do
+while getopts Ccflnpr:u opt; do
     case "$opt" in
+	C) PROJECT=chncoin ;;
 	c) CHECKOUT=true ;;
 	f) FORCE=true ;;
 	l) PROJECT=litecoin ;;
@@ -31,9 +32,14 @@ while getopts cflnpr:u opt; do
     esac
 done
 
+PROJECTDIR=$PROJECT
 case $PROJECT in
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
+	;;
+    chncoin)
+	GITURL=https://github.com/CHNCoin/CHNCoin.git
+	PROJECTDIR=CHNCoin
 	;;
     litecoin)
 	GITURL=https://github.com/litecoin-project/litecoin.git	
@@ -87,20 +93,20 @@ CFLAGS="$CFLAGS -I/usr/include -I$DB_INCPATH"
 
 BINARY=${PROJECT}d
 
-if $CHECKOUT || [ ! -d $BASEDIR/$PROJECT ]; then
+if $CHECKOUT || [ ! -d $BASEDIR/$PROJECTDIR ]; then
     if [ -n "$REVISION" ]; then
 	REVISION=@$REVISION
     fi
     cd $BASEDIR
-    rm -rf $PROJECT
+    rm -rf $PROJECTDIR
     git clone $GITURL || exit
-    cd $PROJECT
+    cd $PROJECTDIR
 else
     if [ -n "$REVISION" ]; then
 	REVISION="-r $REVISION"
     fi
 
-    cd $BASEDIR/$PROJECT
+    cd $BASEDIR/$PROJECTDIR
 
     # Do not build if there is no source update, but force build from
     # command line if wanted anyway
