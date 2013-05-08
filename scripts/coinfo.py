@@ -260,6 +260,7 @@ initcoins = {
     "bitcoin": 50,
     "chncoin": 88,
     "namecoin": 50,
+    "litecoin": 50,
 }
 
 rpcport = {
