@@ -21,8 +21,8 @@ REVISION=""
 UPNP=
 while getopts Ccflnpr:u opt; do
     case "$opt" in
-	C) PROJECT=chncoin ;;
-	c) CHECKOUT=true ;;
+	c) PROJECT=chncoin ;;
+	C) CHECKOUT=true ;;
 	f) FORCE=true ;;
 	l) PROJECT=litecoin ;;
 	n) PROJECT=namecoin ;;
