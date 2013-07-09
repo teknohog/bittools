@@ -365,7 +365,7 @@ output = []
 
 if hashrate > 0:
     if coin == "primecoin":
-        # block reward = 999 / (diff**0.5)
+        # block reward = 999 / diff**2
         # but the rest of the calculation still TODO...
         pass
     else:
