@@ -369,6 +369,10 @@ if hashrate > 0:
         # but the rest of the calculation still TODO...
         pass
     else:
+        # ppcoin
+        if type(diff) == dict:
+            diff = diff['proof-of-work']
+
         time = diff * 2**32 / hashrate
         tp = timeprint(time)
     
