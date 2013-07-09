@@ -19,13 +19,14 @@ FORCE=false
 PROJECT=bitcoin
 REVISION=""
 UPNP=
-while getopts Ccflnpr:u opt; do
+while getopts CcflnPpr:u opt; do
     case "$opt" in
 	c) PROJECT=chncoin ;;
 	C) CHECKOUT=true ;;
 	f) FORCE=true ;;
 	l) PROJECT=litecoin ;;
 	n) PROJECT=namecoin ;;
+	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
 	r) REVISION=$OPTARG ;;
 	u) UPNP=1 ;;
@@ -50,6 +51,9 @@ case $PROJECT in
     ppcoin)
 	GITURL=https://github.com/ppcoin/ppcoin.git
 	;;
+    primecoin)
+	GITURL=https://github.com/primecoin/primecoin.git
+	;;
     *)
 	exit
 	;;
@@ -58,8 +62,8 @@ esac
 BASEDIR=~/sources
 INSTALLDIR=~/distr.projects/$PROJECT-git/
 
-# On Gentoo, compiler options are automatically found. Otherwise they
-# can be specified manually below.
+# Compiler options, in preference:
+# 1. environment, 2. Gentoo make.conf if found, 3. defaults below
 
 for FILE in /etc/portage/make.conf /etc/make.conf; do
     if [ -f $FILE ]; then
@@ -70,7 +74,11 @@ done
 
 if [ -f $MAKECONF ]; then
     for i in CFLAGS FEATURES MAKEOPTS; do
-	eval "`grep ^$i= $MAKECONF`"
+	# There must be a more elegant way to see if $i is set, but
+	# this will do for now
+	if [ -z "`set | grep $i`" ]; then
+	    eval "`grep ^$i= $MAKECONF`"
+	fi
     done
     
     CCACHE=""
@@ -79,12 +87,12 @@ if [ -f $MAKECONF ]; then
     if [ -n "`echo $FEATURES | grep distcc`" ]; then DISTCC="distcc"; fi
     
     CXX="$CCACHE $DISTCC $MACHTYPE-g++"
-else
-    # Manual settings
-    CFLAGS="-O2 -pipe -march=native"
-    CXX="$MACHTYPE-g++"
-    MAKEOPTS="-j2"
 fi
+  
+# Revert to these defaults, if not defined so far
+CFLAGS="${CFLAGS:--O2 -pipe -march=native}"
+CXX="${CXX:-$MACHTYPE-g++}"
+MAKEOPTS="${MAKEOPTS:--j2}"
 
 # find the latest version
 DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail -n1`
@@ -137,10 +145,12 @@ fi
 # "ccache distcc g++"
 #sed -i 's/CXX=$(CXX)/CXX="$(CXX)"/' leveldb/Makefile
 # The scripts need more fixing, so disable ccache/distcc for now
-if [ $PROJECT == "bitcoin" ]; then
-    CXX="$MACHTYPE-g++"
-    MAKEOPTS="-j2"
-fi
+case $PROJECT in
+    bitcoin|primecoin)
+	CXX="$MACHTYPE-g++"
+	MAKEOPTS="-j2"
+	;;
+esac
 
 make clean
 nice make $MAKEOPTS CXX="$CXX" OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP \

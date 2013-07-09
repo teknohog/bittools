@@ -210,6 +210,8 @@ parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", 
 
 parser.add_option("-n", "--namecoin", action="store_const", const="namecoin", dest="coin", default="bitcoin", help="Connect to namecoind")
 
+parser.add_option("-P", "--primecoin", action="store_const", const="primecoin", dest="coin", default="bitcoin", help="Connect to primecoind")
+
 parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="coin", default="bitcoin", help="Connect to ppcoind")
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
@@ -233,6 +235,7 @@ currency = {
     "litecoin": "LTC",
     "namecoin": "NMC",
     "ppcoin": "PPC",
+    "primecoin": "XPM",
 }
 
 blockhalve = {
@@ -247,6 +250,7 @@ blocksperhour = {
     "chncoin": 60.,
     "litecoin": 24.,
     "namecoin": 6.,
+    "primecoin": 60.,
 }
 
 adjustblocks = {
@@ -269,6 +273,7 @@ rpcport = {
     "litecoin": "9332",
     "namecoin": "8332",
     "ppcoin": "9902",
+    "primecoin": "9912",
 }
 
 if len(options.url) > 0:
@@ -324,24 +329,33 @@ info = s.getinfo()
 if options.allinfo:
     keys = info.keys()
 else:
-    keys = ["balance", "difficulty", "testnet"]
+    # Primecoin does not provide difficulty in getinfo, only separately
+    keys = ["balance", "testnet"]
 
 if options.diff:
     diff = float(options.diff)
 else:
-    diff = info["difficulty"]
+    diff = s.getdifficulty()
 
 output = []
 for key in keys:
     output.append([key, info[key]])
 
+# Primecoin above
+output.append(["difficulty", diff])
+
 if options.hashrate:
     hashrate = float(options.hashrate)
     # No point in printing this, if supplied manually
 else:
-    hashrate = s.gethashespersec()
-    if options.allinfo:
-        output.append(["hashespersec", hashrate])
+    if coin == "primecoin":
+        hashrate = s.getprimespersec()
+        if options.allinfo:
+            output.append(["primespersec", hashrate])
+    else:
+        hashrate = s.gethashespersec()
+        if options.allinfo:
+            output.append(["hashespersec", hashrate])
 
 prettyprint(output)
 
@@ -350,24 +364,28 @@ blocks = info["blocks"]
 output = []
 
 if hashrate > 0:
-    time = diff * 2**32 / hashrate
-    tp = timeprint(time)
-
-    output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
-
-    if coin == "ppcoin":
-        # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
-        # "The block reward for a work block is sqrt(sqrt(9999^4 /
-        # difficulty)), rounded down to the next cent boundary."
-        coinrate = int(999900. / diff**0.25) / (100 * tp[0])
+    if coin == "primecoin":
+        # block reward = 999 / (diff**0.5)
+        # but the rest of the calculation still TODO...
+        pass
     else:
-        coinrate = block_coins(blocks) / tp[0]
+        time = diff * 2**32 / hashrate
+        tp = timeprint(time)
+    
+        output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
 
-    output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
+        if coin == "ppcoin":
+            # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
+            # "The block reward for a work block is sqrt(sqrt(9999^4 /
+            # difficulty)), rounded down to the next cent boundary."
+            coinrate = int(999900. / diff**0.25) / (100 * tp[0])
+        else:
+            coinrate = block_coins(blocks) / tp[0]
+        
+        output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
 
-# PPCoin has a dynamic adjustment without fixed intervals.
-if coin != "ppcoin":
-
+# These coins have a dynamic adjustment without fixed intervals.
+if coin not in ["ppcoin", "primecoin"]:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / blocksperhour[coin] * 3600
     tp = timeprint(time)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
