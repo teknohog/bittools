@@ -76,11 +76,11 @@ if [ -f $MAKECONF ]; then
     for i in CFLAGS FEATURES MAKEOPTS; do
 	# There must be a more elegant way to see if $i is set, but
 	# this will do for now
-	if [ -z "`set | grep $i`" ]; then
+	if [ -z "`set | grep $i=`" ]; then
 	    eval "`grep ^$i= $MAKECONF`"
 	fi
     done
-    
+
     CCACHE=""
     DISTCC=""
     if [ -n "`echo $FEATURES | grep ccache`" ]; then CCACHE="ccache"; fi
