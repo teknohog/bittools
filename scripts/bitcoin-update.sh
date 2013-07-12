@@ -86,7 +86,7 @@ if [ -f $MAKECONF ]; then
     if [ -n "`echo $FEATURES | grep ccache`" ]; then CCACHE="ccache"; fi
     if [ -n "`echo $FEATURES | grep distcc`" ]; then DISTCC="distcc"; fi
     
-    CXX="$CCACHE $DISTCC $MACHTYPE-g++"
+    CXX="${CXX:-$CCACHE $DISTCC $MACHTYPE-g++}"
 fi
   
 # Revert to these defaults, if not defined so far
