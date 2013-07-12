@@ -92,7 +92,7 @@ fi
 # Revert to these defaults, if not defined so far
 CFLAGS="${CFLAGS:--O2 -pipe -march=native}"
 CXX="${CXX:-$MACHTYPE-g++}"
-MAKEOPTS="${MAKEOPTS:--j2}"
+MAKEOPTS="${MAKEOPTS:--j`nproc`}"
 
 # find the latest version
 DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail -n1`
