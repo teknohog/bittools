@@ -144,13 +144,11 @@ fi
 # leveldb is broken by multi-part compiler names like
 # "ccache distcc g++"
 #sed -i 's/CXX=$(CXX)/CXX="$(CXX)"/' leveldb/Makefile
-# The scripts need more fixing, so disable ccache/distcc for now
-case $PROJECT in
-    bitcoin|primecoin)
-	CXX="$MACHTYPE-g++"
-	MAKEOPTS="-j2"
-	;;
-esac
+# The scripts need more fixing, so disable multi-part names for now
+if [ -n "`grep ^leveldb/libleveldb.a: Makefile`" ] && \
+    [ "`echo $CXX | wc -w`" -gt 1 ]; then
+    CXX="$MACHTYPE-g++"
+fi
 
 make clean
 nice make $MAKEOPTS CXX="$CXX" OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP \
