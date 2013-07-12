@@ -53,6 +53,7 @@ case $PROJECT in
 	;;
     primecoin)
 	GITURL=https://github.com/primecoin/primecoin.git
+	#GITURL=https://github.com/Chemisist/primecoin.git
 	;;
     *)
 	exit
@@ -122,7 +123,7 @@ else
     git pull | tee $STATUSFILE
     NOUPDATE="`grep Already.up-to-date. $STATUSFILE`"
     rm $STATUSFILE
-    if [ -n "$NOUPDATE" ] && ! $FORCE; then
+     if [ -n "$NOUPDATE" ] && ! $FORCE; then
 	exit
     fi
 fi
@@ -130,7 +131,7 @@ fi
 cd src
 
 cp makefile.unix Makefile
-sed -i 's/-O2/\$(OPTFLAGS)/g' Makefile
+sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
 sed -i 's/g++/\$(CXX)/g' Makefile
 sed -i 's/Bstatic/Bdynamic/g' Makefile
 
