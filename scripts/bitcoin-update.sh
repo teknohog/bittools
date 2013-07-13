@@ -87,11 +87,14 @@ if [ -f $MAKECONF ]; then
     if [ -n "`echo $FEATURES | grep ccache`" ]; then CCACHE="ccache"; fi
     if [ -n "`echo $FEATURES | grep distcc`" ]; then DISTCC="distcc"; fi
     
+    CC="${CC:-$CCACHE $DISTCC $MACHTYPE-gcc}"
     CXX="${CXX:-$CCACHE $DISTCC $MACHTYPE-g++}"
 fi
   
 # Revert to these defaults, if not defined so far
 CFLAGS="${CFLAGS:--O2 -pipe -march=native}"
+AR="${AR:-$MACHTYPE-ar}"
+CC="${CC:-$MACHTYPE-gcc}"
 CXX="${CXX:-$MACHTYPE-g++}"
 MAKEOPTS="${MAKEOPTS:--j`nproc`}"
 
@@ -148,12 +151,16 @@ fi
 # The scripts need more fixing, so disable multi-part names for now
 if [ -n "`grep ^leveldb/libleveldb.a: Makefile`" ] && \
     [ "`echo $CXX | wc -w`" -gt 1 ]; then
+    CC="$MACHTYPE-gcc"
     CXX="$MACHTYPE-g++"
 fi
 
+# Help Intel compilers with linking
+sed -i 's/-l /-l/g' Makefile
+
 make clean
-nice make $MAKEOPTS CXX="$CXX" OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP \
-    $BINARY || exit
+nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
+    OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
 
 if [ ! -d $INSTALLDIR ]; then
     mkdir -p $INSTALLDIR
