@@ -27,10 +27,16 @@ def printlength(s):
     # get rid of newlines for the printable length calculation
     return len(s.replace("\n", ""))
 
-def prettyprint(array, delimiter=""):
-    width = max(map(lambda x: printlength(x[0]), array)) + 1
+def prettyprint(array, delimiter=" "):
+    # I guess this verges on something that should use curses instead
+    columns = len(array[0])
+
+    width = []
+    for column in range(columns):
+        width.append(max(map(lambda x: printlength(x[column]), array)))
+
     for i in array:
-        print(i[0] + delimiter + " "*(width - printlength(i[0])) + str(i[1]))
+        print(delimiter.join(map(lambda col: i[col] + " "*(width[col] - printlength(i[col])), range(columns - 1))) + delimiter + i[columns-1])
 
 def timeprint(time):
     # This is used more generally, so provide the number as a number,
@@ -129,7 +135,7 @@ def listaccounts():
     if len(acc) > 0:
         output = []
         for item in acc:
-            output.append([item, acc[item]])
+            output.append([item, str(acc[item])])
     
         prettyprint(output)
 
@@ -139,15 +145,11 @@ def listreceived():
     if len(rec) > 0:
         output = []
         for item in rec:
-            output.append([str(item["account"]), item["amount"]])
+            output.append([item["account"], str(item["amount"])])
     
         prettyprint(output)
 
 def listtransactions():
-    # The ctime string has a fixed length, so we can combine it into a
-    # string with the account name, and keep using the 2-column
-    # prettyprint function.
-
     trans = s.listtransactions()
 
     if len(trans) > 0:
@@ -155,7 +157,7 @@ def listtransactions():
         for item in trans:
             unconfirmed = item["confirmations"] < int(options.min_confirm) or item["category"] == "immature"
             orphan = item["category"] == "orphan"
-            output.append([ctime(item["time"]) + " " + item["account"], str(item["amount"]) + unconfirmed * " *" + orphan * " orphan"])
+            output.append([ctime(item["time"]), item["account"], str(item["amount"]), unconfirmed * "*", orphan * "orphan"])
 
         prettyprint(output)
 
@@ -340,10 +342,10 @@ else:
 
 output = []
 for key in keys:
-    output.append([key, info[key]])
+    output.append([key, str(info[key])])
 
 # Primecoin above
-output.append(["difficulty", diff])
+output.append(["difficulty", str(diff)])
 
 if options.hashrate:
     hashrate = float(options.hashrate)
@@ -352,11 +354,11 @@ else:
     if coin == "primecoin":
         hashrate = s.getprimespersec()
         if options.allinfo:
-            output.append(["primespersec", hashrate])
+            output.append(["primespersec", str(hashrate)])
     else:
         hashrate = s.gethashespersec()
         if options.allinfo:
-            output.append(["hashespersec", hashrate])
+            output.append(["hashespersec", str(hashrate)])
 
 prettyprint(output)
 
