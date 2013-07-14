@@ -154,7 +154,8 @@ def listtransactions():
         output = []
         for item in trans:
             unconfirmed = item["confirmations"] < int(options.min_confirm) or item["category"] == "immature"
-            output.append([ctime(item["time"]) + " " + item["account"], str(item["amount"]) + unconfirmed * " *"])
+            orphan = item["category"] == "orphan"
+            output.append([ctime(item["time"]) + " " + item["account"], str(item["amount"]) + unconfirmed * " *" + orphan * " orphan"])
 
         prettyprint(output)
 
