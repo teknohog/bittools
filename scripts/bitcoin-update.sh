@@ -52,8 +52,9 @@ case $PROJECT in
 	GITURL=https://github.com/ppcoin/ppcoin.git
 	;;
     primecoin)
-	GITURL=https://github.com/primecoin/primecoin.git
+	#GITURL=https://github.com/primecoin/primecoin.git
 	#GITURL=https://github.com/Chemisist/primecoin.git
+	GITURL=https://github.com/mikaelh2/primecoin.git
 	;;
     *)
 	exit
@@ -148,11 +149,29 @@ fi
 # leveldb is broken by multi-part compiler names like
 # "ccache distcc g++"
 #sed -i 's/CXX=$(CXX)/CXX="$(CXX)"/' leveldb/Makefile
-# The scripts need more fixing, so disable multi-part names for now
+# The scripts need more fixing, so work around multi-part names for now
 if [ -n "`grep ^leveldb/libleveldb.a: Makefile`" ] && \
     [ "`echo $CXX | wc -w`" -gt 1 ]; then
-    CC="$MACHTYPE-gcc"
-    CXX="$MACHTYPE-g++"
+
+    MYCC=`mktemp`
+    MYCXX=`mktemp`
+
+    cat<<EOF > $MYCC
+#!/bin/bash
+exec $CC "\$@"
+EOF
+
+    cat<<EOF > $MYCXX
+#!/bin/bash
+exec $CXX "\$@"
+EOF
+
+    for FILE in $MYCC $MYCXX; do
+	chmod 700 $FILE
+    done
+
+    CC=$MYCC
+    CXX=$MYCXX
 fi
 
 # Help Intel compilers with linking
@@ -166,3 +185,8 @@ if [ ! -d $INSTALLDIR ]; then
     mkdir -p $INSTALLDIR
 fi
 install -bs $BINARY $INSTALLDIR
+
+# Clean up temps
+for FILE in $MYCC $MYCXX; do
+    if [ -e "$FILE" ]; then rm $FILE; fi
+done
