@@ -156,8 +156,7 @@ def listtransactions():
         output = []
         for item in trans:
             unconfirmed = item["confirmations"] < int(options.min_confirm) or item["category"] == "immature"
-            orphan = item["category"] == "orphan"
-            output.append([ctime(item["time"]), item["account"], str(item["amount"]), unconfirmed * "*", orphan * "orphan"])
+            output.append([ctime(item["time"]), transcat[item["category"]], item["account"], str(item["amount"]), unconfirmed * "*"])
 
         prettyprint(output)
 
@@ -230,6 +229,16 @@ parser.add_option("-u", "--url", dest="url", default="", help="Connect to a diff
 (options, args) = parser.parse_args()
 
 coin = options.coin
+
+# Transaction categories; an immature block is a generated one, and
+# the immaturity is shown with a * like unconfirmed ones.
+transcat = {
+    "generate": "G",
+    "immature": "G",
+    "orphan": "O",
+    "receive": "R",
+    "send": "S",
+}
 
 # coin-dependent constants
 currency = {
