@@ -83,6 +83,23 @@ def parse_config(conffile):
 
     return settings
 
+def chainrate(logfile):
+    # This only applies to some primecoin builds
+
+    lines = 20
+
+    log = ReadFile(os.path.expanduser(logfile))
+
+    tail = re.findall("[0-9]+ 5-chains/h", log)[-lines:]
+    chainrates = map(lambda s: float(re.sub(" 5-chains/h", "", s)), tail)
+    return sum(chainrates) / len(chainrates)
+    
+def ReadFile(file):
+    File = open(file, "r")
+    contents = File.read()
+    File.close()
+    return contents
+
 def ReadLines(file):
     File = open(file, "r")
     contents = File.readlines()
@@ -218,7 +235,7 @@ parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
-parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, e.g. 250e6")
+parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, or 5-chains/h for primecoin")
 
 parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this address, followed by the amount")
 
@@ -351,9 +368,10 @@ if options.hashrate:
     # No point in printing this, if supplied manually
 else:
     if coin == "primecoin":
-        hashrate = s.getprimespersec()
+        #hashrate = s.getprimespersec()
+        hashrate = chainrate(re.sub("primecoin.conf", "debug.log", configfile))
         if options.allinfo:
-            output.append(["primespersec", str(hashrate)])
+            output.append(["5-chains/h", str(hashrate)])
     else:
         hashrate = s.gethashespersec()
         if options.allinfo:
@@ -366,29 +384,33 @@ blocks = info["blocks"]
 output = []
 
 if hashrate > 0:
+    # ppcoin
+    if type(diff) == dict:
+        diff = diff['proof-of-work']
+
     if coin == "primecoin":
-        # block reward = 999 / diff**2
-        # but the rest of the calculation still TODO...
-        pass
+        effdiff = 30**(diff - 5)
+
+        # 5-chain rate is per hour
+        time = effdiff * 3600 / hashrate
     else:
-        # ppcoin
-        if type(diff) == dict:
-            diff = diff['proof-of-work']
-
         time = diff * 2**32 / hashrate
-        tp = timeprint(time)
-    
-        output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
 
-        if coin == "ppcoin":
-            # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
+    tp = timeprint(time)
+    output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
+    
+    if coin == "ppcoin":
+        # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
             # "The block reward for a work block is sqrt(sqrt(9999^4 /
-            # difficulty)), rounded down to the next cent boundary."
-            coinrate = int(999900. / diff**0.25) / (100 * tp[0])
-        else:
-            coinrate = block_coins(blocks) / tp[0]
+        # difficulty)), rounded down to the next cent boundary."
+        coinrate = int(999900. / diff**0.25) / (100 * tp[0])
+    elif coin == "primecoin":
+        # block reward = 999 / diff**2
+        coinrate = (999. / diff**2) / tp[0]
+    else:
+        coinrate = block_coins(blocks) / tp[0]
         
-        output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
+    output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
 
 # These coins have a dynamic adjustment without fixed intervals.
 if coin not in ["ppcoin", "primecoin"]:
