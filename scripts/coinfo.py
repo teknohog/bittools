@@ -92,7 +92,7 @@ def chainrate(logfile):
 
     tail = re.findall("[0-9]+ 5-chains/h", log)[-lines:]
     chainrates = map(lambda s: float(re.sub(" 5-chains/h", "", s)), tail)
-    return sum(chainrates) / len(chainrates)
+    return sum(chainrates) / lines
     
 def ReadFile(file):
     File = open(file, "r")
