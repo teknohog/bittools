@@ -125,9 +125,9 @@ else
     # command line if wanted anyway
     STATUSFILE=`mktemp /tmp/XXXXXX.txt`
     git pull | tee $STATUSFILE
-    NOUPDATE="`grep Already.up-to-date. $STATUSFILE`"
+    UPDATE="`grep Receiving $STATUSFILE`"
     rm $STATUSFILE
-     if [ -n "$NOUPDATE" ] && ! $FORCE; then
+    if [ -z "$UPDATE" ] && ! $FORCE; then
 	exit
     fi
 fi
