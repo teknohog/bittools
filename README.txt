@@ -21,6 +21,13 @@ Requires: openssl, boost and db, in addition to usual development
 tools.
 
 
+primemeter.sh
+=============
+
+Logfile parser for primecoin, to show sensible averages of performance
+metrics.
+
+
 coinfo.py
 =========
 
