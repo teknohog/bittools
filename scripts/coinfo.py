@@ -389,7 +389,7 @@ if hashrate > 0:
         diff = diff['proof-of-work']
 
     if coin == "primecoin":
-        effdiff = 30**(diff - 5)
+        effdiff = 12**(diff - 5)
 
         # 5-chain rate is per hour
         time = effdiff * 3600 / hashrate
