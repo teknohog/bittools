@@ -91,8 +91,8 @@ def chainrate(logfile):
     log = ReadFile(os.path.expanduser(logfile))
 
     tail = re.findall("[0-9]+ 5-chains/h", log)[-lines:]
-    chainrates = map(lambda s: float(re.sub(" 5-chains/h", "", s)), tail)
-    return sum(chainrates) / lines
+    chainrates = map(lambda s: int(re.sub(" 5-chains/h", "", s)), tail)
+    return [sum(chainrates) / float(lines), min(chainrates), max(chainrates)]
     
 def ReadFile(file):
     File = open(file, "r")
@@ -369,9 +369,11 @@ if options.hashrate:
 else:
     if coin == "primecoin":
         #hashrate = s.getprimespersec()
-        hashrate = chainrate(re.sub("primecoin.conf", "debug.log", configfile))
+        chrate = chainrate(re.sub("primecoin.conf", "debug.log", configfile))
+        hashrate = chrate[0]
+        chrate = map(str, chrate)
         if options.allinfo:
-            output.append(["5-chains/h", str(hashrate)])
+            output.append(["5-chains/h", chrate[0] + " (" + chrate[1] + " to " + chrate[2] + ")"])
     else:
         hashrate = s.gethashespersec()
         if options.allinfo:

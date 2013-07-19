@@ -33,7 +33,37 @@ function average () {
     echo $RATE
 }
 
-echo $(RATES="$PRIMERATES" average) primes/h
-echo $(RATES="$TESTRATES" average) tests/h
-echo $(RATES="$FCRATES" average) 5-chains/h
+function min () {
+    RESULT=999999999999999999
+
+    for R in $RATES; do
+	if [ $R -lt $RESULT ]; then
+	    RESULT=$R
+	fi
+    done
+
+    echo $RESULT
+}
+
+function max () {
+    RESULT=0
+
+    for R in $RATES; do
+	if [ $R -gt $RESULT ]; then
+	    RESULT=$R
+	fi
+    done
+
+    echo $RESULT
+}
+
+RATES="$PRIMERATES"
+echo `average` primes/h, `min` to `max`
+
+RATES="$TESTRATES"
+echo `average` tests/h, `min` to `max`
+
+RATES="$FCRATES"
+echo `average` 5-chains/h, `min` to `max`
+
 
