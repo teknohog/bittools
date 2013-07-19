@@ -34,27 +34,11 @@ function average () {
 }
 
 function min () {
-    RESULT=999999999999999999
-
-    for R in $RATES; do
-	if [ $R -lt $RESULT ]; then
-	    RESULT=$R
-	fi
-    done
-
-    echo $RESULT
+    echo "$RATES" | sort -nr | tail -n1
 }
 
 function max () {
-    RESULT=0
-
-    for R in $RATES; do
-	if [ $R -gt $RESULT ]; then
-	    RESULT=$R
-	fi
-    done
-
-    echo $RESULT
+    echo "$RATES" | sort -n | tail -n1
 }
 
 RATES="$PRIMERATES"
@@ -65,5 +49,3 @@ echo `average` tests/h, `min` to `max`
 
 RATES="$FCRATES"
 echo `average` 5-chains/h, `min` to `max`
-
-
