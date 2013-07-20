@@ -33,19 +33,20 @@ function average () {
     echo $RATE
 }
 
-function min () {
-    echo "$RATES" | sort -nr | tail -n1
-}
+function minmax () {
+    RATES="`echo \"$RATES\" | sort -n`"
 
-function max () {
-    echo "$RATES" | sort -n | tail -n1
+    MIN=`echo "$RATES" | head -n1`
+    MAX=`echo "$RATES" | tail -n1`
+
+    echo $MIN to $MAX
 }
 
 RATES="$PRIMERATES"
-echo `average` primes/h, `min` to `max`
+echo `average` primes/h, `minmax`
 
 RATES="$TESTRATES"
-echo `average` tests/h, `min` to `max`
+echo `average` tests/h, `minmax`
 
 RATES="$FCRATES"
-echo `average` 5-chains/h, `min` to `max`
+echo `average` 5-chains/h, `minmax`
