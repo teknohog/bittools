@@ -407,8 +407,8 @@ if hashrate > 0:
         # difficulty)), rounded down to the next cent boundary."
         coinrate = int(999900. / diff**0.25) / (100 * tp[0])
     elif coin == "primecoin":
-        # block reward = 999 / diff**2
-        coinrate = (999. / diff**2) / tp[0]
+        # block reward = 999 / diff**2, likewise floored to cent
+        coinrate = int(99900. / diff**2) / (100 * tp[0])
     else:
         coinrate = block_coins(blocks) / tp[0]
         
