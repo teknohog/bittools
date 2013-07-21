@@ -88,17 +88,19 @@ def chainrate(logfile):
 
     lines = 20
 
-    log = ReadFile(os.path.expanduser(logfile))
+    # grep | tail like construct -- start from bottom to find the last
+    # "lines" matches
+    log = ReadLines(os.path.expanduser(logfile))
+    i = len(log) - 1
+    chainrates = []
+    while len(chainrates) < lines:
+        s = re.search(r".* (\d+) 5-chains/h", log[i])
+        if s:
+            chainrates.append(int(s.groups()[0]))
 
-    tail = re.findall("[0-9]+ 5-chains/h", log)[-lines:]
-    chainrates = map(lambda s: int(re.sub(" 5-chains/h", "", s)), tail)
-    return [sum(chainrates) / float(lines), min(chainrates), max(chainrates)]
+        i -= 1
     
-def ReadFile(file):
-    File = open(file, "r")
-    contents = File.read()
-    File.close()
-    return contents
+    return [sum(chainrates) / float(lines), min(chainrates), max(chainrates)]
 
 def ReadLines(file):
     File = open(file, "r")
