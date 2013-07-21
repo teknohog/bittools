@@ -54,7 +54,9 @@ case $PROJECT in
     primecoin)
 	#GITURL=https://github.com/primecoin/primecoin.git
 	#GITURL=https://github.com/Chemisist/primecoin.git
-	GITURL=https://github.com/mikaelh2/primecoin.git
+	#GITURL=https://github.com/mikaelh2/primecoin.git
+	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
+	PROJECTDIR=primecoin-hp
 	;;
     *)
 	exit
@@ -125,9 +127,10 @@ else
     # command line if wanted anyway
     STATUSFILE=`mktemp /tmp/XXXXXX.txt`
     git pull | tee $STATUSFILE
-    UPDATE="`grep Receiving $STATUSFILE`"
+    NOUPDATE="`grep Already.up-to-date $STATUSFILE`"
+    ERROR="`file $STATUSFILE | grep empty`"
     rm $STATUSFILE
-    if [ -z "$UPDATE" ] && ! $FORCE; then
+    if ( [ -n "$NOUPDATE" ] || [ -n "$ERROR" ] ) && ! $FORCE; then
 	exit
     fi
 fi
