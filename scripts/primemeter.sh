@@ -27,10 +27,7 @@ function average () {
 	SUM=$((SUM + R))
     done
 
-    RATE=`echo "$SUM / $LINES" | bc -l`
-    RATE=${RATE//.*/}
-
-    echo $RATE
+    echo $((SUM/LINES))
 }
 
 function minmax () {
