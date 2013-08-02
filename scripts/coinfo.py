@@ -93,14 +93,20 @@ def chainrate(logfile):
     log = ReadLines(os.path.expanduser(logfile))
     i = len(log) - 1
     chainrates = []
-    while len(chainrates) < lines:
+    while len(chainrates) < lines and i > 0:
         s = re.search(r".* (\d+) 5-chains/h", log[i])
         if s:
             chainrates.append(int(s.groups()[0]))
 
         i -= 1
     
-    return [sum(chainrates) / float(lines), min(chainrates), max(chainrates)]
+    # len(chainrates) may be fewer than "lines" if the log is
+    # small. It may even be zero.
+    l = len(chainrates)
+    if l > 0:
+        return [sum(chainrates) / l, min(chainrates), max(chainrates)]
+    else:
+        return [0, 0, 0]
 
 def ReadLines(file):
     File = open(file, "r")
