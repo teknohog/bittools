@@ -14,9 +14,13 @@ TAIL=`mktemp`
 
 grep primemeter $LOGFILE | tail -n $LINES > $TAIL
 
-# Use a correct divisor if fewer lines are found. The echo is not
-# superfluous, it avoids wc printing the filename.
-LINES=`echo $TAIL | wc -l`
+# Use a correct divisor if fewer lines are found
+LINES=`wc -l < $TAIL`
+
+if [ $LINES == 0 ]; then
+    echo No entries found.
+    exit
+fi
 
 PRIMERATES="`sed -e 's|.* \([0-9]\+\) prime/h.*|\1|g' < $TAIL`"
 TESTRATES="`sed -e 's|.* \([0-9]\+\) test/h.*|\1|g' < $TAIL`"
