@@ -382,6 +382,9 @@ else:
         chrate = map(str, chrate)
         if options.allinfo:
             output.append(["5-chains/h", chrate[0] + " (" + chrate[1] + " to " + chrate[2] + ")"])
+    elif coin == "litecoin":
+        # Mining was removed from the client in 0.8
+        hashrate = 0
     else:
         hashrate = s.gethashespersec()
         if options.allinfo:
