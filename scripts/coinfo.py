@@ -181,7 +181,11 @@ def listtransactions():
         output = []
         for item in trans:
             unconfirmed = item["confirmations"] < int(options.min_confirm) or item["category"] == "immature"
-            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * item["address"]])
+            if "address" in item.keys():
+                address = item["address"]
+            else:
+                address = ""
+            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * address])
 
         prettyprint(output)
 
