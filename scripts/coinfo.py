@@ -181,7 +181,7 @@ def listtransactions():
         output = []
         for item in trans:
             unconfirmed = item["confirmations"] < int(options.min_confirm) or item["category"] == "immature"
-            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*"])
+            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * item["address"]])
 
         prettyprint(output)
 
@@ -217,7 +217,7 @@ parser = OptionParser()
 
 parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_true", default=False, help="List accounts with balances")
 
-parser.add_option("-a", "--allinfo", dest="allinfo", action="store_true", default=False, help="Print complete getinfo")
+parser.add_option("-a", "--allinfo", dest="verbose", action="store_true", default=False, help="Print more detailed info (synonym for verbose)")
 
 parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
@@ -250,6 +250,8 @@ parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this addr
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
 
 parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind")
+
+parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print more detailed info")
 
 (options, args) = parser.parse_args()
 
@@ -353,7 +355,7 @@ if options.transactions:
 
 info = s.getinfo()
 
-if options.allinfo:
+if options.verbose:
     keys = info.keys()
 else:
     # Primecoin does not provide difficulty in getinfo, only separately
@@ -380,14 +382,14 @@ else:
         chrate = chainrate(re.sub("primecoin.conf", "debug.log", configfile))
         hashrate = chrate[0]
         chrate = map(str, chrate)
-        if options.allinfo:
+        if options.verbose:
             output.append(["5-chains/h", chrate[0] + " (" + chrate[1] + " to " + chrate[2] + ")"])
     elif coin == "litecoin":
         # Mining was removed from the client in 0.8
         hashrate = 0
     else:
         hashrate = s.gethashespersec()
-        if options.allinfo:
+        if options.verbose:
             output.append(["hashespersec", str(hashrate)])
 
 prettyprint(output)
