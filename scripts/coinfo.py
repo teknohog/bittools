@@ -437,8 +437,8 @@ if hashrate > 0:
         
     output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
 
-# These coins have a dynamic adjustment without fixed intervals.
-if coin not in ["ppcoin", "primecoin"]:
+# These coins have a dynamic difficulty adjustment without fixed intervals.
+if coin not in ["chncoin", "ppcoin", "primecoin"]:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / blocksperhour[coin] * 3600
     tp = timeprint(time)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])

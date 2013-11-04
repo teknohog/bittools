@@ -39,7 +39,8 @@ case $PROJECT in
 	GITURL=https://github.com/bitcoin/bitcoin.git
 	;;
     chncoin)
-	GITURL=https://github.com/CHNCoin/CHNCoin.git
+	#GITURL=https://github.com/CHNCoin/CHNCoin.git
+	GITURL=https://github.com/RoadTrain/CHNCoin.git
 	PROJECTDIR=CHNCoin
 	;;
     litecoin)
