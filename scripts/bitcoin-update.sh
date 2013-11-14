@@ -19,8 +19,9 @@ FORCE=false
 PROJECT=bitcoin
 REVISION=""
 UPNP=
-while getopts CcflnPpr:u opt; do
+while getopts bCcflnPpr:u opt; do
     case "$opt" in
+	b) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
 	C) CHECKOUT=true ;;
 	f) FORCE=true ;;
@@ -35,6 +36,10 @@ done
 
 PROJECTDIR=$PROJECT
 case $PROJECT in
+    blakecoin)
+	GITURL=https://github.com/BlueDragon747/Blakecoin.git
+	PROJECTDIR=Blakecoin
+	;;
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
 	;;
@@ -143,6 +148,9 @@ sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
 sed -i 's/g++/\$(CXX)/g' Makefile
 sed -i 's/Bstatic/Bdynamic/g' Makefile
 
+# The general case should work with Blakecoin too
+sed -i 's/db_cxx-5.1/db_cxx/g' Makefile
+
 # *sigh* everyone uses x86?
 if [ -z "`echo $MACHTYPE | grep 86`" ]; then
     sed -i 's/-msse2//g' Makefile
@@ -176,6 +184,9 @@ EOF
 
     CC=$MYCC
     CXX=$MYCXX
+
+    # Also, some implementations are missing executable perms
+    chmod u+x leveldb/build_detect_platform
 fi
 
 # Help Intel compilers with linking

@@ -54,6 +54,8 @@ def timeprint(time):
 def block_coins(blocks):
     if coin == "namecoin":
         return 50
+    elif coin == "blakecoin":
+        return 25
     else:
         c = blockhalve[coin] - 2
 
@@ -223,6 +225,8 @@ parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_tru
 
 parser.add_option("-a", "--allinfo", dest="verbose", action="store_true", default=False, help="Print more detailed info (synonym for verbose)")
 
+parser.add_option("-B", "--blakecoin", action="store_const", const="blakecoin", dest="coin", default="bitcoin", help="Connect to blakecoind")
+
 parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
@@ -264,6 +268,7 @@ coin = options.coin
 # coin-dependent constants
 currency = {
     "bitcoin": "BTC",
+    "blakecoin": "BLC",
     "chncoin": "CNC",
     "litecoin": "LTC",
     "namecoin": "NMC",
@@ -280,6 +285,7 @@ blockhalve = {
 
 blocksperhour = {
     "bitcoin": 6.,
+    "blakecoin": 20.,
     "chncoin": 60.,
     "litecoin": 24.,
     "namecoin": 6.,
@@ -288,6 +294,7 @@ blocksperhour = {
 
 adjustblocks = {
     "bitcoin": 2016,
+    "blakecoin": 20,
     "chncoin": 5040,
     "litecoin": 2016,
     "namecoin": 2016,
@@ -302,6 +309,7 @@ initcoins = {
 
 rpcport = {
     "bitcoin": "8332",
+    "blakecoin": "8772",
     "chncoin": "8108",
     "litecoin": "9332",
     "namecoin": "8332",
