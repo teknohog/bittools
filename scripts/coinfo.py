@@ -425,7 +425,7 @@ if hashrate > 0:
 
         # hashrate = chainsperday
         frac = diff - int(diff)
-        time = 86400 / (hashrate * (1 - frac))
+        time = 86400 / (hashrate * (1 - frac + 0.035))
     else:
         time = diff * 2**32 / hashrate
 
