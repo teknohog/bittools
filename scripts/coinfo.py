@@ -52,8 +52,8 @@ def timeprint(time):
         return [time, "s"]
 
 def block_coins(blocks):
-    if coin == "namecoin":
-        return 50
+    if blockhalve[coin] == 0:
+        return initcoins[coin]
     else:
         c = blockhalve[coin] - 2
 
@@ -274,11 +274,12 @@ currency = {
     "primecoin": "XPM",
 }
 
+# 0 means no block reward halving
 blockhalve = {
     "bitcoin": 210000.0,
     "chncoin": 2628000.0,
     "litecoin": 840000.0,
-    "namecoin": 210000.0,
+    "namecoin": 0,
 }
 
 blocksperhour = {
