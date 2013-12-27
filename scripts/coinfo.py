@@ -54,8 +54,6 @@ def timeprint(time):
 def block_coins(blocks):
     if coin == "namecoin":
         return 50
-    elif coin == "blakecoin":
-        return 25
     else:
         c = blockhalve[coin] - 2
 
@@ -440,6 +438,8 @@ if hashrate > 0:
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
         coinrate = int(99900. / diff**2) / (100 * tp[0])
+    elif coin == "blakecoin":
+        coinrate = (25 + round((blocks * diff * 256)**0.5) * 1e-8) / tp[0]
     else:
         coinrate = block_coins(blocks) / tp[0]
         
