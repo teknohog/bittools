@@ -115,16 +115,26 @@ def ReadLines(file):
     return contents
 
 def exportkeys():
-    accounts = s.listaccounts()
-    
+    # Generate addresses are not available via accounts, even though
+    # they are listed under the "" account. So this way should get us
+    # all possible addresses.
+
+    g = s.listaddressgroupings()
+
     l = []
 
-    for acc in accounts:
-        addresses = s.getaddressesbyaccount(acc)
-        for addr in addresses:
-            privkey = s.dumpprivkey(addr)
-            l.append([privkey, acc])
-            
+    for group in g:
+        for addrline in group:
+            address = addrline[0]
+            privkey = s.dumpprivkey(address)
+
+            if len(addrline) == 3:
+                account = addrline[2]
+            else:
+                account = ""
+
+            l.append([privkey, account])
+
     prettyprint(l)
 
 def importkeys(file):
