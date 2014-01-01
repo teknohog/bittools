@@ -195,7 +195,7 @@ def listtransactions():
                 address = item["address"]
             else:
                 address = ""
-            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * address])
+            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * address, options.verbose * str(item["confirmations"])])
 
         prettyprint(output)
 
