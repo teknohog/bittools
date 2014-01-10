@@ -395,7 +395,8 @@ for key in keys:
     output.append([key, str(info[key])])
 
 # Primecoin above
-output.append(["difficulty", str(diff)])
+if "difficulty" not in keys:
+    output.append(["difficulty", str(diff)])
 
 if options.hashrate:
     hashrate = float(options.hashrate)
