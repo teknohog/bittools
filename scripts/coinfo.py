@@ -301,12 +301,15 @@ blocksperhour = {
     "primecoin": 60.,
 }
 
+# 0 means dynamic difficulty adjustment without fixed intervals
 adjustblocks = {
     "bitcoin": 2016,
     "blakecoin": 20,
-    "chncoin": 5040,
+    "chncoin": 0,
     "litecoin": 2016,
     "namecoin": 2016,
+    "ppcoin": 0,
+    "primecoin": 0,
 }
 
 initcoins = {
@@ -456,8 +459,7 @@ if hashrate > 0:
         
     output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
 
-# These coins have a dynamic difficulty adjustment without fixed intervals.
-if coin not in ["chncoin", "ppcoin", "primecoin"]:
+if adjustblocks[coin] > 0:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / blocksperhour[coin] * 3600
     tp = timeprint(time)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
