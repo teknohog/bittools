@@ -65,10 +65,10 @@ def blockreward(coin, diff, blocks):
         # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
         # "The block reward for a work block is sqrt(sqrt(9999^4 /
         # difficulty)), rounded down to the next cent boundary."
-        return int(999900. / diff**0.25) / 100
+        return int(999900. / diff**0.25) / 100.
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
-        return int(99900. / diff**2) / 100
+        return int(99900. / diff**2) / 100.
     elif coin == "blakecoin":
         return 25 + round((blocks * diff * 256)**0.5) * 1e-8
     else:
