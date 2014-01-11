@@ -43,7 +43,7 @@ def timeprint(time):
     # and the unit separately
 
     if time >= 86400:
-        return [time / 86400, "d"]
+        return [time / 86400, "days"]
     elif time >= 3600:
         return [time / 3600, "h"]
     elif time >= 60:
@@ -51,7 +51,7 @@ def timeprint(time):
     else:
         return [time, "s"]
 
-def block_coins(blocks):
+def fixed_reward(coin, blocks):
     if blockhalve[coin] == 0:
         return initcoins[coin]
     else:
@@ -59,6 +59,20 @@ def block_coins(blocks):
 
         p = ceil(blocks / c)
         return initcoins[coin] * 0.5**(p - 1)
+
+def blockreward(coin, diff, blocks):
+    if coin == "ppcoin":
+        # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
+        # "The block reward for a work block is sqrt(sqrt(9999^4 /
+        # difficulty)), rounded down to the next cent boundary."
+        return int(999900. / diff**0.25) / 100
+    elif coin == "primecoin":
+        # block reward = 999 / diff**2, likewise floored to cent
+        return int(99900. / diff**2) / 100
+    elif coin == "blakecoin":
+        return 25 + round((blocks * diff * 256)**0.5) * 1e-8
+    else:
+        return fixed_reward(coin, blocks)
 
 def parse_config(conffile):
     # config file parsing shamelessly adapted from jgarzik's pyminer, as
@@ -445,20 +459,9 @@ if hashrate > 0:
     tp = timeprint(time)
     output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
     
-    if coin == "ppcoin":
-        # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
-            # "The block reward for a work block is sqrt(sqrt(9999^4 /
-        # difficulty)), rounded down to the next cent boundary."
-        coinrate = int(999900. / diff**0.25) / (100 * tp[0])
-    elif coin == "primecoin":
-        # block reward = 999 / diff**2, likewise floored to cent
-        coinrate = int(99900. / diff**2) / (100 * tp[0])
-    elif coin == "blakecoin":
-        coinrate = (25 + round((blocks * diff * 256)**0.5) * 1e-8) / tp[0]
-    else:
-        coinrate = block_coins(blocks) / tp[0]
-        
-    output.append(["Average payout", str(coinrate) + " " + currency[coin] + "/" + tp[1]])
+    coinsperday = blockreward(coin, diff, blocks) / time * 86400
+
+    output.append(["Average payout", str(coinsperday) + " " + currency[coin] + "/day"])
 
 if adjustblocks[coin] > 0:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / blocksperhour[coin] * 3600
