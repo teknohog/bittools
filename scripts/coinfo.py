@@ -97,31 +97,6 @@ def parse_config(conffile):
 
     return settings
 
-def chainrate(logfile):
-    # This only applies to some primecoin builds
-
-    lines = 20
-
-    # grep | tail like construct -- start from bottom to find the last
-    # "lines" matches
-    log = ReadLines(os.path.expanduser(logfile))
-    i = len(log) - 1
-    chainrates = []
-    while len(chainrates) < lines and i > 0:
-        s = re.search(r".* (\d+) 5-chains/h", log[i])
-        if s:
-            chainrates.append(int(s.groups()[0]))
-
-        i -= 1
-    
-    # len(chainrates) may be fewer than "lines" if the log is
-    # small. It may even be zero.
-    l = len(chainrates)
-    if l > 0:
-        return [sum(chainrates) / l, min(chainrates), max(chainrates)]
-    else:
-        return [0, 0, 0]
-
 def ReadLines(file):
     File = open(file, "r")
     contents = File.readlines()
@@ -273,7 +248,7 @@ parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
-parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, or chainsperday for primecoin")
+parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, or blocksperday for primecoin")
 
 parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this address, followed by the amount")
 
@@ -417,15 +392,10 @@ if options.hashrate:
     # No point in printing this, if supplied manually
 else:
     if coin == "primecoin":
-        #chrate = chainrate(re.sub("primecoin.conf", "debug.log", configfile))
-        #hashrate = chrate[0]
-        #chrate = map(str, chrate)
-
-        hashrate = s.getmininginfo()["chainsperday"]
+        hashrate = s.getmininginfo()["blocksperday"]
 
         if options.verbose:
-            #output.append(["5-chains/h", chrate[0] + " (" + chrate[1] + " to " + chrate[2] + ")"])
-            output.append(["chainsperday", str(hashrate)])
+            output.append(["blocksperday", str(hashrate)])
     elif coin == "litecoin":
         # Mining was removed from the client in 0.8
         hashrate = 0
@@ -446,13 +416,7 @@ if hashrate > 0:
         diff = diff['proof-of-work']
 
     if coin == "primecoin":
-        #effdiff = 12**(diff - 5)
-        # 5-chain rate is per hour
-        #time = effdiff * 3600 / hashrate
-
-        # hashrate = chainsperday
-        frac = diff - int(diff)
-        time = 86400 / (hashrate * (0.97 * (1 - frac) + 0.03))
+        time = 86400. / hashrate
     else:
         time = diff * 2**32 / hashrate
 
