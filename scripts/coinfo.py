@@ -232,6 +232,8 @@ parser.add_option("-C", "--confirmations", dest="min_confirm", default=1, help="
 
 parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
 
+parser.add_option("-E", "--ecoin", action="store_const", const="ecoin", dest="coin", default="bitcoin", help="Connect to ecoind")
+
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
@@ -267,6 +269,7 @@ currency = {
     "bitcoin": "BTC",
     "blakecoin": "BLC",
     "chncoin": "CNC",
+    "ecoin": "ECN",
     "litecoin": "LTC",
     "namecoin": "NMC",
     "ppcoin": "PPC",
@@ -277,6 +280,7 @@ currency = {
 blockhalve = {
     "bitcoin": 210000.0,
     "chncoin": 2628000.0,
+    "ecoin": 0,
     "litecoin": 840000.0,
     "namecoin": 0,
 }
@@ -285,6 +289,7 @@ blocksperhour = {
     "bitcoin": 6.,
     "blakecoin": 20.,
     "chncoin": 60.,
+    "ecoin": 60.,
     "litecoin": 24.,
     "namecoin": 6.,
     "primecoin": 60.,
@@ -295,6 +300,7 @@ adjustblocks = {
     "bitcoin": 2016,
     "blakecoin": 20,
     "chncoin": 0,
+    "ecoin": 100,
     "litecoin": 2016,
     "namecoin": 2016,
     "ppcoin": 0,
@@ -304,6 +310,7 @@ adjustblocks = {
 initcoins = {
     "bitcoin": 50,
     "chncoin": 88,
+    "ecoin": 700,
     "namecoin": 50,
     "litecoin": 50,
 }
@@ -312,6 +319,7 @@ rpcport = {
     "bitcoin": "8332",
     "blakecoin": "8772",
     "chncoin": "8108",
+    "ecoin": "10444",
     "litecoin": "9332",
     "namecoin": "8332",
     "ppcoin": "9902",
