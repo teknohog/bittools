@@ -19,7 +19,7 @@ FORCE=false
 PROJECT=bitcoin
 REVISION=""
 UPNP=
-while getopts bCcflnPpr:u opt; do
+while getopts bCcflnPpr:su opt; do
     case "$opt" in
 	b) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
@@ -30,11 +30,14 @@ while getopts bCcflnPpr:u opt; do
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
 	r) REVISION=$OPTARG ;;
+	s) PROJECT=skeincoin ;;
 	u) UPNP=1 ;;
     esac
 done
 
 PROJECTDIR=$PROJECT
+BINARY=${PROJECT}d
+
 case $PROJECT in
     blakecoin)
 	GITURL=https://github.com/BlueDragon747/Blakecoin.git
@@ -63,6 +66,9 @@ case $PROJECT in
 	#GITURL=https://github.com/mikaelh2/primecoin.git
 	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
 	PROJECTDIR=primecoin-hp
+	;;
+    skeincoin)
+	GITURL=https://github.com/skeincoin/skeincoin.git
 	;;
     *)
 	exit
@@ -112,8 +118,6 @@ DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail 
 
 CFLAGS="$CFLAGS -I/usr/include -I$DB_INCPATH"
 
-BINARY=${PROJECT}d
-
 if $CHECKOUT || [ ! -d $BASEDIR/$PROJECTDIR ]; then
     if [ -n "$REVISION" ]; then
 	REVISION=@$REVISION
@@ -144,6 +148,7 @@ fi
 cd src
 
 cp makefile.unix Makefile
+
 sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
 sed -i 's/g++/\$(CXX)/g' Makefile
 sed -i 's/Bstatic/Bdynamic/g' Makefile

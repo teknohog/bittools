@@ -252,6 +252,8 @@ parser.add_option("-R", "--listreceived", dest="listreceived", action="store_tru
 
 parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, or blocksperday for primecoin")
 
+parser.add_option("-S", "--skeincoin", action="store_const", const="skeincoin", dest="coin", default="bitcoin", help="Connect to skeincoind")
+
 parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this address, followed by the amount")
 
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
@@ -274,6 +276,7 @@ currency = {
     "namecoin": "NMC",
     "ppcoin": "PPC",
     "primecoin": "XPM",
+    "skeincoin": "SKC",
 }
 
 # 0 means no block reward halving
@@ -283,6 +286,7 @@ blockhalve = {
     "ecoin": 0,
     "litecoin": 840000.0,
     "namecoin": 0,
+    "skeincoin": 262800.0,
 }
 
 blocksperhour = {
@@ -293,6 +297,7 @@ blocksperhour = {
     "litecoin": 24.,
     "namecoin": 6.,
     "primecoin": 60.,
+    "skeincoin": 30.,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -305,6 +310,7 @@ adjustblocks = {
     "namecoin": 2016,
     "ppcoin": 0,
     "primecoin": 0,
+    "skeincoin": 0,
 }
 
 initcoins = {
@@ -313,6 +319,7 @@ initcoins = {
     "ecoin": 700,
     "namecoin": 50,
     "litecoin": 50,
+    "skeincoin": 32,
 }
 
 rpcport = {
@@ -324,6 +331,7 @@ rpcport = {
     "namecoin": "8332",
     "ppcoin": "9902",
     "primecoin": "9912",
+    "skeincoin": "21230",
 }
 
 if len(options.url) > 0:
