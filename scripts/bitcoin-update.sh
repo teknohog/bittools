@@ -19,10 +19,11 @@ FORCE=false
 PROJECT=bitcoin
 REVISION=""
 UPNP=
-while getopts bCcflnPpr:su opt; do
+while getopts bCcdflnPpr:su opt; do
     case "$opt" in
 	b) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
+	d) PROJECT=dogecoin ;;
 	C) CHECKOUT=true ;;
 	f) FORCE=true ;;
 	l) PROJECT=litecoin ;;
@@ -50,6 +51,9 @@ case $PROJECT in
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
 	GITURL=https://github.com/RoadTrain/CHNCoin.git
 	PROJECTDIR=CHNCoin
+	;;
+    dogecoin)
+	GITURL=https://github.com/dogecoin/dogecoin.git
 	;;
     litecoin)
 	GITURL=https://github.com/litecoin-project/litecoin.git	
