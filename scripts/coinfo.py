@@ -71,6 +71,8 @@ def blockreward(coin, diff, blocks):
         return int(99900. / diff**2) / 100.
     elif coin == "blakecoin":
         return 25 + round((blocks * diff * 256)**0.5) * 1e-8
+    elif coin == "dogecoin" and blocks > 600000:
+        return 10000.0
     else:
         return fixed_reward(coin, blocks)
 
