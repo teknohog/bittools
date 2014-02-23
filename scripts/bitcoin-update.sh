@@ -17,9 +17,8 @@
 CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
-REVISION=""
 UPNP=
-while getopts bCcdflnPpr:su opt; do
+while getopts bCcdflnPprsu opt; do
     case "$opt" in
 	b) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
@@ -30,7 +29,7 @@ while getopts bCcdflnPpr:su opt; do
 	n) PROJECT=namecoin ;;
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
-	r) REVISION=$OPTARG ;;
+	r) PROJECT=riecoin ;;
 	s) PROJECT=skeincoin ;;
 	u) UPNP=1 ;;
     esac
@@ -70,6 +69,9 @@ case $PROJECT in
 	#GITURL=https://github.com/mikaelh2/primecoin.git
 	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
 	PROJECTDIR=primecoin-hp
+	;;
+    riecoin)
+	GITURL=https://github.com/riecoin/riecoin
 	;;
     skeincoin)
 	GITURL=https://github.com/skeincoin/skeincoin.git
@@ -123,18 +125,11 @@ DB_INCPATH=`find /usr/include/ -name db_cxx.h | xargs -n1 dirname | sort | tail 
 CFLAGS="$CFLAGS -I/usr/include -I$DB_INCPATH"
 
 if $CHECKOUT || [ ! -d $BASEDIR/$PROJECTDIR ]; then
-    if [ -n "$REVISION" ]; then
-	REVISION=@$REVISION
-    fi
     cd $BASEDIR
     rm -rf $PROJECTDIR
     git clone $GITURL || exit
     cd $PROJECTDIR
 else
-    if [ -n "$REVISION" ]; then
-	REVISION="-r $REVISION"
-    fi
-
     cd $BASEDIR/$PROJECTDIR
 
     # Do not build if there is no source update, but force build from

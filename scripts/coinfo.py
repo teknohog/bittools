@@ -240,6 +240,8 @@ parser.add_option("-E", "--ecoin", action="store_const", const="ecoin", dest="co
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
+parser.add_option("-I", "--riecoin", action="store_const", const="riecoin", dest="coin", default="bitcoin", help="Connect to riecoind")
+
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
 
 parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
@@ -281,6 +283,7 @@ currency = {
     "namecoin": "NMC",
     "ppcoin": "PPC",
     "primecoin": "XPM",
+    "riecoin": "RIC",
     "skeincoin": "SKC",
 }
 
@@ -292,6 +295,7 @@ blockhalve = {
     "ecoin": 0,
     "litecoin": 840000.0,
     "namecoin": 0,
+    "riecoin": 840000.0,
     "skeincoin": 262800.0,
 }
 
@@ -304,6 +308,7 @@ blocksperhour = {
     "litecoin": 24.,
     "namecoin": 6.,
     "primecoin": 60.,
+    "riecoin": 24.,
     "skeincoin": 30.,
 }
 
@@ -318,6 +323,7 @@ adjustblocks = {
     "namecoin": 2016,
     "ppcoin": 0,
     "primecoin": 0,
+    "riecoin": 288,
     "skeincoin": 0,
 }
 
@@ -328,6 +334,7 @@ initcoins = {
     "ecoin": 700,
     "namecoin": 50,
     "litecoin": 50,
+    "riecoin": 50,
     "skeincoin": 32,
 }
 
@@ -341,6 +348,7 @@ rpcport = {
     "namecoin": "8332",
     "ppcoin": "9902",
     "primecoin": "9912",
+    "riecoin": "28332",
     "skeincoin": "21230",
 }
 
@@ -436,7 +444,7 @@ blocks = info["blocks"]
 
 output = []
 
-if hashrate > 0:
+if hashrate > 0 and coin != "riecoin":
     # ppcoin
     if type(diff) == dict:
         diff = diff['proof-of-work']
