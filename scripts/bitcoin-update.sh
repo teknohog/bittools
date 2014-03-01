@@ -18,8 +18,9 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts bCcdflnPprsu opt; do
+while getopts abCcdflnPprsu opt; do
     case "$opt" in
+	a) PROJECT=AuroraCoin ;;
 	b) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
 	d) PROJECT=dogecoin ;;
@@ -39,6 +40,10 @@ PROJECTDIR=$PROJECT
 BINARY=${PROJECT}d
 
 case $PROJECT in
+    AuroraCoin)
+	GITURL=https://github.com/baldurodinsson/auroracoin-project
+	PROJECTDIR=auroracoin-project
+	;;
     blakecoin)
 	GITURL=https://github.com/BlueDragon747/Blakecoin.git
 	PROJECTDIR=Blakecoin

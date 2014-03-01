@@ -222,7 +222,7 @@ parser = OptionParser()
 
 parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_true", default=False, help="List accounts with balances")
 
-parser.add_option("-a", "--allinfo", dest="verbose", action="store_true", default=False, help="Print more detailed info (synonym for verbose)")
+parser.add_option("-a", "--AuroraCoin", action="store_const", const="AuroraCoin", dest="coin", default="bitcoin", help="Connect to AuroraCoind")
 
 parser.add_option("-B", "--blakecoin", action="store_const", const="blakecoin", dest="coin", default="bitcoin", help="Connect to blakecoind")
 
@@ -274,6 +274,7 @@ coin = options.coin
 
 # coin-dependent constants
 currency = {
+    "AuroraCoin": "AUR",
     "bitcoin": "BTC",
     "blakecoin": "BLC",
     "chncoin": "CNC",
@@ -289,6 +290,7 @@ currency = {
 
 # 0 means no block reward halving
 blockhalve = {
+    "AuroraCoin": 420000.0,
     "bitcoin": 210000.0,
     "chncoin": 2628000.0,
     "dogecoin": 100000.0,
@@ -300,6 +302,7 @@ blockhalve = {
 }
 
 blocksperhour = {
+    "AuroraCoin": 6.,
     "bitcoin": 6.,
     "blakecoin": 20.,
     "chncoin": 60.,
@@ -314,6 +317,7 @@ blocksperhour = {
 
 # 0 means dynamic difficulty adjustment without fixed intervals
 adjustblocks = {
+    "AuroraCoin": 8,
     "bitcoin": 2016,
     "blakecoin": 20,
     "chncoin": 0,
@@ -328,6 +332,7 @@ adjustblocks = {
 }
 
 initcoins = {
+    "AuroraCoin": 25,
     "bitcoin": 50,
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
@@ -339,6 +344,7 @@ initcoins = {
 }
 
 rpcport = {
+    "AuroraCoin": "12341",
     "bitcoin": "8332",
     "blakecoin": "8772",
     "chncoin": "8108",
