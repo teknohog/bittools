@@ -1,6 +1,6 @@
 bittools -- command line tools for various cryptocurrency daemons
 (AuroraCoin, Bitcoin, Blakecoin, CHNcoin, Dogecoin, eCoin, Litecoin,
-Namecoin, PPCoin, Primecoin, Riecoin, Skeincoin)
+Maxcoin, Namecoin, PPCoin, Primecoin, Riecoin, Skeincoin)
 
 by Risto A. Paju / teknohog
 BTC: 1HkL2iLLQe3KJuNCgKPc8ViZs83NJyyQDM
@@ -10,7 +10,7 @@ LTC: LMuSoipjtRtPwD8VFyKypUTt6nXQHH8zW2
 bitcoin-update.sh
 =================
 
-Build and update the latest git version of bitcoind on a unix
+Build and update the latest git version of *coind on a unix
 system. This is aimed at Gentoo Linux, where the system-wide
 compilation options are automatically found. For other unices, you may
 want to specify some options in the script.
@@ -33,12 +33,12 @@ coinfo.py
 =========
 
 A simplified command-line interface to some of the functions of
-bitcoind. To communicate with the daemon it uses python-jsonrpc which
+*coind. To communicate with the daemon it uses python-jsonrpc which
 can be downloaded here:
 
 http://json-rpc.org/wiki/python-json-rpc
 
-By default, the script connects to your locally running bitcoind,
+By default, the script connects to your locally running *coind,
 using credentials found in ~/.bitcoin/bitcoin.conf.
 
 The script is fairly self-documenting with the -h or --help option.
@@ -93,7 +93,7 @@ back up your wallets first.
 However, nothing is destroyed on the export side. You can access the
 same addresses on both wallets after a succesful import.
 
-Also note that bitcoind takes several minutes to import one
+Also note that *coind takes several minutes to import one
 address. It probably depends on many factors such as the number of
 transactions.
 
