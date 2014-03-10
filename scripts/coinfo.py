@@ -248,6 +248,8 @@ parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", de
 
 parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", default=False, help="Get new address, optionally for the given account")
 
+parser.add_option("-m", "--maxcoin", action="store_const", const="maxcoin", dest="coin", default="bitcoin", help="Connect to maxcoind")
+
 parser.add_option("-n", "--namecoin", action="store_const", const="namecoin", dest="coin", default="bitcoin", help="Connect to namecoind")
 
 parser.add_option("-P", "--primecoin", action="store_const", const="primecoin", dest="coin", default="bitcoin", help="Connect to primecoind")
@@ -281,6 +283,7 @@ currency = {
     "dogecoin": "DOGE",
     "ecoin": "ECN",
     "litecoin": "LTC",
+    "maxcoin": "MAX",
     "namecoin": "NMC",
     "ppcoin": "PPC",
     "primecoin": "XPM",
@@ -296,6 +299,7 @@ blockhalve = {
     "dogecoin": 100000.0,
     "ecoin": 0,
     "litecoin": 840000.0,
+    "maxcoin": 1051200.0,
     "namecoin": 0,
     "riecoin": 840000.0,
     "skeincoin": 262800.0,
@@ -309,6 +313,7 @@ blocksperhour = {
     "dogecoin": 60.,
     "ecoin": 60.,
     "litecoin": 24.,
+    "maxcoin": 120.,
     "namecoin": 6.,
     "primecoin": 60.,
     "riecoin": 24.,
@@ -324,6 +329,7 @@ adjustblocks = {
     "dogecoin": 240,
     "ecoin": 100,
     "litecoin": 2016,
+    "maxcoin": 0,
     "namecoin": 2016,
     "ppcoin": 0,
     "primecoin": 0,
@@ -337,6 +343,7 @@ initcoins = {
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
     "ecoin": 700,
+    "maxcoin": 96,
     "namecoin": 50,
     "litecoin": 50,
     "riecoin": 50,
@@ -351,6 +358,7 @@ rpcport = {
     "dogecoin": "22555",
     "ecoin": "10444",
     "litecoin": "9332",
+    "maxcoin": "8669",
     "namecoin": "8332",
     "ppcoin": "9902",
     "primecoin": "9912",
