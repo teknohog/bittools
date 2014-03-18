@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts abCcdeflmnPprsu opt; do
+while getopts abCcdeflmnPprSsu opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	b) PROJECT=blakecoin ;;
@@ -33,6 +33,7 @@ while getopts abCcdeflmnPprsu opt; do
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
 	r) PROJECT=riecoin ;;
+	S) PROJECT=SlothCoin ;;
 	s) PROJECT=skeincoin ;;
 	u) UPNP=1 ;;
     esac
@@ -89,6 +90,10 @@ case $PROJECT in
 	;;
     skeincoin)
 	GITURL=https://github.com/skeincoin/skeincoin.git
+	;;
+    SlothCoin)
+	GITURL=https://github.com/thimod/Slothcoin
+	PROJECTDIR=Slothcoin
 	;;
     *)
 	exit

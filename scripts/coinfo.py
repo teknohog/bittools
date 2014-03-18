@@ -244,6 +244,8 @@ parser.add_option("-I", "--riecoin", action="store_const", const="riecoin", dest
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
 
+parser.add_option("-L", "--SlothCoin", action="store_const", const="SlothCoin", dest="coin", default="bitcoin", help="Connect to SlothCoind")
+
 parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
 
 parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", default=False, help="Get new address, optionally for the given account")
@@ -289,6 +291,7 @@ currency = {
     "primecoin": "XPM",
     "riecoin": "RIC",
     "skeincoin": "SKC",
+    "SlothCoin": "Sloth",
 }
 
 # 0 means no block reward halving
@@ -303,6 +306,7 @@ blockhalve = {
     "namecoin": 0,
     "riecoin": 840000.0,
     "skeincoin": 262800.0,
+    "SlothCoin": 100000.0,
 }
 
 blocksperhour = {
@@ -318,6 +322,7 @@ blocksperhour = {
     "primecoin": 60.,
     "riecoin": 24.,
     "skeincoin": 30.,
+    "SlothCoin": 60.,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -335,6 +340,7 @@ adjustblocks = {
     "primecoin": 0,
     "riecoin": 288,
     "skeincoin": 0,
+    "SlothCoin": 4,
 }
 
 initcoins = {
@@ -348,6 +354,7 @@ initcoins = {
     "litecoin": 50,
     "riecoin": 50,
     "skeincoin": 32,
+    "SlothCoin": 500000,
 }
 
 rpcport = {
@@ -364,6 +371,7 @@ rpcport = {
     "primecoin": "9912",
     "riecoin": "28332",
     "skeincoin": "21230",
+    "SlothCoin": "5108",
 }
 
 if len(options.url) > 0:
