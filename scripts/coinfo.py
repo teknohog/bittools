@@ -349,7 +349,7 @@ initcoins = {
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
     "ecoin": 700,
-    "maxcoin": 96,
+    "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
     "riecoin": 50,
