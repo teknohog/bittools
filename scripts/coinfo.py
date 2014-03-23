@@ -322,7 +322,7 @@ blocksperhour = {
     "primecoin": 60.,
     "riecoin": 24.,
     "skeincoin": 30.,
-    "SlothCoin": 60.,
+    "SlothCoin": 24.,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -340,7 +340,7 @@ adjustblocks = {
     "primecoin": 0,
     "riecoin": 288,
     "skeincoin": 0,
-    "SlothCoin": 4,
+    "SlothCoin": 2,
 }
 
 initcoins = {
