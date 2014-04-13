@@ -18,23 +18,23 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts abCcdeflmnPprSsu opt; do
+while getopts aBCcDEfILlmnPpSu opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
-	b) PROJECT=blakecoin ;;
-	c) PROJECT=chncoin ;;
-	d) PROJECT=dogecoin ;;
-	e) PROJECT=ecoin ;;
+	B) PROJECT=blakecoin ;;
 	C) CHECKOUT=true ;;
+	c) PROJECT=chncoin ;;
+	D) PROJECT=dogecoin ;;
+	E) PROJECT=ecoin ;;
 	f) FORCE=true ;;
+	I) PROJECT=riecoin ;;
+	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
-	r) PROJECT=riecoin ;;
-	S) PROJECT=Slothcoin ;;
-	s) PROJECT=skeincoin ;;
+	S) PROJECT=skeincoin ;;
 	u) UPNP=1 ;;
     esac
 done
