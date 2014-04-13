@@ -105,3 +105,19 @@ Why merge wallets instead of simply sending coins?
 
 * Avoid transaction fees
 * Keep the receiving addresses alive
+
+
+meandiff.sh
+===========
+
+For some coins, the difficulty jumps around considerably during a
+single day, making it hard to estimate long-term returns. This script
+is used to maintain a sliding average.
+
+To first collect the difficulty history, have something like this in
+crontab:
+
+13 * * * * meandiff.sh -Bs
+
+Later, meandiff.sh -B will show the average. Coin identifiers are the
+same as in other scripts, so this example is for Blakecoin.
