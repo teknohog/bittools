@@ -71,6 +71,8 @@ def blockreward(coin, diff, blocks):
         return int(99900. / diff**2) / 100.
     elif coin == "blakecoin":
         return 25 + round((blocks * diff * 256)**0.5) * 1e-8
+    elif coin == "photon":
+        return 32768 + round((blocks * diff * 256)**0.5) * 1e-8
     elif coin == "dogecoin" and blocks > 600000:
         return 10000.0
     else:
@@ -240,6 +242,8 @@ parser.add_option("-E", "--ecoin", action="store_const", const="ecoin", dest="co
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
+parser.add_option("-H", "--photon", action="store_const", const="photon", dest="coin", default="bitcoin", help="Connect to photond")
+
 parser.add_option("-I", "--riecoin", action="store_const", const="riecoin", dest="coin", default="bitcoin", help="Connect to riecoind")
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
@@ -287,6 +291,7 @@ currency = {
     "litecoin": "LTC",
     "maxcoin": "MAX",
     "namecoin": "NMC",
+    "photon": "PHO",
     "ppcoin": "PPC",
     "primecoin": "XPM",
     "riecoin": "RIC",
@@ -319,6 +324,7 @@ blocksperhour = {
     "litecoin": 24.,
     "maxcoin": 120.,
     "namecoin": 6.,
+    "photon": 20.,
     "primecoin": 60.,
     "riecoin": 24.,
     "skeincoin": 30.,
@@ -336,6 +342,7 @@ adjustblocks = {
     "litecoin": 2016,
     "maxcoin": 0,
     "namecoin": 2016,
+    "photon": 20,
     "ppcoin": 0,
     "primecoin": 0,
     "riecoin": 288,
@@ -367,6 +374,7 @@ rpcport = {
     "litecoin": "9332",
     "maxcoin": "8669",
     "namecoin": "8332",
+    "photon": "74532",
     "ppcoin": "9902",
     "primecoin": "9912",
     "riecoin": "28332",
