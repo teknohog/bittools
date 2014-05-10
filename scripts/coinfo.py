@@ -242,6 +242,8 @@ parser.add_option("-E", "--ecoin", action="store_const", const="ecoin", dest="co
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
+parser.add_option("-g", "--ShibeCoin", action="store_const", const="ShibeCoin", dest="coin", default="bitcoin", help="Connect to ShibeCoind")
+
 parser.add_option("-H", "--photon", action="store_const", const="photon", dest="coin", default="bitcoin", help="Connect to photond")
 
 parser.add_option("-I", "--riecoin", action="store_const", const="riecoin", dest="coin", default="bitcoin", help="Connect to riecoind")
@@ -295,6 +297,7 @@ currency = {
     "ppcoin": "PPC",
     "primecoin": "XPM",
     "riecoin": "RIC",
+    "ShibeCoin": "Shibe",
     "skeincoin": "SKC",
     "SlothCoin": "Sloth",
 }
@@ -310,6 +313,7 @@ blockhalve = {
     "maxcoin": 1051200.0,
     "namecoin": 0,
     "riecoin": 840000.0,
+    "ShibeCoin": 0,
     "skeincoin": 262800.0,
     "SlothCoin": 100000.0,
 }
@@ -327,6 +331,7 @@ blocksperhour = {
     "photon": 20.,
     "primecoin": 60.,
     "riecoin": 24.,
+    "ShibeCoin": 60.,
     "skeincoin": 30.,
     "SlothCoin": 24.,
 }
@@ -346,6 +351,7 @@ adjustblocks = {
     "ppcoin": 0,
     "primecoin": 0,
     "riecoin": 288,
+    "ShibeCoin": 0,
     "skeincoin": 0,
     "SlothCoin": 2,
 }
@@ -360,6 +366,7 @@ initcoins = {
     "namecoin": 50,
     "litecoin": 50,
     "riecoin": 50,
+    "ShibeCoin": 0, # Not meaningful for mostly proof of stake coin
     "skeincoin": 32,
     "SlothCoin": 500000,
 }
@@ -378,6 +385,7 @@ rpcport = {
     "ppcoin": "9902",
     "primecoin": "9912",
     "riecoin": "28332",
+    "ShibeCoin": "18812",
     "skeincoin": "21230",
     "SlothCoin": "5108",
 }
