@@ -20,6 +20,7 @@ function average () {
     echo $TOTAL / $N | bc -l
 }
 
+POS=false
 SET=false
 PROJECT=bitcoin
 while getopts aBcDEgHILlmnPpSs opt; do
@@ -29,7 +30,10 @@ while getopts aBcDEgHILlmnPpSs opt; do
 	c) PROJECT=chncoin ;;
 	D) PROJECT=dogecoin ;;
 	E) PROJECT=ecoin ;;
-	g) PROJECT=ShibeCoin ;;
+	g)
+	    PROJECT=shibecoin
+	    POS=true
+	    ;;
         H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
 	L) PROJECT=Slothcoin ;;
@@ -37,23 +41,38 @@ while getopts aBcDEgHILlmnPpSs opt; do
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
 	P) PROJECT=primecoin ;;
-	p) PROJECT=ppcoin ;;
+	p)
+	    PROJECT=ppcoin
+	    POS=true
+	    ;;
 	S) PROJECT=skeincoin ;;
 	s) SET=true ;;
     esac
 done
 
-if [ "$PROJECT" == "Slothcoin" ]; then
-    LOGFILE=~/.SlothCoin/difflog
-else
-    LOGFILE=~/.$PROJECT/difflog
-fi
+case $PROJECT in
+    Slothcoin)
+	LOGFILE=~/.SlothCoin/difflog
+	;;
+    shibecoin)
+	LOGFILE=~/.ShibeCoin/difflog
+	;;
+    *)
+	LOGFILE=~/.$PROJECT/difflog
+	;;
+esac
 
 CMD=~/distr.projects/$PROJECT-git/${PROJECT}d
 
 if $SET; then
     # top up the logfile
-    $CMD getdifficulty >> $LOGFILE
+    if $POS; then
+	# Get the PoW entry from a mixed PoS/PoW coin
+	$CMD getdifficulty | grep work | \
+	    sed -Ee 's/.* ([0-9]+\.[0-9]+),.*/\1/' >> $LOGFILE
+    else
+	$CMD getdifficulty >> $LOGFILE
+    fi
 
     # and prune it
     tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE
