@@ -57,7 +57,7 @@ def fixed_reward(coin, blocks):
     else:
         c = blockhalve[coin] - 2
 
-        p = ceil(blocks / c)
+        p = ceil(float(blocks) / float(c))
         return initcoins[coin] * 0.5**(p - 1)
 
 def blockreward(coin, diff, blocks):
