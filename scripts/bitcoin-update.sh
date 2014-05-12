@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfgHILlmnPpSu opt; do
+while getopts aBCcDEfgHIjkLlmnPpSu opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -30,6 +30,8 @@ while getopts aBCcDEfgHILlmnPpSu opt; do
 	g) PROJECT=shibecoin ;;
 	H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
+	j) PROJECT=primio ;;
+	k) PROJECT=blakebitcoin ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
 	m) PROJECT=maxcoin ;;
@@ -48,6 +50,10 @@ case $PROJECT in
     AuroraCoin)
 	GITURL=https://github.com/baldurodinsson/auroracoin-project
 	PROJECTDIR=auroracoin-project
+	;;
+    blakebitcoin)
+	GITURL=https://github.com/BlueDragon747/BlakeBitcoin
+	PROJECTDIR=BlakeBitcoin
 	;;
     blakecoin)
 	GITURL=https://github.com/BlueDragon747/Blakecoin.git
@@ -89,6 +95,10 @@ case $PROJECT in
 	#GITURL=https://github.com/mikaelh2/primecoin.git
 	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
 	PROJECTDIR=primecoin-hp
+	;;
+    primio)
+	GITURL=https://github.com/Primio/Primio
+	PROJECTDIR=Primio
 	;;
     riecoin)
 	GITURL=https://github.com/riecoin/riecoin
@@ -221,6 +231,9 @@ fi
 
 # Help Intel compilers with linking
 sed -i 's/-l /-l/g' Makefile
+
+# Missing on Primio
+mkdir obj
 
 make clean
 nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
