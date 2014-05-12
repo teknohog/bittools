@@ -307,38 +307,38 @@ currency = {
 
 # 0 means no block reward halving
 blockhalve = {
-    "AuroraCoin": 420000.0,
-    "bitcoin": 210000.0,
-    "chncoin": 2628000.0,
-    "dogecoin": 100000.0,
+    "AuroraCoin": 420000,
+    "bitcoin": 210000,
+    "chncoin": 2628000,
+    "dogecoin": 100000,
     "ecoin": 0,
-    "litecoin": 840000.0,
-    "maxcoin": 1051200.0,
+    "litecoin": 840000,
+    "maxcoin": 1051200,
     "namecoin": 0,
     "primio": 100000,
-    "riecoin": 840000.0,
+    "riecoin": 840000,
     "ShibeCoin": 0,
-    "skeincoin": 262800.0,
-    "SlothCoin": 100000.0,
+    "skeincoin": 262800,
+    "SlothCoin": 100000,
 }
 
 blocksperhour = {
-    "AuroraCoin": 6.,
-    "bitcoin": 6.,
-    "blakecoin": 20.,
-    "chncoin": 60.,
-    "dogecoin": 60.,
-    "ecoin": 60.,
-    "litecoin": 24.,
-    "maxcoin": 120.,
-    "namecoin": 6.,
-    "photon": 20.,
-    "primecoin": 60.,
-    "primio": 12.,
-    "riecoin": 24.,
-    "ShibeCoin": 60.,
-    "skeincoin": 30.,
-    "SlothCoin": 24.,
+    "AuroraCoin": 6,
+    "bitcoin": 6,
+    "blakecoin": 20,
+    "chncoin": 60,
+    "dogecoin": 60,
+    "ecoin": 60,
+    "litecoin": 24,
+    "maxcoin": 120,
+    "namecoin": 6,
+    "photon": 20,
+    "primecoin": 60,
+    "primio": 12,
+    "riecoin": 24,
+    "ShibeCoin": 60,
+    "skeincoin": 30,
+    "SlothCoin": 24,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -508,7 +508,7 @@ if hashrate > 0 and coin != "riecoin":
     output.append(["Average payout", str(coinsperday) + " " + currency[coin] + "/day"])
 
 if adjustblocks[coin] > 0:
-    time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / blocksperhour[coin] * 3600
+    time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
     tp = timeprint(time)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
 
