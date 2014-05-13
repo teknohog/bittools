@@ -252,6 +252,8 @@ parser.add_option("-i", "--importkeys", dest="importfile", help="Import private 
 
 parser.add_option("-j", "--primio", action="store_const", const="primio", dest="coin", default="bitcoin", help="Connect to primiod")
 
+parser.add_option("-k", "--blakebitcoin", action="store_const", const="blakebitcoin", dest="coin", default="bitcoin", help="Connect to blakebitcoind")
+
 parser.add_option("-L", "--SlothCoin", action="store_const", const="SlothCoin", dest="coin", default="bitcoin", help="Connect to SlothCoind")
 
 parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
@@ -288,6 +290,7 @@ coin = options.coin
 currency = {
     "AuroraCoin": "AUR",
     "bitcoin": "BTC",
+    "blakebitcoin": "B+",
     "blakecoin": "BLC",
     "chncoin": "CNC",
     "dogecoin": "DOGE",
@@ -309,6 +312,7 @@ currency = {
 blockhalve = {
     "AuroraCoin": 420000,
     "bitcoin": 210000,
+    "blakebitcoin": 210000,
     "chncoin": 2628000,
     "dogecoin": 100000,
     "ecoin": 0,
@@ -325,6 +329,7 @@ blockhalve = {
 blocksperhour = {
     "AuroraCoin": 6,
     "bitcoin": 6,
+    "blakebitcoin": 24,
     "blakecoin": 20,
     "chncoin": 60,
     "dogecoin": 60,
@@ -345,6 +350,7 @@ blocksperhour = {
 adjustblocks = {
     "AuroraCoin": 8,
     "bitcoin": 2016,
+    "blakebitcoin": 8064,
     "blakecoin": 20,
     "chncoin": 0,
     "dogecoin": 240,
@@ -365,6 +371,7 @@ adjustblocks = {
 initcoins = {
     "AuroraCoin": 25,
     "bitcoin": 50,
+    "blakebitcoin": 50,
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
     "ecoin": 700,
@@ -381,6 +388,7 @@ initcoins = {
 rpcport = {
     "AuroraCoin": "12341",
     "bitcoin": "8332",
+    "blakebitcoin": "243",
     "blakecoin": "8772",
     "chncoin": "8108",
     "dogecoin": "22555",
