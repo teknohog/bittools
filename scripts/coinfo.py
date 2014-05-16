@@ -52,13 +52,18 @@ def timeprint(time):
         return [time, "s"]
 
 def fixed_reward(coin, blocks):
+    if coin == "GroestlCoin":
+        base = 0.94
+    else:
+        base = 0.5        
+
     if blockhalve[coin] == 0:
         return initcoins[coin]
     else:
         c = blockhalve[coin] - 2
 
         p = ceil(float(blocks) / float(c))
-        return initcoins[coin] * 0.5**(p - 1)
+        return initcoins[coin] * base**(p - 1)
 
 def blockreward(coin, diff, blocks):
     if coin == "ppcoin":
@@ -244,6 +249,8 @@ parser.add_option("-E", "--ecoin", action="store_const", const="ecoin", dest="co
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
+parser.add_option("-G", "--GroestlCoin", action="store_const", const="GroestlCoin", dest="coin", default="bitcoin", help="Connect to GroestlCoind")
+
 parser.add_option("-g", "--ShibeCoin", action="store_const", const="ShibeCoin", dest="coin", default="bitcoin", help="Connect to ShibeCoind")
 
 parser.add_option("-H", "--photon", action="store_const", const="photon", dest="coin", default="bitcoin", help="Connect to photond")
@@ -300,6 +307,7 @@ currency = {
     "darkcoin": "DRK",
     "dogecoin": "DOGE",
     "ecoin": "ECN",
+    "GroestlCoin": "GRS",
     "litecoin": "LTC",
     "maxcoin": "MAX",
     "namecoin": "NMC",
@@ -322,6 +330,7 @@ blockhalve = {
     "darkcoin": 0,
     "dogecoin": 100000,
     "ecoin": 0,
+    "GroestlCoin": 10080, # Reduced by 6%
     "litecoin": 840000,
     "maxcoin": 1051200,
     "namecoin": 0,
@@ -341,6 +350,7 @@ blocksperhour = {
     "darkcoin": 24,
     "dogecoin": 60,
     "ecoin": 60,
+    "GroestlCoin": 60,
     "litecoin": 24,
     "maxcoin": 120,
     "namecoin": 6,
@@ -363,6 +373,7 @@ adjustblocks = {
     "darkcoin": 0,
     "dogecoin": 240,
     "ecoin": 100,
+    "GroestlCoin": 0,
     "litecoin": 2016,
     "maxcoin": 0,
     "namecoin": 2016,
@@ -383,6 +394,7 @@ initcoins = {
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
     "ecoin": 700,
+    "GroestlCoin": 512, # Minimum 5
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
@@ -402,6 +414,7 @@ rpcport = {
     "darkcoin": "9998",
     "dogecoin": "22555",
     "ecoin": "10444",
+    "GroestlCoin": "1441",
     "litecoin": "9332",
     "maxcoin": "8669",
     "namecoin": "8332",

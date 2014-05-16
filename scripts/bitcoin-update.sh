@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfgHIjKkLlmnPpSu opt; do
+while getopts aBCcDEfGgHIjKkLlmnPpSu opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -27,6 +27,7 @@ while getopts aBCcDEfgHIjKkLlmnPpSu opt; do
 	D) PROJECT=dogecoin ;;
 	E) PROJECT=ecoin ;;
 	f) FORCE=true ;;
+	G) PROJECT=GroestlCoin ;;
 	g) PROJECT=shibecoin ;;
 	H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
@@ -77,6 +78,9 @@ case $PROJECT in
     ecoin)
 	GITURL=https://github.com/eCoinSource/eCoin
 	PROJECTDIR=eCoin
+	;;
+    GroestlCoin)
+	GITURL=https://github.com/GroestlCoin/GroestlCoin
 	;;
     litecoin)
 	GITURL=https://github.com/litecoin-project/litecoin.git	
