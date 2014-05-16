@@ -75,6 +75,8 @@ def blockreward(coin, diff, blocks):
         return 32768 + round((blocks * diff * 256)**0.5) * 1e-8
     elif coin == "dogecoin" and blocks > 600000:
         return 10000.0
+    elif coin == "darkcoin":
+        return 2222222. / (((diff + 2600.)/9.)**2)
     else:
         return fixed_reward(coin, blocks)
 
@@ -252,6 +254,8 @@ parser.add_option("-i", "--importkeys", dest="importfile", help="Import private 
 
 parser.add_option("-j", "--primio", action="store_const", const="primio", dest="coin", default="bitcoin", help="Connect to primiod")
 
+parser.add_option("-K", "--darkcoin", action="store_const", const="darkcoin", dest="coin", default="bitcoin", help="Connect to darkcoind")
+
 parser.add_option("-k", "--blakebitcoin", action="store_const", const="blakebitcoin", dest="coin", default="bitcoin", help="Connect to blakebitcoind")
 
 parser.add_option("-L", "--SlothCoin", action="store_const", const="SlothCoin", dest="coin", default="bitcoin", help="Connect to SlothCoind")
@@ -293,6 +297,7 @@ currency = {
     "blakebitcoin": "B+",
     "blakecoin": "BLC",
     "chncoin": "CNC",
+    "darkcoin": "DRK",
     "dogecoin": "DOGE",
     "ecoin": "ECN",
     "litecoin": "LTC",
@@ -314,6 +319,7 @@ blockhalve = {
     "bitcoin": 210000,
     "blakebitcoin": 210000,
     "chncoin": 2628000,
+    "darkcoin": 0,
     "dogecoin": 100000,
     "ecoin": 0,
     "litecoin": 840000,
@@ -332,6 +338,7 @@ blocksperhour = {
     "blakebitcoin": 24,
     "blakecoin": 20,
     "chncoin": 60,
+    "darkcoin": 24,
     "dogecoin": 60,
     "ecoin": 60,
     "litecoin": 24,
@@ -353,6 +360,7 @@ adjustblocks = {
     "blakebitcoin": 8064,
     "blakecoin": 20,
     "chncoin": 0,
+    "darkcoin": 0,
     "dogecoin": 240,
     "ecoin": 100,
     "litecoin": 2016,
@@ -391,6 +399,7 @@ rpcport = {
     "blakebitcoin": "243",
     "blakecoin": "8772",
     "chncoin": "8108",
+    "darkcoin": "9998",
     "dogecoin": "22555",
     "ecoin": "10444",
     "litecoin": "9332",
