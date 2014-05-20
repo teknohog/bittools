@@ -89,7 +89,7 @@ def blockreward(coin, diff, blocks):
     elif coin == "dogecoin" and blocks > 600000:
         return 10000.0
     elif coin == "darkcoin":
-        return 2222222. / (((diff + 2600.)/9.)**2)
+        return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
     elif coin == "dirac":
         return dirac_reward(blocks)
     else:
