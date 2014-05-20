@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlmnPpSu opt; do
+while getopts aBCcDEfGgHIjKkLlmnPpSux opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -41,6 +41,7 @@ while getopts aBCcDEfGgHIjKkLlmnPpSu opt; do
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
 	S) PROJECT=skeincoin ;;
+	x) PROJECT=dirac ;;
 	u) UPNP=1 ;;
     esac
 done
@@ -51,15 +52,12 @@ BINARY=${PROJECT}d
 case $PROJECT in
     AuroraCoin)
 	GITURL=https://github.com/baldurodinsson/auroracoin-project
-	PROJECTDIR=auroracoin-project
 	;;
     blakebitcoin)
 	GITURL=https://github.com/BlueDragon747/BlakeBitcoin
-	PROJECTDIR=BlakeBitcoin
 	;;
     blakecoin)
 	GITURL=https://github.com/BlueDragon747/Blakecoin.git
-	PROJECTDIR=Blakecoin
 	;;
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
@@ -67,17 +65,18 @@ case $PROJECT in
     chncoin)
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
 	GITURL=https://github.com/RoadTrain/CHNCoin.git
-	PROJECTDIR=CHNCoin
 	;;
     darkcoin)
 	GITURL=https://github.com/darkcoinproject/darkcoin
+	;;
+    dirac)
+	GITURL=https://github.com/bryceweiner/Dirac
 	;;
     dogecoin)
 	GITURL=https://github.com/dogecoin/dogecoin.git
 	;;
     ecoin)
 	GITURL=https://github.com/eCoinSource/eCoin
-	PROJECTDIR=eCoin
 	;;
     GroestlCoin)
 	GITURL=https://github.com/GroestlCoin/GroestlCoin
@@ -102,11 +101,9 @@ case $PROJECT in
 	#GITURL=https://github.com/Chemisist/primecoin.git
 	#GITURL=https://github.com/mikaelh2/primecoin.git
 	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
-	PROJECTDIR=primecoin-hp
 	;;
     primio)
 	GITURL=https://github.com/Primio/Primio
-	PROJECTDIR=Primio
 	;;
     riecoin)
 	GITURL=https://github.com/riecoin/riecoin
@@ -124,6 +121,10 @@ case $PROJECT in
 	exit
 	;;
 esac
+
+# Sometimes different from PROJECT (binary etc.) name, comes from the
+# git repo
+PROJECTDIR=$(echo $GITURL | sed -Ee 's|.*/([^/.]*)(.git)?$|\1|')
 
 BASEDIR=~/sources
 INSTALLDIR=~/distr.projects/$PROJECT-git/

@@ -23,7 +23,7 @@ function average () {
 POS=false
 SET=false
 PROJECT=bitcoin
-while getopts aBcDEGgHIjKLlmnPpSs opt; do
+while getopts aBcDEGgHIjKLlmnPpSsx opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -50,6 +50,7 @@ while getopts aBcDEGgHIjKLlmnPpSs opt; do
 	    ;;
 	S) PROJECT=skeincoin ;;
 	s) SET=true ;;
+	x) PROJECT=dirac ;;
     esac
 done
 

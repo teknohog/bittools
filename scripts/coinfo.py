@@ -65,6 +65,14 @@ def fixed_reward(coin, blocks):
         p = ceil(float(blocks) / float(c))
         return initcoins[coin] * base**(p - 1)
 
+def dirac_reward(blocks):
+    limits = [0, 43201, 744001, 1448001, 2145601, 2846401]
+    rewards = [8.0, 1.25, 0.75, 0.5, 0.25, 0.01]
+
+    for i in range(len(limits)):
+        if blocks < limits[i]:
+            return rewards[i-1]
+
 def blockreward(coin, diff, blocks):
     if coin == "ppcoin":
         # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
@@ -82,6 +90,8 @@ def blockreward(coin, diff, blocks):
         return 10000.0
     elif coin == "darkcoin":
         return 2222222. / (((diff + 2600.)/9.)**2)
+    elif coin == "dirac":
+        return dirac_reward(blocks)
     else:
         return fixed_reward(coin, blocks)
 
@@ -293,6 +303,8 @@ parser.add_option("-u", "--url", dest="url", default="", help="Connect to a diff
 
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print more detailed info")
 
+parser.add_option("-x", "--dirac", action="store_const", const="dirac", dest="coin", default="bitcoin", help="Connect to diracd")
+
 (options, args) = parser.parse_args()
 
 coin = options.coin
@@ -319,6 +331,7 @@ currency = {
     "ShibeCoin": "Shibe",
     "skeincoin": "SKC",
     "SlothCoin": "Sloth",
+    "dirac": "XDQ",
 }
 
 # 0 means no block reward halving
@@ -361,6 +374,7 @@ blocksperhour = {
     "ShibeCoin": 60,
     "skeincoin": 30,
     "SlothCoin": 24,
+    "dirac": 20,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -385,6 +399,7 @@ adjustblocks = {
     "ShibeCoin": 0,
     "skeincoin": 0,
     "SlothCoin": 2,
+    "dirac": 20,
 }
 
 initcoins = {
@@ -426,6 +441,7 @@ rpcport = {
     "ShibeCoin": "18812",
     "skeincoin": "21230",
     "SlothCoin": "5108",
+    "dirac": "74532",
 }
 
 if len(options.url) > 0:
