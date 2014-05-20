@@ -73,6 +73,8 @@ def dirac_reward(blocks):
         if blocks < limits[i]:
             return rewards[i-1]
 
+    return rewards[-1]
+
 def blockreward(coin, diff, blocks):
     if coin == "ppcoin":
         # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
