@@ -532,9 +532,12 @@ else:
         if options.verbose:
             output.append(["hashespersec", str(hashrate)])
 
-prettyprint(output)
-
 blocks = info["blocks"]
+
+if options.verbose:
+    output.append(["block reward", str(blockreward(coin, diff, blocks)) + " " + currency[coin]])
+
+prettyprint(output)
 
 output = []
 
