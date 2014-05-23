@@ -507,6 +507,10 @@ if options.diff:
 else:
     diff = s.getdifficulty()
 
+    # Hybrid PoW / PoS
+    if type(diff) == dict:
+        diff = diff['proof-of-work']
+
 output = []
 for key in keys:
     output.append([key, str(info[key])])
@@ -542,10 +546,6 @@ prettyprint(output)
 output = []
 
 if hashrate > 0 and coin != "riecoin":
-    # ppcoin
-    if type(diff) == dict:
-        diff = diff['proof-of-work']
-
     if coin == "primecoin":
         time = 86400. / hashrate
     else:
