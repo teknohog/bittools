@@ -29,7 +29,7 @@ while getopts aBcDEGgHIjKLlmnPpSsx opt; do
 	B) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
 	D) PROJECT=dogecoin ;;
-	E) PROJECT=ecoin ;;
+	E) PROJECT=electron ;;
 	G) PROJECT=GroestlCoin ;;
 	g)
 	    PROJECT=shibecoin

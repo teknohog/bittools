@@ -65,9 +65,8 @@ def fixed_reward(coin, blocks):
         p = ceil(float(blocks) / float(c))
         return initcoins[coin] * base**(p - 1)
 
-def dirac_reward(blocks):
-    limits = [0, 43201, 744001, 1448001, 2145601, 2846401]
-    rewards = [8.0, 1.25, 0.75, 0.5, 0.25, 0.01]
+def staired_reward(blocks, reward_stairs):
+    (limits, rewards) = reward_stairs
 
     for i in range(len(limits)):
         if blocks < limits[i]:
@@ -92,8 +91,8 @@ def blockreward(coin, diff, blocks):
         return 10000.0
     elif coin == "darkcoin":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
-    elif coin == "dirac":
-        return dirac_reward(blocks)
+    elif coin in ["dirac", "electron"]:
+        return staired_reward(blocks, reward_stairs[coin])
     else:
         return fixed_reward(coin, blocks)
 
@@ -257,7 +256,9 @@ parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mi
 
 parser.add_option("-D", "--dogecoin", action="store_const", const="dogecoin", dest="coin", default="bitcoin", help="Connect to dogecoind")
 
-parser.add_option("-E", "--ecoin", action="store_const", const="ecoin", dest="coin", default="bitcoin", help="Connect to ecoind")
+parser.add_option("--ecoin", action="store_const", const="ecoin", dest="coin", default="bitcoin", help="Connect to ecoind")
+
+parser.add_option("-E", "--electron", action="store_const", const="electron", dest="coin", default="bitcoin", help="Connect to electrond")
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
@@ -321,6 +322,7 @@ currency = {
     "darkcoin": "DRK",
     "dogecoin": "DOGE",
     "ecoin": "ECN",
+    "electron": "ELT",
     "GroestlCoin": "GRS",
     "litecoin": "LTC",
     "maxcoin": "MAX",
@@ -365,6 +367,7 @@ blocksperhour = {
     "darkcoin": 24,
     "dogecoin": 60,
     "ecoin": 60,
+    "electron": 60,
     "GroestlCoin": 60,
     "litecoin": 24,
     "maxcoin": 120,
@@ -389,6 +392,7 @@ adjustblocks = {
     "darkcoin": 0,
     "dogecoin": 240,
     "ecoin": 100,
+    "electron": 0, # ?
     "GroestlCoin": 0,
     "litecoin": 2016,
     "maxcoin": 0,
@@ -404,6 +408,7 @@ adjustblocks = {
     "dirac": 20,
 }
 
+# For coins with regular block halving
 initcoins = {
     "AuroraCoin": 25,
     "bitcoin": 50,
@@ -422,6 +427,14 @@ initcoins = {
     "SlothCoin": 500000,
 }
 
+# (list of block limits, list of fixed rewards for those intervals)
+reward_stairs = {
+    "dirac": ([0, 43201, 744001, 1448001, 2145601, 2846401],
+              [8.0, 1.25, 0.75, 0.5, 0.25, 0.01]),
+    "electron": ([0, 525600],
+                 [20, 10]),
+}
+
 rpcport = {
     "AuroraCoin": "12341",
     "bitcoin": "8332",
@@ -431,6 +444,7 @@ rpcport = {
     "darkcoin": "9998",
     "dogecoin": "22555",
     "ecoin": "10444",
+    "electron": "6852", 
     "GroestlCoin": "1441",
     "litecoin": "9332",
     "maxcoin": "8669",

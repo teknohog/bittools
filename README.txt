@@ -1,7 +1,7 @@
 bittools -- command line tools for various cryptocurrency daemons
 (AuroraCoin, Bitcoin, BlakeBitcoin, Blakecoin, CHNcoin, Darkcoin, Dirac,
-Dogecoin, eCoin, GroestlCoin, Litecoin, Maxcoin, Namecoin, Photon, PPCoin,
-Primecoin, Primio, Riecoin, ShibeCoin, Skeincoin, Slothcoin)
+Dogecoin, eCoin, Electron, GroestlCoin, Litecoin, Maxcoin, Namecoin, Photon,
+PPCoin, Primecoin, Primio, Riecoin, ShibeCoin, Skeincoin, Slothcoin)
 
 by Risto A. Paju / teknohog
 BTC: 1HkL2iLLQe3KJuNCgKPc8ViZs83NJyyQDM

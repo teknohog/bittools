@@ -25,7 +25,7 @@ while getopts aBCcDEfGgHIjKkLlmnPpSux opt; do
 	C) CHECKOUT=true ;;
 	c) PROJECT=chncoin ;;
 	D) PROJECT=dogecoin ;;
-	E) PROJECT=ecoin ;;
+	E) PROJECT=electron ;;
 	f) FORCE=true ;;
 	G) PROJECT=GroestlCoin ;;
 	g) PROJECT=shibecoin ;;
@@ -75,8 +75,8 @@ case $PROJECT in
     dogecoin)
 	GITURL=https://github.com/dogecoin/dogecoin.git
 	;;
-    ecoin)
-	GITURL=https://github.com/eCoinSource/eCoin
+    electron)
+	GITURL=https://github.com/Electron-Coin2014/Electron-ELT
 	;;
     GroestlCoin)
 	GITURL=https://github.com/GroestlCoin/GroestlCoin
