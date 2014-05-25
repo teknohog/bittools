@@ -91,7 +91,7 @@ def blockreward(coin, diff, blocks):
         return 10000.0
     elif coin == "darkcoin":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
-    elif coin in ["dirac", "electron"]:
+    elif coin in reward_stairs.keys():
         return staired_reward(blocks, reward_stairs[coin])
     else:
         return fixed_reward(coin, blocks)
