@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlmnPpSux opt; do
+while getopts aBCcDEfGgHIjKkLlMmnPpSux opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -36,6 +36,7 @@ while getopts aBCcDEfGgHIjKkLlmnPpSux opt; do
 	k) PROJECT=blakebitcoin ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
+	M) PROJECT=bitmonero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
 	P) PROJECT=primecoin ;;
@@ -46,7 +47,6 @@ while getopts aBCcDEfGgHIjKkLlmnPpSux opt; do
     esac
 done
 
-PROJECTDIR=$PROJECT
 BINARY=${PROJECT}d
 
 case $PROJECT in
@@ -61,6 +61,11 @@ case $PROJECT in
 	;;
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
+	;;
+    bitmonero)
+	GITURL=https://github.com/monero-project/bitmonero
+	# For install only
+	BINARY="bitmonerod simplewallet simpleminer"
 	;;
     chncoin)
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
@@ -189,30 +194,9 @@ else
     fi
 fi
 
-cd src
-
-cp makefile.unix Makefile
-
-sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
-sed -i 's/g++/\$(CXX)/g' Makefile
-sed -i 's/Bstatic/Bdynamic/g' Makefile
-
-# The general case should work with Blakecoin too
-sed -i 's/db_cxx-5.1/db_cxx/g' Makefile
-
-# *sigh* everyone uses x86?
-if [ -z "`echo $MACHTYPE | grep 86`" ]; then
-    sed -i 's/-msse2//g' Makefile
-    sed -i 's/-DFOURWAYSSE2//g' Makefile
-    sed -i 's/-march=amdfam10//g' Makefile
-fi    
-
 # leveldb is broken by multi-part compiler names like
-# "ccache distcc g++"
-#sed -i 's/CXX=$(CXX)/CXX="$(CXX)"/' leveldb/Makefile
-# The scripts need more fixing, so work around multi-part names for now
-if [ -n "`grep ^leveldb/libleveldb.a: Makefile`" ] && \
-    [ "`echo $CXX | wc -w`" -gt 1 ]; then
+# "ccache distcc g++"... and so is bitmonero, so fix this for everyone
+if [ "`echo $CXX | wc -w`" -gt 1 ]; then
 
     MYCC=`mktemp`
     MYCXX=`mktemp`
@@ -233,20 +217,48 @@ EOF
 
     CC=$MYCC
     CXX=$MYCXX
-
-    # Also, some implementations are missing executable perms
-    chmod u+x leveldb/build_detect_platform
 fi
 
-# Help Intel compilers with linking
-sed -i 's/-l /-l/g' Makefile
+if [ "$PROJECT" == "bitmonero" ]; then
+    nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+    cd build/release/src
+else
+    cd src
 
-# Missing on Primio
-mkdir obj
+    # Some implementations are missing executable perms
+    LDB=leveldb/build_detect_platform
+    if [ -e $LDB ] && [ ! -x $LDB ]; then
+	chmod u+x $LDB
+    fi
 
-make clean
-nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
-    OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
+    cp makefile.unix Makefile
+    
+    sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
+    sed -i 's/g++/\$(CXX)/g' Makefile
+    sed -i 's/Bstatic/Bdynamic/g' Makefile
+    
+    # The general case should work with Blakecoin too
+    sed -i 's/db_cxx-5.1/db_cxx/g' Makefile
+    
+    # *sigh* everyone uses x86?
+    if [ -z "`echo $MACHTYPE | grep 86`" ]; then
+	sed -i 's/-msse2//g' Makefile
+	sed -i 's/-DFOURWAYSSE2//g' Makefile
+	sed -i 's/-march=amdfam10//g' Makefile
+    fi    
+
+    # Help Intel compilers with linking
+    sed -i 's/-l /-l/g' Makefile
+
+    # Missing on Primio
+    if [ ! -d obj ]; then
+	mkdir obj
+    fi
+
+    make clean
+    nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
+	OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
+fi
 
 if [ ! -d $INSTALLDIR ]; then
     mkdir -p $INSTALLDIR
