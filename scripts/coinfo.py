@@ -390,7 +390,7 @@ adjustblocks = {
     "blakecoin": 20,
     "chncoin": 0,
     "darkcoin": 0,
-    "dogecoin": 240,
+    "dogecoin": 0,
     "ecoin": 100,
     "electron": 0, # ?
     "GroestlCoin": 0,
