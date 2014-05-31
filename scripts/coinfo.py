@@ -51,20 +51,6 @@ def timeprint(time):
     else:
         return [time, "s"]
 
-def fixed_reward(coin, blocks):
-    if coin == "GroestlCoin":
-        base = 0.94
-    else:
-        base = 0.5        
-
-    if blockhalve[coin] == 0:
-        return initcoins[coin]
-    else:
-        c = blockhalve[coin] - 2
-
-        p = ceil(float(blocks) / float(c))
-        return initcoins[coin] * base**(p - 1)
-
 def staired_reward(blocks, reward_stairs):
     (limits, rewards) = reward_stairs
 
@@ -73,6 +59,20 @@ def staired_reward(blocks, reward_stairs):
             return rewards[i-1]
 
     return rewards[-1]
+
+def groestl_reward(blocks):
+    if blocks >= 150000:
+        return exp_decay(25, blocks-150000, 10080, 0.99)
+
+    if blocks >= 120000:
+        return exp_decay(250, blocks-120000, 1440, 0.9)
+
+    # Default to old scheme
+    return exp_decay(512, blocks, 10080, 0.94)
+
+def exp_decay(init, blocks, period, base=0.5):
+    p = ceil(float(blocks) / float(period - 2))
+    return init * base**(p - 1)
 
 def blockreward(coin, diff, blocks):
     if coin == "ppcoin":
@@ -91,10 +91,14 @@ def blockreward(coin, diff, blocks):
         return 10000.0
     elif coin == "darkcoin":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
+    elif coin == "GroestlCoin":
+        return groestl_reward(blocks)
     elif coin in reward_stairs.keys():
         return staired_reward(blocks, reward_stairs[coin])
+    elif blockhalve[coin] == 0:
+        return initcoins[coin]
     else:
-        return fixed_reward(coin, blocks)
+        return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
 def parse_config(conffile):
     # config file parsing shamelessly adapted from jgarzik's pyminer, as
@@ -320,6 +324,7 @@ currency = {
     "blakecoin": "BLC",
     "chncoin": "CNC",
     "darkcoin": "DRK",
+    "dirac": "XDQ",
     "dogecoin": "DOGE",
     "ecoin": "ECN",
     "electron": "ELT",
@@ -335,7 +340,6 @@ currency = {
     "ShibeCoin": "Shibe",
     "skeincoin": "SKC",
     "SlothCoin": "Sloth",
-    "dirac": "XDQ",
 }
 
 # 0 means no block reward halving
@@ -347,7 +351,6 @@ blockhalve = {
     "darkcoin": 0,
     "dogecoin": 100000,
     "ecoin": 0,
-    "GroestlCoin": 10080, # Reduced by 6%
     "litecoin": 840000,
     "maxcoin": 1051200,
     "namecoin": 0,
@@ -365,6 +368,7 @@ blocksperhour = {
     "blakecoin": 20,
     "chncoin": 60,
     "darkcoin": 24,
+    "dirac": 20,
     "dogecoin": 60,
     "ecoin": 60,
     "electron": 60,
@@ -379,7 +383,6 @@ blocksperhour = {
     "ShibeCoin": 60,
     "skeincoin": 30,
     "SlothCoin": 24,
-    "dirac": 20,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -390,6 +393,7 @@ adjustblocks = {
     "blakecoin": 20,
     "chncoin": 0,
     "darkcoin": 0,
+    "dirac": 20,
     "dogecoin": 0,
     "ecoin": 100,
     "electron": 0, # ?
@@ -405,7 +409,6 @@ adjustblocks = {
     "ShibeCoin": 0,
     "skeincoin": 0,
     "SlothCoin": 2,
-    "dirac": 20,
 }
 
 # For coins with regular block halving
@@ -416,7 +419,6 @@ initcoins = {
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
     "ecoin": 700,
-    "GroestlCoin": 512, # Minimum 5
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
@@ -442,6 +444,7 @@ rpcport = {
     "blakecoin": "8772",
     "chncoin": "8108",
     "darkcoin": "9998",
+    "dirac": "74532",
     "dogecoin": "22555",
     "ecoin": "10444",
     "electron": "6852", 
@@ -457,7 +460,6 @@ rpcport = {
     "ShibeCoin": "18812",
     "skeincoin": "21230",
     "SlothCoin": "5108",
-    "dirac": "74532",
 }
 
 if len(options.url) > 0:
