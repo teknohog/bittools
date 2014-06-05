@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnPpSux opt; do
+while getopts aBCcDEfGgHIjKkLlMmnoPpSux opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -39,6 +39,7 @@ while getopts aBCcDEfGgHIjKkLlMmnPpSux opt; do
 	M) PROJECT=bitmonero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
+	o) PROJECT=boolberry ;;
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
 	S) PROJECT=skeincoin ;;
@@ -66,6 +67,11 @@ case $PROJECT in
 	GITURL=https://github.com/monero-project/bitmonero
 	# For install only
 	BINARY="bitmonerod simplewallet simpleminer"
+	;;
+    boolberry)
+	GITURL=https://github.com/cryptozoidberg/boolberry
+	# For install only
+	BINARY="boolbd simplewallet simpleminer"
 	;;
     chncoin)
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
@@ -219,46 +225,56 @@ EOF
     CXX=$MYCXX
 fi
 
-if [ "$PROJECT" == "bitmonero" ]; then
-    nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
-    cd build/release/src
-else
-    cd src
+case $PROJECT in
+    bitmonero|boolberry)
+	if [ -z "`grep Boost_LIBRARIES CMakeLists.txt | grep pthread`" ]; then
+	    # undefined reference to symbol
+	    # 'pthread_mutexattr_settype@@GLIBC_2.2.5' -- fix borrowed
+	    # from Monero
+	    sed -i 's/set(Boost_LIBRARIES.*/set(Boost_LIBRARIES "${Boost_LIBRARIES};rt;pthread")/' CMakeLists.txt
+	fi
 
-    # Some implementations are missing executable perms
-    LDB=leveldb/build_detect_platform
-    if [ -e $LDB ] && [ ! -x $LDB ]; then
-	chmod u+x $LDB
-    fi
-
-    cp makefile.unix Makefile
+	nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	cd build/release/src
+	;;
+    *)
+	cd src
+	
+	# Some implementations are missing executable perms
+	LDB=leveldb/build_detect_platform
+	if [ -e $LDB ] && [ ! -x $LDB ]; then
+	    chmod u+x $LDB
+	fi
+	
+	cp makefile.unix Makefile
     
-    sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
-    sed -i 's/g++/\$(CXX)/g' Makefile
-    sed -i 's/Bstatic/Bdynamic/g' Makefile
-    
-    # The general case should work with Blakecoin too
-    sed -i 's/db_cxx-5.1/db_cxx/g' Makefile
-    
-    # *sigh* everyone uses x86?
-    if [ -z "`echo $MACHTYPE | grep 86`" ]; then
-	sed -i 's/-msse2//g' Makefile
-	sed -i 's/-DFOURWAYSSE2//g' Makefile
-	sed -i 's/-march=amdfam10//g' Makefile
-    fi    
-
-    # Help Intel compilers with linking
-    sed -i 's/-l /-l/g' Makefile
-
-    # Missing on Primio
-    if [ ! -d obj ]; then
-	mkdir obj
-    fi
-
-    make clean
-    nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
-	OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
-fi
+	sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
+	sed -i 's/g++/\$(CXX)/g' Makefile
+	sed -i 's/Bstatic/Bdynamic/g' Makefile
+	
+	# The general case should work with Blakecoin too
+	sed -i 's/db_cxx-5.1/db_cxx/g' Makefile
+	
+	# *sigh* everyone uses x86?
+	if [ -z "`echo $MACHTYPE | grep 86`" ]; then
+	    sed -i 's/-msse2//g' Makefile
+	    sed -i 's/-DFOURWAYSSE2//g' Makefile
+	    sed -i 's/-march=amdfam10//g' Makefile
+	fi    
+	
+	# Help Intel compilers with linking
+	sed -i 's/-l /-l/g' Makefile
+	
+	# Missing on Primio
+	if [ ! -d obj ]; then
+	    mkdir obj
+	fi
+	
+	make clean
+	nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
+	    OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
+	;;
+esac
 
 if [ ! -d $INSTALLDIR ]; then
     mkdir -p $INSTALLDIR
