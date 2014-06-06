@@ -234,7 +234,11 @@ case $PROJECT in
 	    sed -i 's/set(Boost_LIBRARIES.*/set(Boost_LIBRARIES "${Boost_LIBRARIES};rt;pthread")/' CMakeLists.txt
 	fi
 
-	nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	# Custom compilers are sometimes problematic here, and
+	# ccache/distcc don't seem to take effect anyway
+	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	nice make -j`nproc` CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+
 	cd build/release/src
 	;;
     *)
