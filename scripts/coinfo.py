@@ -100,6 +100,20 @@ def blockreward(coin, diff, blocks):
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
+def own_share(coin, blocks, info):
+    total = 0
+
+    # Only compute the simple case, no elaborate integration
+    if coin in reward_stairs.keys() and blocks <= reward_stairs[coin][0][1]:
+        total = blocks * reward_stairs[coin][1][0]
+    elif (coin in blockhalve.keys() and blocks <= blockhalve[coin]) \
+         or coin in ["blakecoin", "photon"]:
+        total = blocks * initcoins[coin]
+
+    if total > 0:
+        share = info["balance"] / total
+        print("\nYou have about " + str(share * 100) + " % or 1/" + str(int(round(1/share))) + " of all " + currency[coin])
+
 def parse_config(conffile):
     # config file parsing shamelessly adapted from jgarzik's pyminer, as
     # Python's configparser insists on having sections
@@ -415,6 +429,7 @@ adjustblocks = {
 initcoins = {
     "AuroraCoin": 25,
     "bitcoin": 50,
+    "blakecoin": 50,
     "blakebitcoin": 50,
     "chncoin": 88,
     "dogecoin": 500000, # Average; random in [0, 1000000]
@@ -422,6 +437,7 @@ initcoins = {
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
+    "photon": 32768,
     "primio": 50,
     "riecoin": 50,
     "ShibeCoin": 0, # Not meaningful for mostly proof of stake coin
@@ -558,6 +574,9 @@ if options.verbose:
     output.append(["block reward", str(blockreward(coin, diff, blocks)) + " " + currency[coin]])
 
 prettyprint(output)
+
+if options.verbose:
+    own_share(coin, blocks, info)
 
 output = []
 
