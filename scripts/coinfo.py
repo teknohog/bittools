@@ -83,10 +83,8 @@ def blockreward(coin, diff, blocks):
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
         return int(99900. / diff**2) / 100.
-    elif coin == "blakecoin":
-        return 25 + round((blocks * diff * 256)**0.5) * 1e-8
-    elif coin == "photon":
-        return 32768 + round((blocks * diff * 256)**0.5) * 1e-8
+    elif coin in ["blakecoin", "photon"]:
+        return initcoins[coin] + round((blocks * diff * 256)**0.5) * 1e-8
     elif coin == "dogecoin" and blocks > 600000:
         return 10000.0
     elif coin == "darkcoin":
