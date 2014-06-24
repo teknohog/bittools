@@ -234,6 +234,8 @@ case $PROJECT in
 	    sed -i 's/set(Boost_LIBRARIES.*/set(Boost_LIBRARIES "${Boost_LIBRARIES};rt;pthread")/' CMakeLists.txt
 	fi
 
+	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
+
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway
 	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
