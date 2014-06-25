@@ -105,7 +105,7 @@ def own_share(coin, blocks, info):
     if coin in reward_stairs.keys() and blocks <= reward_stairs[coin][0][1]:
         total = blocks * reward_stairs[coin][1][0]
     elif (coin in blockhalve.keys() and blocks <= blockhalve[coin]) \
-         or coin in ["blakecoin", "photon"]:
+         or coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
     if total > 0:
