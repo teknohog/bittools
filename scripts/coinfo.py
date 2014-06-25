@@ -108,7 +108,7 @@ def own_share(coin, blocks, info):
          or coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
-    if total > 0:
+    if total > 0 and info["balance"] > 0:
         share = info["balance"] / total
         print("\nYou have about " + str(share * 100) + " % or 1/" + str(int(round(1/share))) + " of all " + currency[coin])
 
@@ -316,6 +316,8 @@ parser.add_option("-S", "--skeincoin", action="store_const", const="skeincoin", 
 
 parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this address, followed by the amount")
 
+parser.add_option("-T", "--TjcoinV2", action="store_const", const="TjcoinV2", dest="coin", default="bitcoin", help="Connect to Tjcoind")
+
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
 
 parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind")
@@ -352,6 +354,7 @@ currency = {
     "ShibeCoin": "Shibe",
     "skeincoin": "SKC",
     "SlothCoin": "Sloth",
+    "TjcoinV2": "TJC",
 }
 
 # 0 means no block reward halving
@@ -371,6 +374,7 @@ blockhalve = {
     "ShibeCoin": 0,
     "skeincoin": 262800,
     "SlothCoin": 100000,
+    "TjcoinV2": 840000,
 }
 
 blocksperhour = {
@@ -395,6 +399,7 @@ blocksperhour = {
     "ShibeCoin": 60,
     "skeincoin": 30,
     "SlothCoin": 24,
+    "TjcoinV2": 24,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -421,6 +426,7 @@ adjustblocks = {
     "ShibeCoin": 0,
     "skeincoin": 0,
     "SlothCoin": 2,
+    "TjcoinV2": 2016,
 }
 
 # For coins with regular block halving
@@ -441,6 +447,7 @@ initcoins = {
     "ShibeCoin": 0, # Not meaningful for mostly proof of stake coin
     "skeincoin": 32,
     "SlothCoin": 500000,
+    "TjcoinV2": 50,
 }
 
 # (list of block limits, list of fixed rewards for those intervals)
@@ -474,6 +481,7 @@ rpcport = {
     "ShibeCoin": "18812",
     "skeincoin": "21230",
     "SlothCoin": "5108",
+    "TjcoinV2": "9178",
 }
 
 if len(options.url) > 0:

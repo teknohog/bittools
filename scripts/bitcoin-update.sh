@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnoPpSux opt; do
+while getopts aBCcDEfGgHIjKkLlMmnoPpSTux opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -43,8 +43,9 @@ while getopts aBCcDEfGgHIjKkLlMmnoPpSux opt; do
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
 	S) PROJECT=skeincoin ;;
-	x) PROJECT=dirac ;;
+	T) PROJECT=Tjcoin ;;
 	u) UPNP=1 ;;
+	x) PROJECT=dirac ;;
     esac
 done
 
@@ -127,6 +128,9 @@ case $PROJECT in
 	;;
     Slothcoin)
 	GITURL=https://github.com/thimod/Slothcoin
+	;;
+    Tjcoin)
+	GITURL=https://github.com/TaojingCoin-pd/TjcoinV2
 	;;
     *)
 	exit
@@ -253,6 +257,11 @@ case $PROJECT in
 	fi
 	
 	cp makefile.unix Makefile
+
+	if [ "$PROJECT" == "Tjcoin" ]; then
+	    sed -i 's/litecoin/Tjcoin/g' Makefile
+	    sed -i 's/scrypt.o/ocean.o/g' Makefile
+	fi
     
 	sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
 	sed -i 's/g++/\$(CXX)/g' Makefile
