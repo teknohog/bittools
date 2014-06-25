@@ -426,7 +426,7 @@ adjustblocks = {
     "ShibeCoin": 0,
     "skeincoin": 0,
     "SlothCoin": 2,
-    "TjcoinV2": 2016,
+    "TjcoinV2": 336,
 }
 
 # For coins with regular block halving
