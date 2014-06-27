@@ -238,6 +238,10 @@ case $PROJECT in
 	    sed -i 's/set(Boost_LIBRARIES.*/set(Boost_LIBRARIES "${Boost_LIBRARIES};rt;pthread")/' CMakeLists.txt
 	fi
 
+	# "# Note that at the time of this writing the
+	# -Wstrict-prototypes flag added below will make this fail"
+	sed -i 's/find_package(Threads REQUIRED)//' CMakeLists.txt
+
 	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
 
 	# Custom compilers are sometimes problematic here, and
