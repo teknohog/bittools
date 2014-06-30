@@ -101,11 +101,28 @@ def blockreward(coin, diff, blocks):
 def own_share(coin, blocks, info):
     total = 0
 
-    # Only compute the simple case, no elaborate integration
-    if coin in reward_stairs.keys() and blocks <= reward_stairs[coin][0][1]:
-        total = blocks * reward_stairs[coin][1][0]
-    elif (coin in blockhalve.keys() and blocks <= blockhalve[coin]) \
-         or coin in ["blakecoin", "photon", "namecoin"]:
+    if coin in reward_stairs.keys():
+        # Current reward algo tells us which cycle is on
+        reward = staired_reward(blocks, reward_stairs[coin])
+        cycle = reward_stairs[coin][1].index(reward)
+
+        # Total over finished cycles
+        total = sum([(reward_stairs[coin][0][j+1] - reward_stairs[coin][0][j]) * reward_stairs[coin][1][j] for j in range(cycle)])
+
+        # + total over current cycle
+        total += (blocks - reward_stairs[coin][0][cycle]) * reward
+
+    elif coin in blockhalve.keys():
+        reward = exp_decay(initcoins[coin], blocks, blockhalve[coin])
+        fullcycles = int(blocks / blockhalve[coin])
+        
+        # Total over finished halving cycles
+        total = 2 * (1 - 0.5**fullcycles) * blockhalve[coin] * initcoins[coin]
+
+        # + total over current cycle
+        total += (blocks - fullcycles * blockhalve[coin]) * reward
+
+    elif coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
     if total > 0 and info["balance"] > 0:
