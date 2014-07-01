@@ -85,8 +85,6 @@ def blockreward(coin, diff, blocks):
         return int(99900. / diff**2) / 100.
     elif coin in ["blakecoin", "photon"]:
         return initcoins[coin] + round((blocks * diff * 256)**0.5) * 1e-8
-    elif coin == "dogecoin" and blocks > 600000:
-        return 10000.0
     elif coin == "darkcoin":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
     elif coin == "GroestlCoin":
@@ -381,7 +379,6 @@ blockhalve = {
     "blakebitcoin": 210000,
     "chncoin": 2628000,
     "darkcoin": 0,
-    "dogecoin": 100000,
     "ecoin": 0,
     "litecoin": 840000,
     "maxcoin": 1051200,
@@ -453,7 +450,6 @@ initcoins = {
     "blakecoin": 50,
     "blakebitcoin": 50,
     "chncoin": 88,
-    "dogecoin": 500000, # Average; random in [0, 1000000]
     "ecoin": 700,
     "maxcoin": 48,
     "namecoin": 50,
@@ -471,6 +467,8 @@ initcoins = {
 reward_stairs = {
     "dirac": ([0, 43201, 744001, 1448001, 2145601, 2846401],
               [8.0, 1.25, 0.75, 0.5, 0.25, 0.01]),
+    "dogecoin": ([0, 100000, 200000, 300000, 400000, 500000, 600000], 
+                 [500000, 250000, 125000, 62500, 31250, 15625, 10000]),
     "electron": ([0, 525600],
                  [20, 10]),
 }
