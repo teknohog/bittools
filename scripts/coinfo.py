@@ -110,7 +110,7 @@ def own_share(coin, blocks, info):
         # + total over current cycle
         total += (blocks - reward_stairs[coin][0][cycle]) * reward
 
-    elif coin in blockhalve.keys():
+    elif coin in blockhalve.keys() and blockhalve[coin] > 0:
         reward = exp_decay(initcoins[coin], blocks, blockhalve[coin])
         fullcycles = int(blocks / blockhalve[coin])
         
