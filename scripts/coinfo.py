@@ -98,6 +98,8 @@ def blockreward(coin, diff, blocks):
 
 def own_share(coin, blocks, info):
     total = 0
+    final_total = 0
+    printout = []
 
     if coin in reward_stairs.keys():
         # Current reward algo tells us which cycle is on
@@ -120,12 +122,22 @@ def own_share(coin, blocks, info):
         # + total over current cycle
         total += (blocks - fullcycles * blockhalve[coin]) * reward
 
+        final_total = 2 * blockhalve[coin] * initcoins[coin]
+
     elif coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
     if total > 0 and info["balance"] > 0:
         share = info["balance"] / total
-        print("\nYou have about " + str(share * 100) + " % or 1/" + str(int(round(1/share))) + " of all " + currency[coin])
+        printout.append([str(share * 100), str(int(round(1/share))) + " of all current " + currency[coin]])
+
+    if final_total > 0 and info["balance"] > 0:
+        share = info["balance"] / final_total
+        printout.append([str(share * 100), str(int(round(1/share))) + " of all " + currency[coin] + " ever"])
+
+    if len(printout) > 0:
+        print("\nYour balance represents about")
+        prettyprint(printout, " % or 1/")
 
 def parse_config(conffile):
     # config file parsing shamelessly adapted from jgarzik's pyminer, as
