@@ -192,6 +192,11 @@ if $CHECKOUT || [ ! -d $BASEDIR/$PROJECTDIR ]; then
 else
     cd $BASEDIR/$PROJECTDIR
 
+    if [ -e CMakeLists.txt ]; then
+	# CMakeLists.txt cannot be updated if we changed it
+	git stash save
+    fi
+
     # Do not build if there is no source update, but force build from
     # command line if wanted anyway
     STATUSFILE=`mktemp /tmp/XXXXXX.txt`
