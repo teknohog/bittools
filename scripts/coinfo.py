@@ -162,6 +162,17 @@ def parse_config(conffile):
 
     return settings
 
+def coin_price(coin):
+    # Assume EUR as the base price for now
+    cn_url = "https://www.cryptonator.com/api/ticker/" + currency[coin] + "-EUR"
+
+    # http://stackoverflow.com/questions/12965203/how-to-get-json-from-webpage-into-python-script
+    import urllib, json
+    response = urllib.urlopen(cn_url);
+    data = json.loads(response.read())
+
+    return float(data["ticker"]["price"])
+
 def ReadLines(file):
     File = open(file, "r")
     contents = File.readlines()
@@ -351,6 +362,10 @@ parser.add_option("-u", "--url", dest="url", default="", help="Connect to a diff
 
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print more detailed info")
 
+parser.add_option("-W", "--watts", dest="watts", help="Power usage of miners for profitability calculation")
+
+parser.add_option("-w", "--kwh-price", dest="kwhprice", help="kWh price in EUR for profitability calculation")
+
 parser.add_option("-x", "--dirac", action="store_const", const="dirac", dest="coin", default="bitcoin", help="Connect to diracd")
 
 (options, args) = parser.parse_args()
@@ -361,7 +376,7 @@ coin = options.coin
 currency = {
     "AuroraCoin": "AUR",
     "bitcoin": "BTC",
-    "blakebitcoin": "B+",
+    "blakebitcoin": "BBTC",
     "blakecoin": "BLC",
     "chncoin": "CNC",
     "darkcoin": "DRK",
@@ -625,6 +640,26 @@ if hashrate > 0 and coin != "riecoin":
     coinsperday = blockreward(coin, diff, blocks) / time * 86400
 
     output.append(["Average payout", str(coinsperday) + " " + currency[coin] + "/day"])
+
+    fiatpay = coinsperday * coin_price(coin)
+    output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
+
+    if options.watts and options.kwhprice:
+        watts = float(options.watts)
+        kwhprice = float(options.kwhprice)
+        cost = kwhprice * watts / 1000 * 24
+        
+        if cost > 0:
+            pratio = fiatpay / cost
+            
+            if pratio > 2:
+                emo = ":D"
+            elif pratio > 1:
+                emo = ":)"
+            else:
+                emo = ":("
+
+            output.append(["Profitability", str(pratio) + " " + emo])
 
 if adjustblocks[coin] > 0:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
