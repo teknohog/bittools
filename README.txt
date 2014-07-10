@@ -80,6 +80,50 @@ It presents a warning if you have recently sent to the same address,
 and asks for confirmation in a random way to reduce accidents.
 
 
+Profitability estimation
+------------------------
+
+With a known hashrate, coinfo.py now uses price data from
+https://www.cryptonator.com/ to convert daily returns into fiat
+currency. For example, mining Darkcoins with 8 Mhash/s:
+
+$ coinfo.py -Kr 8e6
+balance    *****
+testnet    False
+difficulty 3018.54586397
+
+Average time between blocks 18.7565910984 days
+Average payout              0.303997974714 DRK/day
+Fiat payout                 1.51651756614 EUR/day
+
+To find out if this is worth it, you can also enter the total wattage
+and the EUR price of a kWh:
+
+$ coinfo.py -Kr 8e6 -W 270 -w 0.1274
+balance    *****
+testnet    False
+difficulty 3018.54586397
+
+Average time between blocks 18.7565910984 days
+Average payout              0.303997974714 DRK/day
+Fiat payout                 1.51591177114 EUR/day
+Payout/cost                 1.83624020187 :)
+Net profit                  0.690359771137 EUR/day
+
+I can implement a switch for USD and other fiat currencies if there is
+enough demand. (Or simply replace EUR by USD everywhere in the script.)
+
+Note:
+
+* Cryptonator is a free service provided by a third party, so please
+do not overuse this.
+
+* As prices and difficulties vary over time, this can only
+give a rough estimate of real profitability. Also, this won't take
+merge mining into account. I generally use a spreadsheet to keep track
+of these things, with suitable averages (hint: meandiff.sh).
+
+
 Exporting and importing private keys
 ------------------------------------
 

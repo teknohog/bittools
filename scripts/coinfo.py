@@ -659,7 +659,8 @@ if hashrate > 0 and coin != "riecoin":
             else:
                 emo = ":("
 
-            output.append(["Profitability", str(pratio) + " " + emo])
+            output.append(["Payout/cost", str(pratio) + " " + emo])
+            output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
 
 if adjustblocks[coin] > 0:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
