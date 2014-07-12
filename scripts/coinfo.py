@@ -168,10 +168,14 @@ def coin_price(coin):
 
     # http://stackoverflow.com/questions/12965203/how-to-get-json-from-webpage-into-python-script
     import urllib, json
+
     response = urllib.urlopen(cn_url);
     data = json.loads(response.read())
 
-    return float(data["ticker"]["price"])
+    if "ticker" in data.keys():
+        return float(data["ticker"]["price"])
+    else:
+        return 0
 
 def ReadLines(file):
     File = open(file, "r")
@@ -641,26 +645,32 @@ if hashrate > 0 and coin != "riecoin":
 
     output.append(["Average payout", str(coinsperday) + " " + currency[coin] + "/day"])
 
-    fiatpay = coinsperday * coin_price(coin)
-    output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
+    fiatprice = coin_price(coin)    
 
-    if options.watts and options.kwhprice:
-        watts = float(options.watts)
-        kwhprice = float(options.kwhprice)
-        cost = kwhprice * watts / 1000 * 24
+    if fiatprice > 0:
+
+        fiatpay = coinsperday * fiatprice
+
+        output.append(["1 " + currency[coin], str(fiatprice) + " EUR"])
+        output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
+
+        if options.watts and options.kwhprice:
+            watts = float(options.watts)
+            kwhprice = float(options.kwhprice)
+            cost = kwhprice * watts / 1000 * 24
         
-        if cost > 0:
-            pratio = fiatpay / cost
-            
-            if pratio > 2:
-                emo = ":D"
-            elif pratio > 1:
-                emo = ":)"
-            else:
-                emo = ":("
+            if cost > 0:
+                pratio = fiatpay / cost
+                
+                if pratio > 2:
+                    emo = ":D"
+                elif pratio > 1:
+                    emo = ":)"
+                else:
+                    emo = ":("
 
-            output.append(["Payout/cost", str(pratio) + " " + emo])
-            output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
+                output.append(["Payout/cost", str(pratio) + " " + emo])
+                output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
 
 if adjustblocks[coin] > 0:
     time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
