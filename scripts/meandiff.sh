@@ -20,6 +20,21 @@ function average () {
     echo $TOTAL / $N | bc -l
 }
 
+# Profit calculation uses 1/diff, so use 1/(average of 1/diff) instead
+function inv_average () {
+    TOTAL=0
+    # Note the actual number of entries, which may be less than $LINES
+    N=0
+
+    for LINE in `tail -n $LINES $LOGFILE`; do
+	TOTAL=`echo $TOTAL + 1 / $LINE | bc -l`
+	N=$((++N))
+    done
+
+    echo $N / $TOTAL | bc -l
+}
+
+
 POS=false
 SET=false
 PROJECT=bitcoin
@@ -81,6 +96,6 @@ if $SET; then
     # and prune it
     tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE
 else
-    average
+    inv_average
 fi
 
