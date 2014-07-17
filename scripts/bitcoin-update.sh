@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnoPpSTux opt; do
+while getopts aBCcDEfGgHIjKkLlMmnoPpSTuVx opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -45,6 +45,7 @@ while getopts aBCcDEfGgHIjKkLlMmnoPpSTux opt; do
 	S) PROJECT=skeincoin ;;
 	T) PROJECT=Tjcoin ;;
 	u) UPNP=1 ;;
+	V) PROJECT=virtacoin ;;
 	x) PROJECT=dirac ;;
     esac
 done
@@ -131,6 +132,11 @@ case $PROJECT in
 	;;
     Tjcoin)
 	GITURL=https://github.com/TaojingCoin-pd/TjcoinV2
+	;;
+    virtacoin)
+	GITURL=https://github.com/virtacoin/VirtaCoinProject
+	# For install only
+	BINARY="virtacoind virtacoin-cli"
 	;;
     *)
 	exit
@@ -255,6 +261,16 @@ case $PROJECT in
 	nice make -j`nproc` CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
+	;;
+    virtacoin)
+	sh autogen.sh
+
+	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
+
+	nice make $MAKEOPTS
+
+	cd src
 	;;
     *)
 	cd src

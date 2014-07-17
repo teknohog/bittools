@@ -93,6 +93,9 @@ def blockreward(coin, diff, blocks):
         return staired_reward(blocks, reward_stairs[coin])
     elif blockhalve[coin] == 0:
         return initcoins[coin]
+    elif coin == "virtacoin":
+        # 8000 coins per block, reduces by 0.5% each week starting 2/28/14
+        return exp_decay(8000, blocks, 10080, 0.995)
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
@@ -364,6 +367,8 @@ parser.add_option("-t", "--transactions", dest="transactions", action="store_tru
 
 parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind")
 
+parser.add_option("-V", "--virtacoin", action="store_const", const="virtacoin", dest="coin", default="bitcoin", help="Connect to virtacoind")
+
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print more detailed info")
 
 parser.add_option("-W", "--watts", dest="watts", help="Power usage of miners for profitability calculation")
@@ -401,6 +406,7 @@ currency = {
     "skeincoin": "SKC",
     "SlothCoin": "Sloth",
     "TjcoinV2": "TJC",
+    "virtacoin": "VTA",
 }
 
 # 0 means no block reward halving
@@ -420,6 +426,7 @@ blockhalve = {
     "skeincoin": 262800,
     "SlothCoin": 100000,
     "TjcoinV2": 840000,
+    "virtacoin": 10080,
 }
 
 blocksperhour = {
@@ -445,6 +452,7 @@ blocksperhour = {
     "skeincoin": 30,
     "SlothCoin": 24,
     "TjcoinV2": 24,
+    "virtacoin": 60,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -472,6 +480,8 @@ adjustblocks = {
     "skeincoin": 0,
     "SlothCoin": 2,
     "TjcoinV2": 336,
+    "virtacoin": 0,
+
 }
 
 # For coins with regular block halving
@@ -492,6 +502,7 @@ initcoins = {
     "skeincoin": 32,
     "SlothCoin": 500000,
     "TjcoinV2": 50,
+    "virtacoin": 8000,
 }
 
 # (list of block limits, list of fixed rewards for those intervals)
@@ -528,6 +539,8 @@ rpcport = {
     "skeincoin": "21230",
     "SlothCoin": "5108",
     "TjcoinV2": "9178",
+    "virtacoin": "22815",
+
 }
 
 if len(options.url) > 0:
