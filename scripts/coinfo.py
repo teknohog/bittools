@@ -104,6 +104,13 @@ def own_share(coin, blocks, info):
     final_total = 0
     printout = []
 
+    # This should really be made more generic, like blockhalve, but
+    # this will do until more coins come up with different exp bases.
+    if coin == "virtacoin":
+        base = 0.995
+    else:
+        base = 0.5
+
     if coin in reward_stairs.keys():
         # Current reward algo tells us which cycle is on
         reward = staired_reward(blocks, reward_stairs[coin])
@@ -120,12 +127,12 @@ def own_share(coin, blocks, info):
         fullcycles = int(blocks / blockhalve[coin])
         
         # Total over finished halving cycles
-        total = 2 * (1 - 0.5**fullcycles) * blockhalve[coin] * initcoins[coin]
+        total = (1 - base**fullcycles) / (1 - base) * blockhalve[coin] * initcoins[coin]
 
         # + total over current cycle
         total += (blocks - fullcycles * blockhalve[coin]) * reward
 
-        final_total = 2 * blockhalve[coin] * initcoins[coin]
+        final_total = blockhalve[coin] / (1 - base) * initcoins[coin]
 
     elif coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
@@ -481,7 +488,6 @@ adjustblocks = {
     "SlothCoin": 2,
     "TjcoinV2": 336,
     "virtacoin": 0,
-
 }
 
 # For coins with regular block halving
@@ -540,7 +546,6 @@ rpcport = {
     "SlothCoin": "5108",
     "TjcoinV2": "9178",
     "virtacoin": "22815",
-
 }
 
 if len(options.url) > 0:
