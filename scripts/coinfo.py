@@ -89,9 +89,6 @@ def blockreward(coin, diff, blocks):
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
     elif coin == "GroestlCoin":
         return groestl_reward(blocks)
-    elif coin == "universalmolecule":
-        # Depends on difficulty change, so impossible to predict here
-        return 0
     elif coin in reward_stairs.keys():
         return staired_reward(blocks, reward_stairs[coin])
     elif blockhalve[coin] == 0:
@@ -439,6 +436,7 @@ blockhalve = {
     "skeincoin": 262800,
     "SlothCoin": 100000,
     "TjcoinV2": 840000,
+    "universalmolecule": 0,
     "virtacoin": 10080,
 }
 
@@ -516,6 +514,7 @@ initcoins = {
     "skeincoin": 32,
     "SlothCoin": 500000,
     "TjcoinV2": 50,
+    "universalmolecule": 0.1, # Minimum
     "virtacoin": 8000,
 }
 
