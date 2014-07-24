@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnoPpSTuVx opt; do
+while getopts aBCcDEfGgHIjKkLlMmnoPpSTUuVx opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -44,6 +44,7 @@ while getopts aBCcDEfGgHIjKkLlMmnoPpSTuVx opt; do
 	p) PROJECT=ppcoin ;;
 	S) PROJECT=skeincoin ;;
 	T) PROJECT=Tjcoin ;;
+	U) PROJECT=universalmolecule ;;
 	u) UPNP=1 ;;
 	V) PROJECT=virtacoin ;;
 	x) PROJECT=dirac ;;
@@ -132,6 +133,9 @@ case $PROJECT in
 	;;
     Tjcoin)
 	GITURL=https://github.com/TaojingCoin-pd/TjcoinV2
+	;;
+    universalmolecule)
+	GITURL=https://github.com/universalmol/universalmol
 	;;
     virtacoin)
 	GITURL=https://github.com/virtacoin/VirtaCoinProject

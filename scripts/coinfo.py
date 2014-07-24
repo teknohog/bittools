@@ -89,6 +89,9 @@ def blockreward(coin, diff, blocks):
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
     elif coin == "GroestlCoin":
         return groestl_reward(blocks)
+    elif coin == "universalmolecule":
+        # Depends on difficulty change, so impossible to predict here
+        return 0
     elif coin in reward_stairs.keys():
         return staired_reward(blocks, reward_stairs[coin])
     elif blockhalve[coin] == 0:
@@ -372,6 +375,8 @@ parser.add_option("-T", "--TjcoinV2", action="store_const", const="TjcoinV2", de
 
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
 
+parser.add_option("-U", "--universalmolecule", action="store_const", const="universalmolecule", dest="coin", default="bitcoin", help="Connect to universalmoleculed")
+
 parser.add_option("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local bitcoind")
 
 parser.add_option("-V", "--virtacoin", action="store_const", const="virtacoin", dest="coin", default="bitcoin", help="Connect to virtacoind")
@@ -413,6 +418,7 @@ currency = {
     "skeincoin": "SKC",
     "SlothCoin": "Sloth",
     "TjcoinV2": "TJC",
+    "universalmolecule": "UMO",
     "virtacoin": "VTA",
 }
 
@@ -459,6 +465,7 @@ blocksperhour = {
     "skeincoin": 30,
     "SlothCoin": 24,
     "TjcoinV2": 24,
+    "universalmolecule": 30,
     "virtacoin": 60,
 }
 
@@ -487,6 +494,7 @@ adjustblocks = {
     "skeincoin": 0,
     "SlothCoin": 2,
     "TjcoinV2": 336,
+    "universalmolecule": 20,
     "virtacoin": 0,
 }
 
@@ -545,6 +553,7 @@ rpcport = {
     "skeincoin": "21230",
     "SlothCoin": "5108",
     "TjcoinV2": "9178",
+    "universalmolecule": "19738",
     "virtacoin": "22815",
 }
 
