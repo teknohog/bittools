@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnoPpSTUuVx opt; do
+while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVx opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
