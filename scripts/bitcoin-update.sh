@@ -73,7 +73,7 @@ case $PROJECT in
 	BINARY="bitmonerod simplewallet simpleminer"
 	;;
     boolberry)
-	#GITURL=https://github.com/cryptozoidberg/boolberry
+	GITURL=https://github.com/cryptozoidberg/boolberry
 	# For install only
 	BINARY="boolbd simplewallet simpleminer"
 	;;
