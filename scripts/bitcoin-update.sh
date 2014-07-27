@@ -39,6 +39,7 @@ while getopts aBCcDEfGgHIjKkLlMmnoPpSTUuVx opt; do
 	M) PROJECT=bitmonero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
+	O) PROJECT=boolberry-opencl ;;
 	o) PROJECT=boolberry ;;
 	P) PROJECT=primecoin ;;
 	p) PROJECT=ppcoin ;;
@@ -72,7 +73,12 @@ case $PROJECT in
 	BINARY="bitmonerod simplewallet simpleminer"
 	;;
     boolberry)
-	GITURL=https://github.com/cryptozoidberg/boolberry
+	#GITURL=https://github.com/cryptozoidberg/boolberry
+	# For install only
+	BINARY="boolbd simplewallet simpleminer"
+	;;
+    boolberry-opencl)
+	GITURL=https://github.com/mbkuperman/boolberry-opencl.git
 	# For install only
 	BINARY="boolbd simplewallet simpleminer"
 	;;
@@ -245,7 +251,7 @@ EOF
 fi
 
 case $PROJECT in
-    bitmonero|boolberry)
+    bitmonero|boolberry*)
 	if [ -z "`grep Boost_LIBRARIES CMakeLists.txt | grep pthread`" ]; then
 	    # undefined reference to symbol
 	    # 'pthread_mutexattr_settype@@GLIBC_2.2.5' -- fix borrowed
@@ -323,6 +329,11 @@ esac
 if [ ! -d $INSTALLDIR ]; then
     mkdir -p $INSTALLDIR
 fi
+
+if [ "$PROJECT" == "boolberry-opencl" ]; then
+    cp $BASEDIR/$PROJECTDIR/src/cl/*.cl $INSTALLDIR/
+fi
+
 install -bs $BINARY $INSTALLDIR
 
 # Clean up temps
