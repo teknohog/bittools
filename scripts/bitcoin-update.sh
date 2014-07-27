@@ -268,7 +268,7 @@ case $PROJECT in
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway
 	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
-	nice make -j`nproc` CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	nice make $MAKEOPTS CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
 	;;
