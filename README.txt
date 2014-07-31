@@ -167,3 +167,13 @@ crontab:
 
 Later, meandiff.sh -B will show the average. Coin identifiers are the
 same as in other scripts, so this example is for Blakecoin.
+
+
+random_id.py
+============
+
+A simple script to generate a random Payment ID for Cryptonote coins,
+such as Boolberry and Monero. Example:
+
+$ ./random_id.py
+9923EA057C8AADCE0B5FEB187F329FB50A4B95967F3BD4498332AAACDABE8FE0
