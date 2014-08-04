@@ -168,6 +168,10 @@ crontab:
 Later, meandiff.sh -B will show the average. Coin identifiers are the
 same as in other scripts, so this example is for Blakecoin.
 
+For Cryptonote coins, the difficulties are already logged by the
+daemon. There is no need to collect them explicitly, and this script
+parses the original log for averaging the last 10 numbers.
+
 
 random_id.py
 ============

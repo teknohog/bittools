@@ -38,7 +38,7 @@ function inv_average () {
 POS=false
 SET=false
 PROJECT=bitcoin
-while getopts aBcDEGgHIjKLlmnPpSsUVx opt; do
+while getopts aBcDEGgHIjKLlMmnOoPpSsUVx opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -56,8 +56,11 @@ while getopts aBcDEGgHIjKLlmnPpSsUVx opt; do
 	K) PROJECT=darkcoin ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
+	M) PROJECT=bitmonero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
+	O) PROJECT=boolberry-opencl ;;
+	o) PROJECT=boolberry ;;
 	P) PROJECT=primecoin ;;
 	p)
 	    PROJECT=ppcoin
@@ -72,6 +75,28 @@ while getopts aBcDEGgHIjKLlmnPpSsUVx opt; do
 done
 
 case $PROJECT in
+    bitmonero|boolberry*)
+	BINDIR=${HOME}/distr.projects/${PROJECT}-git
+	
+	# Original project logs contain the difficulties, so there is
+	# no need to collect these separately.
+
+	if [ -n "`echo $PROJECT | grep boolberry`" ]; then
+	    URLOG=boolbd.log
+	else
+	    URLOG=${PROJECT}d.log
+	fi
+	
+	# Numbers for the averaging function
+	LOGFILE=`mktemp`
+	
+	grep "^difficulty:.*[0-9]\+$" $BINDIR/$URLOG | tail -n $LINES | \
+	    awk '{print $2}' > $LOGFILE
+
+	inv_average
+	rm $LOGFILE
+	exit
+	;;
     Slothcoin)
 	LOGFILE=~/.SlothCoin/difflog
 	;;
