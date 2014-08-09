@@ -89,9 +89,9 @@ case $PROJECT in
 	
 	# Numbers for the averaging function
 	LOGFILE=`mktemp`
-	
-	grep "^difficulty:.*[0-9]\+$" $BINDIR/$URLOG | tail -n $LINES | \
-	    awk '{print $2}' > $LOGFILE
+
+	grep "difficulty:.*[0-9]\+$" $BINDIR/$URLOG | tail -n $LINES | \
+	    sed -e 's/.*difficulty:[[:space:]]\+\([0-9]\+\)$/\1/' > $LOGFILE
 
 	inv_average
 	rm $LOGFILE
