@@ -316,6 +316,8 @@ parser.add_option("-B", "--blakecoin", action="store_const", const="blakecoin", 
 
 parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
+parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin", default="bitcoin", help="Connect to bitcoind")
+
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
 
 parser.add_option("-C", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
