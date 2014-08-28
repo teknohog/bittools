@@ -102,13 +102,12 @@ def blockreward(coin, diff, blocks):
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
-# Extended precision float encoding for Cryptonite. Not yet used as
-# the RPC should accept regular floats too.
-#def ep_enc(x):
-#    return '%.10fep' % x
-#
-#def ep_dec(s):
-#    return float(s.rstrip('ep'))
+# Extended precision float encoding for Cryptonite
+def ep_enc(x):
+    return '%.10fep' % x
+
+def ep_dec(s):
+    return float(s.rstrip('ep'))
 
 def own_share(coin, blocks, info):
     total = 0
@@ -150,6 +149,12 @@ def own_share(coin, blocks, info):
 
     elif "moneysupply" in info:
         total = info["moneysupply"]
+
+    elif coin == "cryptonite":
+        # Coinbase address
+        coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
+        total = 2**64 * 1e-10 - coinbase
+        info["balance"] = ep_dec(info["balance"])
 
     if total > 0 and info["balance"] > 0:
         share = info["balance"] / total
@@ -310,9 +315,14 @@ def send(address, amount):
     chars = string.ascii_letters + string.digits
     conf = string.join(sample(chars, randrange(6, 15)), "")
     c_input = raw_input("Please type " + conf + " to confirm the transaction: ")
+
     if c_input == conf:
         try:
-            result = s.sendtoaddress(address, amount)
+            if coin == "cryptonite":
+                result = s.sendtoaddress(address, ep_enc(amount))
+            else:
+                result = s.sendtoaddress(address, amount)
+
             print("Sent " + str(amount) + " to " + address + " with txid")
             print(result)
         except:
