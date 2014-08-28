@@ -153,7 +153,8 @@ def own_share(coin, blocks, info):
     elif coin == "cryptonite":
         # Coinbase address
         coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
-        total = 2**64 * 1e-10 - coinbase
+        final_total = 2**64 * 1e-10
+        total = final_total - coinbase
         info["balance"] = ep_dec(info["balance"])
 
     if total > 0 and info["balance"] > 0:
