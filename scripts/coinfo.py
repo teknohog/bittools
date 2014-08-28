@@ -91,13 +91,24 @@ def blockreward(coin, diff, blocks):
         return groestl_reward(blocks)
     elif coin in reward_stairs.keys():
         return staired_reward(blocks, reward_stairs[coin])
-    elif blockhalve[coin] == 0:
+    elif coin in blockhalve.keys() and blockhalve[coin] == 0:
         return initcoins[coin]
     elif coin == "virtacoin":
         # 8000 coins per block, reduces by 0.5% each week starting 2/28/14
         return exp_decay(8000, blocks, 10080, 0.995)
+    elif coin == "cryptonite":
+        # Approximately
+        return 243.1 * (1 - 2**-23)**blocks
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
+
+# Extended precision float encoding for Cryptonite. Not yet used as
+# the RPC should accept regular floats too.
+#def ep_enc(x):
+#    return '%.10fep' % x
+#
+#def ep_dec(s):
+#    return float(s.rstrip('ep'))
 
 def own_share(coin, blocks, info):
     total = 0
@@ -386,6 +397,8 @@ parser.add_option("-W", "--watts", dest="watts", help="Power usage of miners for
 
 parser.add_option("-w", "--kwh-price", dest="kwhprice", help="kWh price in EUR for profitability calculation")
 
+parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite", dest="coin", default="bitcoin", help="Connect to cryptonited")
+
 parser.add_option("-x", "--dirac", action="store_const", const="dirac", dest="coin", default="bitcoin", help="Connect to diracd")
 
 (options, args) = parser.parse_args()
@@ -399,6 +412,7 @@ currency = {
     "blakebitcoin": "BBTC",
     "blakecoin": "BLC",
     "chncoin": "CNC",
+    "cryptonite": "XCN",
     "darkcoin": "DRK",
     "dirac": "XDQ",
     "dogecoin": "DOGE",
@@ -448,6 +462,7 @@ blocksperhour = {
     "blakebitcoin": 24,
     "blakecoin": 20,
     "chncoin": 60,
+    "cryptonite": 60,
     "darkcoin": 24,
     "dirac": 20,
     "dogecoin": 60,
@@ -476,6 +491,7 @@ adjustblocks = {
     "blakebitcoin": 8064,
     "blakecoin": 20,
     "chncoin": 0,
+    "cryptonite": 0,
     "darkcoin": 0,
     "dirac": 20,
     "dogecoin": 0,
@@ -536,6 +552,7 @@ rpcport = {
     "blakebitcoin": "243",
     "blakecoin": "8772",
     "chncoin": "8108",
+    "cryptonite": "8252",
     "darkcoin": "9998",
     "dirac": "74532",
     "dogecoin": "22555",
@@ -663,6 +680,9 @@ output = []
 if hashrate > 0 and coin != "riecoin":
     if coin == "primecoin":
         time = 86400. / hashrate
+    elif coin == "cryptonite":
+        # Guess based on current network hashrate and difficulty
+        time = diff * 2**20 / hashrate
     else:
         time = diff * 2**32 / hashrate
 

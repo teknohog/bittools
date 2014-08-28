@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVx opt; do
+while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXx opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -48,6 +48,7 @@ while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVx opt; do
 	U) PROJECT=universalmolecule ;;
 	u) UPNP=1 ;;
 	V) PROJECT=virtacoin ;;
+	X) PROJECT=cryptonite ;;
 	x) PROJECT=dirac ;;
     esac
 done
@@ -81,6 +82,9 @@ case $PROJECT in
 	GITURL=https://github.com/mbkuperman/boolberry-opencl.git
 	# For install only
 	BINARY="boolbd simplewallet simpleminer"
+	;;
+    cryptonite)
+	GITURL=https://github.com/MiniblockchainProject/Cryptonite
 	;;
     chncoin)
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
@@ -145,8 +149,6 @@ case $PROJECT in
 	;;
     virtacoin)
 	GITURL=https://github.com/virtacoin/VirtaCoinProject
-	# For install only
-	BINARY="virtacoind virtacoin-cli"
 	;;
     *)
 	exit
@@ -272,7 +274,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    virtacoin)
+     cryptonite|virtacoin)
 	sh autogen.sh
 
 	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
@@ -281,6 +283,8 @@ case $PROJECT in
 	nice make $MAKEOPTS
 
 	cd src
+	
+	BINARY="${PROJECT}d ${PROJECT}-cli"
 	;;
     *)
 	cd src
