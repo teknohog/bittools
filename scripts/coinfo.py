@@ -148,6 +148,9 @@ def own_share(coin, blocks, info):
     elif coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
+    elif "moneysupply" in info:
+        total = info["moneysupply"]
+
     if total > 0 and info["balance"] > 0:
         share = info["balance"] / total
         printout.append([str(share * 100), str(int(round(1/share))) + " of all current " + currency[coin]])
