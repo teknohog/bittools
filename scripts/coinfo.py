@@ -97,8 +97,9 @@ def blockreward(coin, diff, blocks):
         # 8000 coins per block, reduces by 0.5% each week starting 2/28/14
         return exp_decay(8000, blocks, 10080, 0.995)
     elif coin == "cryptonite":
-        # Approximately
-        return 243.1 * (1 - 2**-23)**blocks
+        coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
+        final_total = (2**64 - 1) * 1e-10
+        return 243.1 * coinbase / final_total
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
@@ -153,7 +154,7 @@ def own_share(coin, blocks, info):
     elif coin == "cryptonite":
         # Coinbase address
         coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
-        final_total = 2**64 * 1e-10
+        final_total = (2**64 - 1) * 1e-10
         total = final_total - coinbase
         info["balance"] = ep_dec(info["balance"])
 
