@@ -60,7 +60,7 @@ case $PROJECT in
 	GITURL=https://github.com/baldurodinsson/auroracoin-project
 	;;
     blakebitcoin)
-	GITURL=https://github.com/BlueDragon747/BlakeBitcoin
+	GITURL=https://github.com/BlakeBitcoin/BlakeBitcoin
 	;;
     blakecoin)
 	GITURL=https://github.com/BlueDragon747/Blakecoin.git
