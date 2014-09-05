@@ -217,7 +217,7 @@ def ReadLines(file):
 def exportkeys():
     # Generate addresses are not available via accounts, even though
     # they are listed under the "" account. So this way should get us
-    # all possible addresses.
+    # all possible addresses...
 
     g = s.listaddressgroupings()
 
@@ -234,6 +234,20 @@ def exportkeys():
                 account = ""
 
             l.append([privkey, account])
+
+    # ..but the above seems to leave out addresses with zero balance,
+    # so use the old way too, and check for dupes.
+
+    accounts = s.listaccounts()
+
+    for acc in accounts:
+        addresses = s.getaddressesbyaccount(acc)
+        for addr in addresses:
+            privkey = s.dumpprivkey(addr)
+            item = [privkey, acc]
+            
+            if item not in l:
+                l.append(item)
 
     prettyprint(l)
 
