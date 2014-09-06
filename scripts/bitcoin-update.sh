@@ -274,10 +274,17 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-     cryptonite|virtacoin)
+     cryptonite|dogecoin|virtacoin)
 	sh autogen.sh
 
-	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	if [ $PROJECT == "dogecoin" ]; then
+	    EXTRACONFIG="--with-incompatible-bdb"
+	else
+	    EXTRACONFIG=""
+	fi
+
+	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS" $EXTRACONFIG
+
 	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
 
 	nice make $MAKEOPTS
