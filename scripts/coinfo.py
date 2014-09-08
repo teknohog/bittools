@@ -219,21 +219,24 @@ def exportkeys():
     # they are listed under the "" account. So this way should get us
     # all possible addresses...
 
-    g = s.listaddressgroupings()
-
     l = []
 
-    for group in g:
-        for addrline in group:
-            address = addrline[0]
-            privkey = s.dumpprivkey(address)
+    # Method not available in ppcoin
+    try:
+        g = s.listaddressgroupings()
+        for group in g:
+            for addrline in group:
+                address = addrline[0]
+                privkey = s.dumpprivkey(address)
 
-            if len(addrline) == 3:
-                account = addrline[2]
-            else:
-                account = ""
+                if len(addrline) == 3:
+                    account = addrline[2]
+                else:
+                    account = ""
 
-            l.append([privkey, account])
+                l.append([privkey, account])
+    except:
+        print("Warning: missing listaddressgroupings method, list of keys may be incomplete\n")
 
     # ..but the above seems to leave out addresses with zero balance,
     # so use the old way too, and check for dupes.
