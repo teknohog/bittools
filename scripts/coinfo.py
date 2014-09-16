@@ -433,6 +433,8 @@ parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite"
 
 parser.add_option("-x", "--dirac", action="store_const", const="dirac", dest="coin", default="bitcoin", help="Connect to diracd")
 
+parser.add_option("-y", "--vertcoin", action="store_const", const="vertcoin", dest="coin", default="bitcoin", help="Connect to vertcoind")
+
 (options, args) = parser.parse_args()
 
 coin = options.coin
@@ -464,6 +466,7 @@ currency = {
     "SlothCoin": "Sloth",
     "TjcoinV2": "TJC",
     "universalmolecule": "UMO",
+    "vertcoin": "VTC",
     "virtacoin": "VTA",
 }
 
@@ -485,6 +488,7 @@ blockhalve = {
     "SlothCoin": 100000,
     "TjcoinV2": 840000,
     "universalmolecule": 0,
+    "vertcoin": 840000,
     "virtacoin": 10080,
 }
 
@@ -513,6 +517,7 @@ blocksperhour = {
     "SlothCoin": 24,
     "TjcoinV2": 24,
     "universalmolecule": 30,
+    "vertcoin": 24,
     "virtacoin": 60,
 }
 
@@ -543,6 +548,7 @@ adjustblocks = {
     "SlothCoin": 2,
     "TjcoinV2": 336,
     "universalmolecule": 20,
+    "vertcoin": 0,
     "virtacoin": 0,
 }
 
@@ -565,6 +571,7 @@ initcoins = {
     "SlothCoin": 500000,
     "TjcoinV2": 50,
     "universalmolecule": 0.1, # Minimum
+    "vertcoin": 50,
     "virtacoin": 8000,
 }
 
@@ -604,6 +611,7 @@ rpcport = {
     "SlothCoin": "5108",
     "TjcoinV2": "9178",
     "universalmolecule": "19738",
+    "vertcoin": "5888",
     "virtacoin": "22815",
 }
 

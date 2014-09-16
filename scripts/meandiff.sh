@@ -38,7 +38,7 @@ function inv_average () {
 POS=false
 SET=false
 PROJECT=bitcoin
-while getopts aBcDEGgHIjKLlMmnOoPpSsUVXx opt; do
+while getopts aBcDEGgHIjKLlMmnOoPpSsUVXxy opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -72,6 +72,7 @@ while getopts aBcDEGgHIjKLlMmnOoPpSsUVXx opt; do
 	V) PROJECT=virtacoin ;;
 	X) PROJECT=cryptonite ;;
 	x) PROJECT=dirac ;;
+	y) PROJECT=vertcoin ;;
     esac
 done
 
