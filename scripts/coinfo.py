@@ -326,6 +326,9 @@ def send(address, amount):
     if len(trans) > 0:
         for item in trans:
             if "address" in item.keys() and address == item["address"]:
+                if coin == "cryptonite":
+                    item["amount"] = ep_dec(item["amount"])
+
                 print("Warning! " + str(abs(item["amount"])) + " already sent to this address on " + ctime(item["time"]))
                 
     # Ask for confirmation by typing/copying a random string
