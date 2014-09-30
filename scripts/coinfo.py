@@ -241,16 +241,20 @@ def exportkeys():
     # ..but the above seems to leave out addresses with zero balance,
     # so use the old way too, and check for dupes.
 
-    accounts = s.listaccounts()
+    # EXCL: "Accounting API is deprecated and will be removed in future."
+    try:
+        accounts = s.listaccounts()
 
-    for acc in accounts:
-        addresses = s.getaddressesbyaccount(acc)
-        for addr in addresses:
-            privkey = s.dumpprivkey(addr)
-            item = [privkey, acc]
+        for acc in accounts:
+            addresses = s.getaddressesbyaccount(acc)
+            for addr in addresses:
+                privkey = s.dumpprivkey(addr)
+                item = [privkey, acc]
             
-            if item not in l:
-                l.append(item)
+                if item not in l:
+                    l.append(item)
+    except:
+        print("Warning: missing listaccounts method, list of keys may be incomplete\n")
 
     prettyprint(l)
 
