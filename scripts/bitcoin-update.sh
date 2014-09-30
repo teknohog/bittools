@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxy opt; do
+while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -51,6 +51,7 @@ while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxy opt; do
 	X) PROJECT=cryptonite ;;
 	x) PROJECT=dirac ;;
 	y) PROJECT=vertcoin ;;
+	z) PROJECT=ExclusiveCoin ;;
     esac
 done
 
@@ -102,6 +103,9 @@ case $PROJECT in
 	;;
     electron)
 	GITURL=https://github.com/Electron-Coin2014/Electron-ELT
+	;;
+    ExclusiveCoin)
+	GITURL=https://github.com/exclusivecoin/Exclusive
 	;;
     GroestlCoin)
 	GITURL=https://github.com/GroestlCoin/GroestlCoin
@@ -296,6 +300,13 @@ case $PROJECT in
 	cd src
 	
 	BINARY="${PROJECT}d ${PROJECT}-cli"
+	;;
+    ExclusiveCoin)
+	cd src
+
+	if [ ! -d obj/zerocoin ]; then
+	    mkdir -p obj/zerocoin
+	fi
 	;;
     *)
 	cd src

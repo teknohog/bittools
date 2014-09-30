@@ -436,6 +436,8 @@ parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite"
 
 parser.add_option("-x", "--dirac", action="store_const", const="dirac", dest="coin", default="bitcoin", help="Connect to diracd")
 
+parser.add_option("-z", "--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
+
 parser.add_option("-y", "--vertcoin", action="store_const", const="vertcoin", dest="coin", default="bitcoin", help="Connect to vertcoind")
 
 (options, args) = parser.parse_args()
@@ -455,6 +457,7 @@ currency = {
     "dogecoin": "DOGE",
     "ecoin": "ECN",
     "electron": "ELT",
+    "ExclusiveCoin": "EXCL",
     "GroestlCoin": "GRS",
     "litecoin": "LTC",
     "maxcoin": "MAX",
@@ -481,6 +484,7 @@ blockhalve = {
     "chncoin": 2628000,
     "darkcoin": 0,
     "ecoin": 0,
+    "ExclusiveCoin": 0, # ?
     "litecoin": 840000,
     "maxcoin": 1051200,
     "namecoin": 0,
@@ -507,6 +511,7 @@ blocksperhour = {
     "dogecoin": 60,
     "ecoin": 60,
     "electron": 60,
+    "ExclusiveCoin": 90,
     "GroestlCoin": 60,
     "litecoin": 24,
     "maxcoin": 120,
@@ -537,6 +542,7 @@ adjustblocks = {
     "dogecoin": 0,
     "ecoin": 100,
     "electron": 0, # ?
+    "ExclusiveCoin": 0,
     "GroestlCoin": 0,
     "litecoin": 2016,
     "maxcoin": 0,
@@ -563,6 +569,7 @@ initcoins = {
     "blakebitcoin": 50,
     "chncoin": 88,
     "ecoin": 700,
+    "ExclusiveCoin": 8,
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
@@ -600,6 +607,7 @@ rpcport = {
     "dogecoin": "22555",
     "ecoin": "10444",
     "electron": "6852", 
+    "ExclusiveCoin": "22621",
     "GroestlCoin": "1441",
     "litecoin": "9332",
     "maxcoin": "8669",
@@ -700,8 +708,9 @@ else:
 
         if options.verbose:
             output.append(["blocksperday", str(hashrate)])
-    elif coin == "litecoin":
-        # Mining was removed from the client in 0.8
+    elif coin in ["litecoin", "ExclusiveCoin"]:
+        # Litecoin: Mining was removed from the client in 0.8
+        # EXCL: not available
         hashrate = 0
     else:
         hashrate = s.gethashespersec()
