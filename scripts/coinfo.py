@@ -702,6 +702,9 @@ else:
     # Hybrid PoW / PoS
     if type(diff) == dict:
         diff = diff['proof-of-work']
+        
+        # Print PoW diff only for simpler parsing on external scripts
+        info['difficulty'] = diff
 
 output = []
 for key in keys:
