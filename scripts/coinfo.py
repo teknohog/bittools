@@ -83,7 +83,7 @@ def blockreward(coin, diff, blocks):
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
         return int(99900. / diff**2) / 100.
-    elif coin in ["blakecoin", "photon"]:
+    elif coin in ["blakecoin", "lithium", "photon"]:
         return initcoins[coin] + round((blocks * diff * 256)**0.5) * 1e-8
     elif coin == "darkcoin":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
@@ -440,9 +440,11 @@ parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite"
 
 parser.add_option("-x", "--dirac", action="store_const", const="dirac", dest="coin", default="bitcoin", help="Connect to diracd")
 
-parser.add_option("-z", "--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
+parser.add_option("-Y", "--lithium", action="store_const", const="lithium", dest="coin", default="bitcoin", help="Connect to lithiumd")
 
 parser.add_option("-y", "--vertcoin", action="store_const", const="vertcoin", dest="coin", default="bitcoin", help="Connect to vertcoind")
+
+parser.add_option("-z", "--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
 
 (options, args) = parser.parse_args()
 
@@ -464,6 +466,7 @@ currency = {
     "ExclusiveCoin": "EXCL",
     "GroestlCoin": "GRS",
     "litecoin": "LTC",
+    "lithium": "LIT",
     "maxcoin": "MAX",
     "namecoin": "NMC",
     "photon": "PHO",
@@ -490,6 +493,7 @@ blockhalve = {
     "ecoin": 0,
     "ExclusiveCoin": 0, # ?
     "litecoin": 840000,
+    "lithium": 0,
     "maxcoin": 1051200,
     "namecoin": 0,
     "primio": 100000,
@@ -518,6 +522,7 @@ blocksperhour = {
     "ExclusiveCoin": 90,
     "GroestlCoin": 60,
     "litecoin": 24,
+    "lithium": 20,
     "maxcoin": 120,
     "namecoin": 6,
     "photon": 20,
@@ -549,6 +554,7 @@ adjustblocks = {
     "ExclusiveCoin": 0,
     "GroestlCoin": 0,
     "litecoin": 2016,
+    "lithium": 20,
     "maxcoin": 0,
     "namecoin": 2016,
     "photon": 20,
@@ -577,6 +583,7 @@ initcoins = {
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
+    "lithium": 48,
     "photon": 32768,
     "primio": 50,
     "riecoin": 50,
@@ -614,6 +621,7 @@ rpcport = {
     "ExclusiveCoin": "22621",
     "GroestlCoin": "1441",
     "litecoin": "9332",
+    "lithium": "12007",
     "maxcoin": "8669",
     "namecoin": "8332",
     "photon": "74532",

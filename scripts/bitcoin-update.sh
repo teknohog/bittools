@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxyz opt; do
+while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -50,6 +50,7 @@ while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxyz opt; do
 	V) PROJECT=virtacoin ;;
 	X) PROJECT=cryptonite ;;
 	x) PROJECT=dirac ;;
+	Y) PROJECT=lithium ;;
 	y) PROJECT=vertcoin ;;
 	z) PROJECT=ExclusiveCoin ;;
     esac
@@ -112,6 +113,9 @@ case $PROJECT in
 	;;
     litecoin)
 	GITURL=https://github.com/litecoin-project/litecoin.git	
+	;;
+    lithium)
+	GITURL=https://github.com/lithiumcoin/lithium
 	;;
     maxcoin)
 	GITURL=https://github.com/Max-Coin/maxcoin
