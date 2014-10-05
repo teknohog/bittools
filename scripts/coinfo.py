@@ -621,7 +621,7 @@ rpcport = {
     "ExclusiveCoin": "22621",
     "GroestlCoin": "1441",
     "litecoin": "9332",
-    "lithium": "12007",
+    "lithium": "12000",
     "maxcoin": "8669",
     "namecoin": "8332",
     "photon": "74532",
