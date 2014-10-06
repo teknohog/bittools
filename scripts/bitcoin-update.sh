@@ -305,15 +305,12 @@ case $PROJECT in
 	
 	BINARY="${PROJECT}d ${PROJECT}-cli"
 	;;
-    ExclusiveCoin)
-	cd src
-
-	if [ ! -d obj/zerocoin ]; then
-	    mkdir -p obj/zerocoin
-	fi
-	;;
     *)
 	cd src
+
+	if [ "$PROJECT" == "ExclusiveCoin"] && [ ! -d obj/zerocoin ]; then
+	    mkdir -p obj/zerocoin
+	fi
 	
 	# Some implementations are missing executable perms
 	LDB=leveldb/build_detect_platform
