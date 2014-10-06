@@ -308,7 +308,7 @@ case $PROJECT in
     *)
 	cd src
 
-	if [ "$PROJECT" == "ExclusiveCoin"] && [ ! -d obj/zerocoin ]; then
+	if [ "$PROJECT" == "ExclusiveCoin" ] && [ ! -d obj/zerocoin ]; then
 	    mkdir -p obj/zerocoin
 	fi
 	
