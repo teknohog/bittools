@@ -83,7 +83,7 @@ def blockreward(coin, diff, blocks):
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
         return int(99900. / diff**2) / 100.
-    elif coin in ["blakecoin", "lithium", "photon"]:
+    elif coin in ["blakecoin", "photon"]:
         return initcoins[coin] + round((blocks * diff * 256)**0.5) * 1e-8
     elif coin == "darkcoin":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
@@ -583,7 +583,6 @@ initcoins = {
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
-    "lithium": 48,
     "photon": 32768,
     "primio": 50,
     "riecoin": 50,
@@ -604,6 +603,8 @@ reward_stairs = {
                  [500000, 250000, 125000, 62500, 31250, 15625, 10000]),
     "electron": ([0, 525600],
                  [20, 10]),
+    "lithium": ([0, 2000],
+                [0.48, 48]),
 }
 
 rpcport = {
