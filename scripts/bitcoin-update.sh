@@ -74,7 +74,7 @@ case $PROJECT in
     bitmonero)
 	GITURL=https://github.com/monero-project/bitmonero
 	# For install only
-	BINARY="bitmonerod simplewallet simpleminer"
+	BINARY="connectivity_tool bitmonerod simplewallet simpleminer"
 	;;
     boolberry)
 	GITURL=https://github.com/cryptozoidberg/boolberry
@@ -265,7 +265,12 @@ EOF
 fi
 
 case $PROJECT in
-    bitmonero|boolberry*)
+    bitmonero)
+	nice make $MAKEOPTS CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+
+	cd build/release/bin
+	;;
+    boolberry*)
 	if [ -z "`grep Boost_LIBRARIES CMakeLists.txt | grep pthread`" ]; then
 	    # undefined reference to symbol
 	    # 'pthread_mutexattr_settype@@GLIBC_2.2.5' -- fix borrowed
