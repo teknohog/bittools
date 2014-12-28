@@ -134,6 +134,9 @@ case $PROJECT in
 	#GITURL=https://github.com/Chemisist/primecoin.git
 	#GITURL=https://github.com/mikaelh2/primecoin.git
 	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
+	# OpenCL alternative
+	#GITURL=https://github.com/madMAx43v3r/xpmserver
+	#BINARY=primecoind
 	;;
     primio)
 	GITURL=https://github.com/Primio/Primio
@@ -266,28 +269,23 @@ fi
 
 case $PROJECT in
     bitmonero)
-	nice make $MAKEOPTS CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	# Custom compilers are sometimes problematic here, and
+	# ccache/distcc don't seem to take effect anyway
+	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/bin
 	;;
     boolberry*)
-	if [ -z "`grep Boost_LIBRARIES CMakeLists.txt | grep pthread`" ]; then
-	    # undefined reference to symbol
-	    # 'pthread_mutexattr_settype@@GLIBC_2.2.5' -- fix borrowed
-	    # from Monero
-	    sed -i 's/set(Boost_LIBRARIES.*/set(Boost_LIBRARIES "${Boost_LIBRARIES};rt;pthread")/' CMakeLists.txt
-	fi
-
-	# "# Note that at the time of this writing the
-	# -Wstrict-prototypes flag added below will make this fail"
-	sed -i 's/find_package(Threads REQUIRED)//' CMakeLists.txt
-
 	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
 
-	# Custom compilers are sometimes problematic here, and
-	# ccache/distcc don't seem to take effect anyway
-	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
-	nice make $MAKEOPTS CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	sed -i 's/option (UPNPC_BUILD_STATIC "Build static library" TRUE)/option (UPNPC_BUILD_STATIC "Build static library" FALSE)/' contrib/miniupnpc/CMakeLists.txt
+
+	# warning "_BSD_SOURCE and _SVID_SOURCE are deprecated, use _DEFAULT_SOURCE"
+	sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' contrib/miniupnpc/CMakeLists.txt
+	
+	# As in bitmonero
+	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
 	;;
