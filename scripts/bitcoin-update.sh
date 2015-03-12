@@ -289,7 +289,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-     cryptonite|dogecoin|virtacoin)
+     cryptonite|dogecoin|riecoin|virtacoin)
 	sh autogen.sh
 
 	if [ $PROJECT == "dogecoin" ]; then
