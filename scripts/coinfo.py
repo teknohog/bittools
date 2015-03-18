@@ -80,6 +80,10 @@ def blockreward(coin, diff, blocks):
         # "The block reward for a work block is sqrt(sqrt(9999^4 /
         # difficulty)), rounded down to the next cent boundary."
         return int(999900. / diff**0.25) / 100.
+    elif coin == "gapcoin":
+        #  /* nSubsidy = ((nDifficulty / 2^27) * 10^8) / 2^21 */ with halving
+        i = diff / 2**27 * 1e8
+        return exp_decay(i, blocks, 420000)
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
         return int(99900. / diff**2) / 100.
@@ -382,6 +386,8 @@ parser.add_option("-E", "--electron", action="store_const", const="electron", de
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
+parser.add_option("-F", "--gapcoin", action="store_const", const="gapcoin", dest="coin", default="bitcoin", help="Connect to gapcoind")
+
 parser.add_option("-G", "--GroestlCoin", action="store_const", const="GroestlCoin", dest="coin", default="bitcoin", help="Connect to GroestlCoind")
 
 parser.add_option("-g", "--ShibeCoin", action="store_const", const="ShibeCoin", dest="coin", default="bitcoin", help="Connect to ShibeCoind")
@@ -465,6 +471,7 @@ currency = {
     "electron": "ELT",
     "ExclusiveCoin": "EXCL",
     "GroestlCoin": "GRS",
+    "gapcoin": "GAP",
     "litecoin": "LTC",
     "lithium": "LIT",
     "maxcoin": "MAX",
@@ -521,6 +528,7 @@ blocksperhour = {
     "electron": 60,
     "ExclusiveCoin": 90,
     "GroestlCoin": 60,
+    "gapcoin": 24,
     "litecoin": 24,
     "lithium": 20,
     "maxcoin": 120,
@@ -552,6 +560,7 @@ adjustblocks = {
     "ecoin": 100,
     "electron": 0, # ?
     "ExclusiveCoin": 0,
+    "gapcoin": 0,
     "GroestlCoin": 0,
     "litecoin": 2016,
     "lithium": 20,
@@ -621,6 +630,7 @@ rpcport = {
     "electron": "6852", 
     "ExclusiveCoin": "22621",
     "GroestlCoin": "1441",
+    "gapcoin": "31397",
     "litecoin": "9332",
     "lithium": "12000",
     "maxcoin": "8669",
@@ -724,6 +734,8 @@ else:
 
         if options.verbose:
             output.append(["blocksperday", str(hashrate)])
+    elif coin == "gapcoin":
+        hashrate = s.getprimespersec()
     elif coin in ["litecoin", "ExclusiveCoin"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available

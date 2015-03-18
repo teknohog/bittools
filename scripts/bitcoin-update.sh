@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=
-while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
+while getopts aBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -26,6 +26,7 @@ while getopts aBCcDEfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
 	c) PROJECT=chncoin ;;
 	D) PROJECT=dogecoin ;;
 	E) PROJECT=electron ;;
+	F) PROJECT=gapcoin ;;
 	f) FORCE=true ;;
 	G) PROJECT=GroestlCoin ;;
 	g) PROJECT=shibecoin ;;
@@ -107,6 +108,9 @@ case $PROJECT in
 	;;
     ExclusiveCoin)
 	GITURL=https://github.com/exclusivecoin/Exclusive
+	;;
+    gapcoin)
+	GITURL=https://github.com/gapcoin/gapcoin
 	;;
     GroestlCoin)
 	GITURL=https://github.com/GroestlCoin/GroestlCoin
@@ -289,7 +293,12 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-     cryptonite|dogecoin|riecoin|virtacoin)
+    cryptonite|dogecoin|gapcoin|riecoin|virtacoin)
+	if [ $PROJECT == "gapcoin" ]; then
+	    git submodule init
+	    git submodule update
+	fi
+	
 	sh autogen.sh
 
 	if [ $PROJECT == "dogecoin" ]; then

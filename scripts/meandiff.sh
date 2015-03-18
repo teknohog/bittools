@@ -38,13 +38,14 @@ function inv_average () {
 POS=false
 SET=false
 PROJECT=bitcoin
-while getopts aBcDEGgHIjKLlMmnOoPpSsUVXxYyz opt; do
+while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVXxYyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
 	D) PROJECT=dogecoin ;;
 	E) PROJECT=electron ;;
+	F) PROJECT=gapcoin ;;
 	G) PROJECT=GroestlCoin ;;
 	g)
 	    PROJECT=shibecoin
@@ -68,6 +69,7 @@ while getopts aBcDEGgHIjKLlMmnOoPpSsUVXxYyz opt; do
 	    ;;
 	S) PROJECT=skeincoin ;;
 	s) SET=true ;;
+	T) PROJECT=Tjcoin ;;
         U) PROJECT=universalmolecule ;;
 	V) PROJECT=virtacoin ;;
 	X) PROJECT=cryptonite ;;
@@ -109,6 +111,9 @@ case $PROJECT in
 	;;
     shibecoin)
 	LOGFILE=~/.ShibeCoin/difflog
+	;;
+    Tjcoin)
+	LOGFILE=~/.TjcoinV2/difflog
 	;;
     *)
 	LOGFILE=~/.$PROJECT/difflog
