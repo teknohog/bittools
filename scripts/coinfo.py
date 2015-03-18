@@ -81,8 +81,9 @@ def blockreward(coin, diff, blocks):
         # difficulty)), rounded down to the next cent boundary."
         return int(999900. / diff**0.25) / 100.
     elif coin == "gapcoin":
-        #  /* nSubsidy = ((nDifficulty / 2^27) * 10^8) / 2^21 */ with halving
-        i = diff / 2**27 * 1e8
+        #  /* nSubsidy = ((nDifficulty / 2^27) * 10^8) / 2^21 */ with
+        #  halving... but this seems correct so far
+        i = diff
         return exp_decay(i, blocks, 420000)
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
