@@ -20,7 +20,7 @@ import sys
 from optparse import OptionParser
 import os.path
 import re
-from math import ceil
+from math import ceil, exp
 from time import ctime
 
 def printlength(s):
@@ -81,10 +81,7 @@ def blockreward(coin, diff, blocks):
         # difficulty)), rounded down to the next cent boundary."
         return int(999900. / diff**0.25) / 100.
     elif coin == "gapcoin":
-        #  /* nSubsidy = ((nDifficulty / 2^27) * 10^8) / 2^21 */ with
-        #  halving... but this seems correct so far
-        i = diff
-        return exp_decay(i, blocks, 420000)
+        return exp_decay(diff, blocks, 420000)
     elif coin == "primecoin":
         # block reward = 999 / diff**2, likewise floored to cent
         return int(99900. / diff**2) / 100.
@@ -764,6 +761,9 @@ if hashrate > 0 and coin != "riecoin":
     elif coin == "cryptonite":
         # Guess based on current network hashrate and difficulty
         time = diff * 2**20 / hashrate
+    elif coin == "gapcoin":
+        # From http://coinia.net/gapcoin/calc.php
+        time = exp(diff) / hashrate
     else:
         time = diff * 2**32 / hashrate
 
