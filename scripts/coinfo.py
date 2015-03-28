@@ -469,7 +469,7 @@ currency = {
     "blakecoin": "BLC",
     "chncoin": "CNC",
     "cryptonite": "XCN",
-    "darkcoin": "DRK",
+    "darkcoin": "DASH",
     "dirac": "XDQ",
     "dogecoin": "DOGE",
     "ecoin": "ECN",
