@@ -334,8 +334,8 @@ def send(address, amount):
     # split over two lines, making the amount less obvious
     print("About to send " + currency[coin] + " " + str(amount) + " to " + address)
 
-    # Warn of potential dupes
-    trans = s.listtransactions()
+    # Warn of potential dupes; sends show up with empty account name
+    trans = s.listtransactions('')
     if len(trans) > 0:
         for item in trans:
             if "address" in item.keys() and address == item["address"]:
