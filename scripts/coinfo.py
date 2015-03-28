@@ -307,9 +307,16 @@ def listreceived():
     
         prettyprint(output)
 
-def listtransactions():
-    trans = s.listtransactions()
+def listtransactions(args):
 
+    # Optional selection by account and number of transactions there.
+    if len(args) == 1:
+        trans = s.listtransactions(args[0])
+    elif len(args) == 2:
+        trans = s.listtransactions(args[0], int(args[1]))
+    else:
+        trans = s.listtransactions()
+        
     if len(trans) > 0:
         output = []
         for item in trans:
@@ -426,7 +433,7 @@ parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this addr
 
 parser.add_option("-T", "--TjcoinV2", action="store_const", const="TjcoinV2", dest="coin", default="bitcoin", help="Connect to Tjcoind")
 
-parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
+parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions, optionally filtered by account name (e.g. '' for generates), and optional number (default 10)")
 
 parser.add_option("-U", "--universalmolecule", action="store_const", const="universalmolecule", dest="coin", default="bitcoin", help="Connect to universalmoleculed")
 
@@ -692,7 +699,7 @@ if options.sendto:
     sys.exit()
 
 if options.transactions:
-    listtransactions()
+    listtransactions(args)
     sys.exit()
 
 info = s.getinfo()
