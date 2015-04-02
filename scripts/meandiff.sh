@@ -54,7 +54,7 @@ while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVXxYyz opt; do
         H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
 	j) PROJECT=primio ;;
-	K) PROJECT=darkcoin ;;
+	K) PROJECT=dash ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
 	M) PROJECT=bitmonero ;;

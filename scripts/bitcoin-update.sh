@@ -33,7 +33,7 @@ while getopts aBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
 	H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
 	j) PROJECT=primio ;;
-	K) PROJECT=darkcoin ;;
+	K) PROJECT=dash ;;
 	k) PROJECT=blakebitcoin ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
@@ -94,7 +94,7 @@ case $PROJECT in
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
 	GITURL=https://github.com/RoadTrain/CHNCoin.git
 	;;
-    darkcoin)
+    dash)
 	GITURL=https://github.com/darkcoinproject/darkcoin
 	;;
     dirac)
@@ -293,7 +293,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    cryptonite|dogecoin|gapcoin|riecoin|virtacoin)
+    cryptonite|dash|dogecoin|gapcoin|riecoin|virtacoin)
 	if [ $PROJECT == "gapcoin" ]; then
 	    git submodule init
 	    git submodule update

@@ -87,7 +87,7 @@ def blockreward(coin, diff, blocks):
         return int(99900. / diff**2) / 100.
     elif coin in ["blakecoin", "photon"]:
         return initcoins[coin] + round((blocks * diff * 256)**0.5) * 1e-8
-    elif coin == "darkcoin":
+    elif coin == "dash":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
     elif coin == "GroestlCoin":
         return groestl_reward(blocks)
@@ -405,7 +405,7 @@ parser.add_option("-i", "--importkeys", dest="importfile", help="Import private 
 
 parser.add_option("-j", "--primio", action="store_const", const="primio", dest="coin", default="bitcoin", help="Connect to primiod")
 
-parser.add_option("-K", "--darkcoin", action="store_const", const="darkcoin", dest="coin", default="bitcoin", help="Connect to darkcoind")
+parser.add_option("-K", "--dash", action="store_const", const="dash", dest="coin", default="bitcoin", help="Connect to dashd")
 
 parser.add_option("-k", "--blakebitcoin", action="store_const", const="blakebitcoin", dest="coin", default="bitcoin", help="Connect to blakebitcoind")
 
@@ -469,7 +469,7 @@ currency = {
     "blakecoin": "BLC",
     "chncoin": "CNC",
     "cryptonite": "XCN",
-    "darkcoin": "DASH",
+    "dash": "DASH",
     "dirac": "XDQ",
     "dogecoin": "DOGE",
     "ecoin": "ECN",
@@ -501,7 +501,7 @@ blockhalve = {
     "bitcoin": 210000,
     "blakebitcoin": 210000,
     "chncoin": 2628000,
-    "darkcoin": 0,
+    "dash": 0,
     "ecoin": 0,
     "ExclusiveCoin": 0, # ?
     "litecoin": 840000,
@@ -526,7 +526,7 @@ blocksperhour = {
     "blakecoin": 20,
     "chncoin": 60,
     "cryptonite": 60,
-    "darkcoin": 24,
+    "dash": 24,
     "dirac": 20,
     "dogecoin": 60,
     "ecoin": 60,
@@ -559,7 +559,7 @@ adjustblocks = {
     "blakecoin": 20,
     "chncoin": 0,
     "cryptonite": 0,
-    "darkcoin": 0,
+    "dash": 0,
     "dirac": 20,
     "dogecoin": 0,
     "ecoin": 100,
@@ -628,7 +628,7 @@ rpcport = {
     "blakecoin": "8772",
     "chncoin": "8108",
     "cryptonite": "8252",
-    "darkcoin": "9998",
+    "dash": "9998",
     "dirac": "74532",
     "dogecoin": "22555",
     "ecoin": "10444",
