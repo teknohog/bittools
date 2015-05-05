@@ -503,7 +503,6 @@ blockhalve = {
     "chncoin": 2628000,
     "dash": 0,
     "ecoin": 0,
-    "ExclusiveCoin": 0, # ?
     "litecoin": 840000,
     "lithium": 0,
     "maxcoin": 1051200,
@@ -593,7 +592,6 @@ initcoins = {
     "blakebitcoin": 50,
     "chncoin": 88,
     "ecoin": 700,
-    "ExclusiveCoin": 8,
     "maxcoin": 48,
     "namecoin": 50,
     "litecoin": 50,
@@ -617,6 +615,7 @@ reward_stairs = {
                  [500000, 250000, 125000, 62500, 31250, 15625, 10000]),
     "electron": ([0, 525600, 1051200],
                  [20, 10, 5]),
+    "ExclusiveCoin": ([0, 1120706], [8, 4]),
     "lithium": ([0, 2000, 175000, 350000, 525000, 650000, 800000, 975000],
                 [0.48, 48, 24, 12, 6, 3, 1.5, 1]),
 }
