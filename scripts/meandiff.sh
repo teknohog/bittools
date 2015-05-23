@@ -22,6 +22,11 @@ function average () {
 
 # Profit calculation uses 1/diff, so use 1/(average of 1/diff) instead
 function inv_average () {
+    if $VERBOSE; then
+	cat $LOGFILE
+	echo
+    fi
+    
     TOTAL=0
     # Note the actual number of entries, which may be less than $LINES
     N=0
@@ -38,7 +43,8 @@ function inv_average () {
 POS=false
 SET=false
 PROJECT=bitcoin
-while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVXxYyz opt; do
+VERBOSE=false
+while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvXxYyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -72,6 +78,7 @@ while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVXxYyz opt; do
 	T) PROJECT=Tjcoin ;;
         U) PROJECT=universalmolecule ;;
 	V) PROJECT=virtacoin ;;
+	v) VERBOSE=true ;;
 	X) PROJECT=cryptonite ;;
 	x) PROJECT=dirac ;;
 	Y) PROJECT=lithium ;;
