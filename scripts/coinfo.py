@@ -329,6 +329,17 @@ def listtransactions(args):
 
         prettyprint(output)
 
+def meandiff(coin):
+    # Use meandiff.sh history if available
+    difflog = os.path.expanduser("~/." + coin + "/difflog")
+    if os.path.exists(difflog):
+        l = ReadLines(difflog)
+
+        # inverse of mean 1/diff
+        return len(l) / sum(map(lambda x: 1./float(x), l))
+    else:
+        return 0
+        
 def send(address, amount):
     # Double check the amount and address -- the command line may be
     # split over two lines, making the amount less obvious
@@ -721,6 +732,11 @@ else:
         # Print PoW diff only for simpler parsing on external scripts
         info['difficulty'] = diff
 
+    md = meandiff(coin)
+    if md > 0:
+        keys.append('meandiff')
+        info['meandiff'] = md
+    
 output = []
 for key in keys:
     output.append([key, str(info[key])])
@@ -762,6 +778,9 @@ if options.verbose:
 output = []
 
 if hashrate > 0 and coin != "riecoin":
+    if 'meandiff' in info.keys():
+        diff = info['meandiff']
+    
     if coin == "primecoin":
         time = 86400. / hashrate
     elif coin == "cryptonite":
