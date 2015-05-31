@@ -35,10 +35,11 @@ coinfo.py
 =========
 
 A simplified command-line interface to some of the functions of
-*coind. To communicate with the daemon it uses python-jsonrpc which
-can be downloaded here:
+*coind. To communicate with the daemon it uses jsonrpclib from 
 
-http://json-rpc.org/wiki/python-json-rpc
+https://github.com/joshmarshall/jsonrpclib
+
+which is also available in Linux distributions.
 
 By default, the script connects to your locally running *coind,
 using credentials found in ~/.bitcoin/bitcoin.conf.

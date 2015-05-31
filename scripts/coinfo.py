@@ -14,8 +14,9 @@
 # ~/.bitcoin/bitcoin.conf and this connects to localhost. Or provide
 # another complete URL.
 
-# module installed via svn from http://json-rpc.org/wiki/python-json-rpc
-from jsonrpc import ServiceProxy
+# https://github.com/joshmarshall/jsonrpclib
+from jsonrpclib import Server
+
 import sys
 from optparse import OptionParser
 import os.path
@@ -677,7 +678,7 @@ else:
 
     url = "http://" + settings['rpcuser'] + ":" + settings['rpcpassword'] + "@127.0.0.1:" + settings['rpcport'] + "/"
 
-s = ServiceProxy(url)
+s = Server(url)
 
 if options.byaccount:
     for addr in s.getaddressesbyaccount(options.byaccount):
