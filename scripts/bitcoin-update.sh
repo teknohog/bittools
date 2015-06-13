@@ -276,6 +276,11 @@ case $PROJECT in
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway
 	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+
+	# This needs to be cleared if the DB path changes
+	rm build/release/CMakeCache.txt
+	sed -i "s|/usr/include/db.*|$DB_INCPATH|" cmake/FindBerkeleyDB.cmake
+	
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/bin
