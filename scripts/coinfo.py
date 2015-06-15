@@ -330,6 +330,21 @@ def listtransactions(args):
 
         prettyprint(output)
 
+def linear_regression(x, y):
+    n = len(x)
+    sx = sum(x)
+    sy = sum(y)
+    sx2 = sum(map(lambda z: z**2, x))
+    sy2 = sum(map(lambda z: z**2, y))
+    sxy = sum(map(lambda a, b: a*b, x, y))
+
+    b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
+    a = (sy - b*sx) / n
+
+    r = (n*sxy - sx*sy) / ((n*sx2 - sx**2)*(n*sy2 - sy**2))**0.5
+
+    return (a, b, r)
+    
 def meandiff(coin):
     # Use meandiff.sh history if available
     difflog = os.path.expanduser("~/." + coin + "/difflog")
@@ -337,7 +352,21 @@ def meandiff(coin):
         l = ReadLines(difflog)
 
         # inverse of mean 1/diff
-        return len(l) / sum(map(lambda x: 1./float(x), l))
+        #return len(l) / sum(map(lambda x: 1./float(x), l))
+
+        # Meandiff was originally about smoothing random
+        # variations. However, if the diff is obviously
+        # increasing/decreasing, use that for prediction. If not, this
+        # performs the smoothing anyway.
+        y = map(float, l)
+
+        # The diffs are collected at equal intervals -- for now
+        x = range(len(y))
+
+        abr = linear_regression(x, y)
+
+        # Nearest future estimate
+        return abr[0] + abr[1] * len(y)
     else:
         return 0
         
