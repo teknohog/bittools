@@ -7,19 +7,6 @@
 
 LINES=10
 
-function average () {
-    TOTAL=0
-    # Note the actual number of entries, which may be less than $LINES
-    N=0
-
-    for LINE in `tail -n $LINES $LOGFILE`; do
-	TOTAL=`echo $TOTAL + $LINE | bc -l`
-	N=$((++N))
-    done
-
-    echo $TOTAL / $N | bc -l
-}
-
 # Profit calculation uses 1/diff, so use 1/(average of 1/diff) instead
 function inv_average () {
     if $VERBOSE; then
@@ -27,18 +14,13 @@ function inv_average () {
 	echo
     fi
     
-    TOTAL=0
     # Note the actual number of entries, which may be less than $LINES
-    N=0
 
-    for LINE in `tail -n $LINES $LOGFILE`; do
-	TOTAL=`echo $TOTAL + 1 / $LINE | bc -l`
-	N=$((++N))
-    done
+    N=$(tail -n $LINES $LOGFILE | wc -l)
+    TOTAL=$(tail -n $LINES $LOGFILE | awk '{total = total + 1/$1}END{print total}')
 
     echo $N / $TOTAL | bc -l
 }
-
 
 POS=false
 SET=false
@@ -127,7 +109,26 @@ case $PROJECT in
 	;;
 esac
 
-CMD=~/distr.projects/$PROJECT-git/${PROJECT}d
+# from bitcoin-backup.sh
+# *-cli binary is preferred to *d. For example, in Bitcoin 0.10.0 the
+# daemon no longer works as an RPC client.
+
+for DIR in ${HOME}/distr.projects/${PROJECT}-git /usr/bin; do
+    for BIN in ${PROJECT}-cli ${PROJECT}d; do
+	if [ -x "$DIR/$BIN" ]; then
+	    CMD=$DIR/$BIN
+	    break
+	fi
+    done
+    # Break out from the outer loop
+    if [ -x "$CMD" ]; then
+	break
+    fi
+done
+
+if [ ! -x "$CMD" ]; then
+    exit 0
+fi
 
 if $SET; then
     # top up the logfile
