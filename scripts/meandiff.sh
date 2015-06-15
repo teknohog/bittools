@@ -17,9 +17,9 @@ function inv_average () {
     # Note the actual number of entries, which may be less than $LINES
 
     N=$(tail -n $LINES $LOGFILE | wc -l)
-    TOTAL=$(tail -n $LINES $LOGFILE | awk '{total = total + 1/$1}END{print total}')
+    TOTAL=$(tail -n $LINES $LOGFILE | awk '{total = total + 1/$2}END{print total}')
 
-    echo $N / $TOTAL | bc -l
+    echo $N $TOTAL | awk '{print $1 / $2}'
 }
 
 POS=false
@@ -134,12 +134,16 @@ if $SET; then
     # top up the logfile
     if $POS; then
 	# Get the PoW entry from a mixed PoS/PoW coin
-	$CMD getdifficulty | grep work | \
-	    sed -Ee 's/.* ([0-9]+\.[0-9]+),.*/\1/' >> $LOGFILE
+	DIFF=$($CMD getdifficulty | grep work | \
+		      sed -Ee 's/.* ([0-9]+\.[0-9]+),.*/\1/')
     else
-	$CMD getdifficulty >> $LOGFILE
+	DIFF=$($CMD getdifficulty)
     fi
 
+    TIME=$(date +%s)
+    
+    echo $TIME $DIFF >> $LOGFILE
+    
     # and prune it
     tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE
 else

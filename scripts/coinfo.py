@@ -22,7 +22,7 @@ from optparse import OptionParser
 import os.path
 import re
 from math import ceil, exp
-from time import ctime
+from time import ctime, time
 
 def printlength(s):
     # get rid of newlines for the printable length calculation
@@ -330,13 +330,22 @@ def listtransactions(args):
 
         prettyprint(output)
 
-def linear_regression(x, y):
-    n = len(x)
-    sx = sum(x)
-    sy = sum(y)
-    sx2 = sum(map(lambda z: z**2, x))
-    sy2 = sum(map(lambda z: z**2, y))
-    sxy = sum(map(lambda a, b: a*b, x, y))
+def linear_regression(pairs):
+    # Data usually comes in x, y pairs, so choose it as my input format
+    
+    # There should be something clever with zip() etc. but I can't
+    # get it working now :-/
+    xy = [[], []]
+    for p in pairs:
+        for i in [0, 1]:
+            xy[i].append(float(p[i]))
+
+    n = len(xy[0])
+    sx = sum(xy[0])
+    sy = sum(xy[1])
+    sx2 = sum(map(lambda z: z**2, xy[0]))
+    sy2 = sum(map(lambda z: z**2, xy[1]))
+    sxy = sum(map(lambda a, b: a*b, xy[0], xy[1]))
 
     b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
     a = (sy - b*sx) / n
@@ -351,22 +360,18 @@ def meandiff(coin):
     if os.path.exists(difflog):
         l = ReadLines(difflog)
 
-        # inverse of mean 1/diff
-        #return len(l) / sum(map(lambda x: 1./float(x), l))
-
         # Meandiff was originally about smoothing random
         # variations. However, if the diff is obviously
         # increasing/decreasing, use that for prediction. If not, this
         # performs the smoothing anyway.
-        y = map(float, l)
 
-        # The diffs are collected at equal intervals -- for now
-        x = range(len(y))
+        # difflog now contains time, diff pairs
+        pairs = map(lambda a: a.split(), l)
+                
+        abr = linear_regression(pairs)
 
-        abr = linear_regression(x, y)
-
-        # Nearest future estimate
-        return abr[0] + abr[1] * len(y)
+        # Estimate a current diff
+        return abr[0] + abr[1] * time()
     else:
         return 0
         
