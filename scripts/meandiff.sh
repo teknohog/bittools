@@ -29,9 +29,9 @@ function lin_reg () {
 	echo
     fi
     
-    # Linear regression
-    AB=$(tail -n $LINES $LOGFILE | \
-		   awk '{n = n + 1
+    # Linear regression to estimate a current diff
+    tail -n $LINES $LOGFILE | \
+	awk '{n = n + 1
 sx = sx + $1
 sy = sy + $2
 sxy = sxy + $1*$2
@@ -39,10 +39,7 @@ sx2 = sx2 + $1**2
 sy2 = sy2 + $2**2}
 END{b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
 a = (sy - b*sx) / n
-print a, b}')
-
-    # Estimate a current diff
-    echo $AB $(date +%s) | awk '{print $1 + $2*$3}'
+print a + b*systime()}'
 }
 
 POS=false
