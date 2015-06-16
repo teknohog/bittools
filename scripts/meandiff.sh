@@ -7,19 +7,42 @@
 
 LINES=10
 
-# Profit calculation uses 1/diff, so use 1/(average of 1/diff) instead
+# This is still used by Cryptonote coins with their different log
+# format
 function inv_average () {
     if $VERBOSE; then
 	cat $LOGFILE
 	echo
     fi
-    
-    # Note the actual number of entries, which may be less than $LINES
 
+    # Note the actual number of entries, which may be less than $LINES
+    
     N=$(tail -n $LINES $LOGFILE | wc -l)
-    TOTAL=$(tail -n $LINES $LOGFILE | awk '{total = total + 1/$2}END{print total}')
+    TOTAL=$(tail -n $LINES $LOGFILE | awk '{total = total + 1/$1}END{print total}')
 
     echo $N $TOTAL | awk '{print $1 / $2}'
+}
+
+function lin_reg () {
+    if $VERBOSE; then
+	cat $LOGFILE
+	echo
+    fi
+    
+    # Linear regression
+    AB=$(tail -n $LINES $LOGFILE | \
+		   awk '{n = n + 1
+sx = sx + $1
+sy = sy + $2
+sxy = sxy + $1*$2
+sx2 = sx2 + $1**2
+sy2 = sy2 + $2**2}
+END{b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
+a = (sy - b*sx) / n
+print a, b}')
+
+    # Estimate a current diff
+    echo $AB $(date +%s) | awk '{print $1 + $2*$3}'
 }
 
 POS=false
@@ -147,6 +170,6 @@ if $SET; then
     # and prune it
     tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE
 else
-    inv_average
+    lin_reg
 fi
 
