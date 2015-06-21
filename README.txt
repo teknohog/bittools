@@ -47,6 +47,12 @@ using credentials found in ~/.bitcoin/bitcoin.conf.
 The script is fairly self-documenting with the -h or --help option.
 
 
+cnfo.py
+=======
+
+A work in progress to replicate coinfo.py for Cryptonote coins.
+
+
 Info examples
 -------------
 

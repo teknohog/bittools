@@ -7,22 +7,6 @@
 
 LINES=10
 
-# This is still used by Cryptonote coins with their different log
-# format
-function inv_average () {
-    if $VERBOSE; then
-	cat $LOGFILE
-	echo
-    fi
-
-    # Note the actual number of entries, which may be less than $LINES
-    
-    N=$(tail -n $LINES $LOGFILE | wc -l)
-    TOTAL=$(tail -n $LINES $LOGFILE | awk '{total = total + 1/$1}END{print total}')
-
-    echo $N $TOTAL | awk '{print $1 / $2}'
-}
-
 function lin_reg () {
     if $VERBOSE; then
 	cat $LOGFILE
@@ -40,6 +24,33 @@ sy2 = sy2 + $2**2}
 END{b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
 a = (sy - b*sx) / n
 print a + b*systime()}'
+}
+
+function find_cmd () {
+    # No need to search this every time, only when we actually need the cmd
+    
+    # from bitcoin-backup.sh
+    # *-cli binary is preferred to *d. For example, in Bitcoin 0.10.0 the
+    # daemon no longer works as an RPC client.
+    
+    for DIR in ${HOME}/distr.projects/${PROJECT}-git /usr/bin; do
+	for BIN in ${PROJECT}-cli ${PROJECT}d; do
+	    if [ -x "$DIR/$BIN" ]; then
+		CMD=$DIR/$BIN
+		break
+	    fi
+	done
+	# Break out from the outer loop
+	if [ -x "$CMD" ]; then
+	    break
+	fi
+    done
+    
+    if [ ! -x "$CMD" ]; then
+	exit 0
+    fi
+
+    echo $CMD
 }
 
 POS=false
@@ -68,8 +79,11 @@ while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvXxYyz opt; do
 	M) PROJECT=bitmonero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
-	O) PROJECT=boolberry-opencl ;;
-	o) PROJECT=boolberry ;;
+	O|o)
+	    # The -O distinction for boolberry-opencl only matters for
+	    # building binaries
+	    PROJECT=boolberry
+	    ;;
 	P) PROJECT=primecoin ;;
 	p)
 	    PROJECT=ppcoin
@@ -93,27 +107,8 @@ while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvXxYyz opt; do
 done
 
 case $PROJECT in
-    bitmonero|boolberry*)
-	BINDIR=${HOME}/distr.projects/${PROJECT}-git
-	
-	# Original project logs contain the difficulties, so there is
-	# no need to collect these separately.
-
-	if [ -n "`echo $PROJECT | grep boolberry`" ]; then
-	    URLOG=boolbd.log
-	else
-	    URLOG=${PROJECT}d.log
-	fi
-	
-	# Numbers for the averaging function
-	LOGFILE=`mktemp`
-
-	grep "difficulty:.*[0-9]\+$" $BINDIR/$URLOG | tail -n $LINES | \
-	    sed -e 's/.*difficulty:[[:space:]]\+\([0-9]\+\)$/\1/' > $LOGFILE
-
-	inv_average
-	rm $LOGFILE
-	exit
+    boolberry)
+	LOGFILE=~/.boolb/difflog
 	;;
     Slothcoin)
 	LOGFILE=~/.SlothCoin/difflog
@@ -129,36 +124,28 @@ case $PROJECT in
 	;;
 esac
 
-# from bitcoin-backup.sh
-# *-cli binary is preferred to *d. For example, in Bitcoin 0.10.0 the
-# daemon no longer works as an RPC client.
-
-for DIR in ${HOME}/distr.projects/${PROJECT}-git /usr/bin; do
-    for BIN in ${PROJECT}-cli ${PROJECT}d; do
-	if [ -x "$DIR/$BIN" ]; then
-	    CMD=$DIR/$BIN
-	    break
-	fi
-    done
-    # Break out from the outer loop
-    if [ -x "$CMD" ]; then
-	break
-    fi
-done
-
-if [ ! -x "$CMD" ]; then
-    exit 0
-fi
-
 if $SET; then
     # top up the logfile
-    if $POS; then
-	# Get the PoW entry from a mixed PoS/PoW coin
-	DIFF=$($CMD getdifficulty | grep work | \
-		      sed -Ee 's/.* ([0-9]+\.[0-9]+),.*/\1/')
-    else
-	DIFF=$($CMD getdifficulty)
-    fi
+    case $PROJECT in
+	bitmonero|boolberry)
+	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
+	    ;;
+	*)
+	    # Note: we could just use coinfo.py similarly here, but
+	    # the old binary way is faster, which makes a difference
+	    # when used dozens of times a day per coin.
+	    
+	    CMD=$(find_cmd)
+	    
+	    if $POS; then
+		# Get the PoW entry from a mixed PoS/PoW coin
+		DIFF=$($CMD getdifficulty | grep work | \
+			      sed -Ee 's/.* ([0-9]+\.[0-9]+),.*/\1/')
+	    else
+		DIFF=$($CMD getdifficulty)
+	    fi
+	    ;;
+    esac
 
     TIME=$(date +%s)
     
