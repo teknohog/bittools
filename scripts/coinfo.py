@@ -350,9 +350,9 @@ def linear_regression(pairs):
     b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
     a = (sy - b*sx) / n
 
-    r = (n*sxy - sx*sy) / ((n*sx2 - sx**2)*(n*sy2 - sy**2))**0.5
+    #r = (n*sxy - sx*sy) / ((n*sx2 - sx**2)*(n*sy2 - sy**2))**0.5
 
-    return (a, b, r)
+    return (a, b)
     
 def meandiff(coin):
     # Use meandiff.sh history if available
@@ -368,10 +368,10 @@ def meandiff(coin):
         # difflog now contains time, diff pairs
         pairs = map(lambda a: a.split(), l)
                 
-        abr = linear_regression(pairs)
+        ab = linear_regression(pairs)
 
         # Estimate a current diff
-        return abr[0] + abr[1] * time()
+        return ab[0] + ab[1] * time()
     else:
         return 0
         
