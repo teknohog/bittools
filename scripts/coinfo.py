@@ -365,6 +365,9 @@ def meandiff(coin):
         # increasing/decreasing, use that for prediction. If not, this
         # performs the smoothing anyway.
 
+        if len(l) < 2:
+            return 0
+
         # difflog now contains time, diff pairs
         pairs = map(lambda a: a.split(), l)
                 
