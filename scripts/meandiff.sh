@@ -147,12 +147,14 @@ if $SET; then
 	    ;;
     esac
 
-    TIME=$(date +%s)
+    # don't ruin the difflog if we have problems
+    if [ -n "$DIFF" ]; then
+	TIME=$(date +%s)
+	echo $TIME $DIFF >> $LOGFILE
     
-    echo $TIME $DIFF >> $LOGFILE
-    
-    # and prune it
-    tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE
+	# prune
+	tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE
+    fi
 else
     lin_reg
 fi
