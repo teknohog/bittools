@@ -794,9 +794,10 @@ else:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
         hashrate = s.getprimespersec()
-    elif coin in ["litecoin", "ExclusiveCoin"]:
+    elif coin in ["bitcoin", "litecoin", "ExclusiveCoin"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available
+        # Bitcoin: removed in 0.11.0
         hashrate = 0
     else:
         hashrate = s.gethashespersec()
