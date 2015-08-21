@@ -637,7 +637,7 @@ adjustblocks = {
 initcoins = {
     "AuroraCoin": 25,
     "bitcoin": 50,
-    "blakecoin": 50,
+    "blakecoin": 25,
     "blakebitcoin": 50,
     "chncoin": 88,
     "ecoin": 700,
