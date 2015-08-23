@@ -298,7 +298,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    cryptonite|dash|dogecoin|gapcoin|riecoin|skeincoin|virtacoin)
+    cryptonite|dash|dogecoin|gapcoin|litecoin|riecoin|skeincoin|virtacoin)
 	if [ $PROJECT == "gapcoin" ]; then
 	    git submodule init
 	    git submodule update
