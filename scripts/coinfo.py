@@ -321,7 +321,7 @@ def listtransactions(args):
     if len(trans) > 0:
         output = []
         for item in trans:
-            unconfirmed = item["confirmations"] < int(options.min_confirm) or item["category"] == "immature"
+            unconfirmed = item["confirmations"] < 1 or item["category"] == "immature"
             if "address" in item.keys():
                 address = item["address"]
             else:
@@ -427,8 +427,6 @@ parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by
 parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin", default="bitcoin", help="Connect to bitcoind")
 
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
-
-parser.add_option("-C", "--confirmations", dest="min_confirm", default=1, help="Warn when there are fewer confirmations for a transaction, default 1")
 
 parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
 
