@@ -2,10 +2,7 @@
 
 # by teknohog for simpler POS payment using URL / QR code from systems
 # like Bitpay. This parses the address and amount from the QR code and
-# calls coinfo.py, which does its thing including verification.
-
-# The latter works best outside screen, when ssh'ed from the N900, so
-# copy-pasting the verification code works.
+# calls the RPC client such as bitcoin-cli.
 
 # Example QR string. I hand-parsed this at a bar to pay a beer
 # directly with coinfo.py, and it's the reason why this helper script
