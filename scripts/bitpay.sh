@@ -32,4 +32,26 @@ else
     AMOUNT=$REPLY
 fi
 
-coinfo.py --$COIN -s $ADDRESS $AMOUNT
+#coinfo.py --$COIN -s $ADDRESS $AMOUNT
+
+# 2015-10-22 Simpler confirmation for mobile use; fewer dependencies
+# on other scripts
+
+# Common coins now prefer -cli as the RPC client
+BIN=${COIN}-cli
+
+for CMD in $(which $BIN) ~/distr.projects/${COIN}-git/$BIN; do
+    if [ -x $CMD ]; then
+	break
+    fi
+done
+    
+if [ ! -x "$CMD" ]; then
+    exit 0
+fi
+    
+echo "Sending $AMOUNT $COIN to $ADDRESS - are you sure? (yes/no)"
+read
+if [ "$REPLY" == "yes" ]; then
+    $CMD sendtoaddress $ADDRESS $AMOUNT
+fi
