@@ -65,7 +65,7 @@ while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvXxYyz opt; do
 	D) PROJECT=dogecoin ;;
 	E) PROJECT=electron ;;
 	F) PROJECT=gapcoin ;;
-	G) PROJECT=GroestlCoin ;;
+	G) PROJECT=groestlcoin ;;
 	g)
 	    PROJECT=shibecoin
 	    POS=true

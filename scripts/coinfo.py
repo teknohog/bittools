@@ -90,7 +90,7 @@ def blockreward(coin, diff, blocks):
         return initcoins[coin] + round((blocks * diff * 256)**0.5) * 1e-8
     elif coin == "dash":
         return max(2222222. / (((diff + 2600.)/9.)**2), 5.0)
-    elif coin == "GroestlCoin":
+    elif coin == "groestlcoin":
         return groestl_reward(blocks)
     elif coin in reward_stairs.keys():
         return staired_reward(blocks, reward_stairs[coin])
@@ -440,7 +440,7 @@ parser.add_option("-e", "--exportkeys", dest="export", action="store_true", defa
 
 parser.add_option("-F", "--gapcoin", action="store_const", const="gapcoin", dest="coin", default="bitcoin", help="Connect to gapcoind")
 
-parser.add_option("-G", "--GroestlCoin", action="store_const", const="GroestlCoin", dest="coin", default="bitcoin", help="Connect to GroestlCoind")
+parser.add_option("-G", "--groestlcoin", action="store_const", const="groestlcoin", dest="coin", default="bitcoin", help="Connect to groestlcoind")
 
 parser.add_option("-g", "--ShibeCoin", action="store_const", const="ShibeCoin", dest="coin", default="bitcoin", help="Connect to ShibeCoind")
 
@@ -522,7 +522,7 @@ currency = {
     "ecoin": "ECN",
     "electron": "ELT",
     "ExclusiveCoin": "EXCL",
-    "GroestlCoin": "GRS",
+    "groestlcoin": "GRS",
     "gapcoin": "GAP",
     "litecoin": "LTC",
     "lithium": "LIT",
@@ -578,7 +578,7 @@ blocksperhour = {
     "ecoin": 60,
     "electron": 60,
     "ExclusiveCoin": 90,
-    "GroestlCoin": 60,
+    "groestlcoin": 60,
     "gapcoin": 24,
     "litecoin": 24,
     "lithium": 20,
@@ -612,7 +612,7 @@ adjustblocks = {
     "electron": 0, # ?
     "ExclusiveCoin": 0,
     "gapcoin": 0,
-    "GroestlCoin": 0,
+    "groestlcoin": 0,
     "litecoin": 2016,
     "lithium": 20,
     "maxcoin": 0,
@@ -680,7 +680,7 @@ rpcport = {
     "ecoin": "10444",
     "electron": "6852", 
     "ExclusiveCoin": "22621",
-    "GroestlCoin": "1441",
+    "groestlcoin": "1441",
     "gapcoin": "31397",
     "litecoin": "9332",
     "lithium": "12000",

@@ -28,7 +28,7 @@ while getopts aBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
 	E) PROJECT=electron ;;
 	F) PROJECT=gapcoin ;;
 	f) FORCE=true ;;
-	G) PROJECT=GroestlCoin ;;
+	G) PROJECT=groestlcoin ;;
 	g) PROJECT=shibecoin ;;
 	H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
@@ -112,8 +112,8 @@ case $PROJECT in
     gapcoin)
 	GITURL=https://github.com/gapcoin/gapcoin
 	;;
-    GroestlCoin)
-	GITURL=https://github.com/GroestlCoin/GroestlCoin
+    groestlcoin)
+	GITURL=https://github.com/GroestlCoin/groestlcoin
 	;;
     litecoin)
 	GITURL=https://github.com/litecoin-project/litecoin.git	
@@ -298,7 +298,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    cryptonite|dash|dogecoin|gapcoin|litecoin|riecoin|skeincoin|virtacoin)
+    cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin)
 	if [ $PROJECT == "gapcoin" ]; then
 	    git submodule init
 	    git submodule update
