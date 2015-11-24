@@ -23,7 +23,9 @@ sx2 = sx2 + $1**2
 sy2 = sy2 + $2**2}
 END{b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
 a = (sy - b*sx) / n
-print a + b*systime()}'
+estimate = a + b*systime()
+print "pct_hourly " b/estimate * 3600 * 100
+print "estimate " estimate}'
 }
 
 function find_cmd () {
