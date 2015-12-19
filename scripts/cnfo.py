@@ -57,12 +57,12 @@ def coin_price(coin):
     # http://stackoverflow.com/questions/12965203/how-to-get-json-from-webpage-into-python-script
     import urllib, json
 
-    response = urllib.urlopen(cn_url);
-    data = json.loads(response.read())
+    try:
+        response = urllib.urlopen(cn_url);
+        data = json.loads(response.read())
 
-    if "ticker" in data.keys():
         return float(data["ticker"]["price"])
-    else:
+    except:
         return 0
 
 def ReadLines(f):
