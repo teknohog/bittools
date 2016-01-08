@@ -88,7 +88,12 @@ def linear_regression(pairs):
     sy2 = sum(map(lambda z: z**2, xy[1]))
     sxy = sum(map(lambda a, b: a*b, xy[0], xy[1]))
 
-    b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
+    # In case of constant y, this makes div by zero error, and should be zero
+    if n*sx2 != sx**2:
+        b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
+    else:
+        b = 0
+
     a = (sy - b*sx) / n
 
     #r = (n*sxy - sx*sy) / ((n*sx2 - sx**2)*(n*sy2 - sy**2))**0.5
