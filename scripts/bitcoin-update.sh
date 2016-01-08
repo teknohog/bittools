@@ -17,7 +17,7 @@
 CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
-UPNP=
+UPNP=- # 0 means build with the lib, but don't start by default
 while getopts aBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
@@ -312,6 +312,10 @@ case $PROJECT in
 	    EXTRACONFIG=""
 	fi
 
+	if [ -z "echo $UPNP | grep [01]" ]; then
+	    EXTRACONFIG="$EXTRACONFIG --without-miniupnpc"
+	fi
+	
 	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS" $EXTRACONFIG
 
 	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
