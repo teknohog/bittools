@@ -19,38 +19,11 @@ from jsonrpclib import Server
 
 import sys
 from optparse import OptionParser
-import os.path
 import re
 from math import ceil, exp
-from time import ctime, time
+from time import ctime
 
-def printlength(s):
-    # get rid of newlines for the printable length calculation
-    return len(s.replace("\n", ""))
-
-def prettyprint(array, delimiter=" "):
-    # I guess this verges on something that should use curses instead
-    columns = len(array[0])
-
-    width = []
-    for column in range(columns):
-        width.append(max(map(lambda x: printlength(x[column]), array)))
-
-    for i in array:
-        print(delimiter.join(map(lambda col: i[col] + " "*(width[col] - printlength(i[col])), range(columns - 1))) + delimiter + i[columns-1])
-
-def timeprint(time):
-    # This is used more generally, so provide the number as a number,
-    # and the unit separately
-
-    if time >= 86400:
-        return [time / 86400, "days"]
-    elif time >= 3600:
-        return [time / 3600, "h"]
-    elif time >= 60:
-        return [time / 60, "min"]
-    else:
-        return [time, "s"]
+from bittools import *
 
 def staired_reward(blocks, reward_stairs):
     (limits, rewards) = reward_stairs
@@ -196,27 +169,6 @@ def parse_config(conffile):
 
     return settings
 
-def coin_price(coin):
-    # Assume EUR as the base price for now
-    cn_url = "https://www.cryptonator.com/api/ticker/" + currency[coin] + "-EUR"
-
-    # http://stackoverflow.com/questions/12965203/how-to-get-json-from-webpage-into-python-script
-    import urllib, json
-
-    try:
-        response = urllib.urlopen(cn_url);
-        data = json.loads(response.read())
-
-        return float(data["ticker"]["price"])
-    except:
-        return 0
-
-def ReadLines(file):
-    File = open(file, "r")
-    contents = File.readlines()
-    File.close()
-    return contents
-
 def exportkeys():
     # Generate addresses are not available via accounts, even though
     # they are listed under the "" account. So this way should get us
@@ -329,59 +281,6 @@ def listtransactions(args):
             output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * address, options.verbose * str(item["confirmations"])])
 
         prettyprint(output)
-
-def linear_regression(pairs):
-    # Data usually comes in x, y pairs, so choose it as my input format
-    
-    # There should be something clever with zip() etc. but I can't
-    # get it working now :-/
-    xy = [[], []]
-    for p in pairs:
-        for i in [0, 1]:
-            xy[i].append(float(p[i]))
-
-    n = len(xy[0])
-    sx = sum(xy[0])
-    sy = sum(xy[1])
-    sx2 = sum(map(lambda z: z**2, xy[0]))
-    sy2 = sum(map(lambda z: z**2, xy[1]))
-    sxy = sum(map(lambda a, b: a*b, xy[0], xy[1]))
-
-    # In case of constant y, this makes div by zero error, and should be zero
-    if n*sx2 != sx**2:
-        b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
-    else:
-        b = 0
-
-    a = (sy - b*sx) / n
-
-    #r = (n*sxy - sx*sy) / ((n*sx2 - sx**2)*(n*sy2 - sy**2))**0.5
-
-    return (a, b)
-    
-def meandiff(coin):
-    # Use meandiff.sh history if available
-    difflog = os.path.expanduser("~/." + coin + "/difflog")
-    if os.path.exists(difflog):
-        l = ReadLines(difflog)
-
-        # Meandiff was originally about smoothing random
-        # variations. However, if the diff is obviously
-        # increasing/decreasing, use that for prediction. If not, this
-        # performs the smoothing anyway.
-
-        if len(l) < 2:
-            return 0
-
-        # difflog now contains time, diff pairs
-        pairs = map(lambda a: a.split(), l)
-                
-        ab = linear_regression(pairs)
-
-        # Estimate a current diff
-        return ab[0] + ab[1] * time()
-    else:
-        return 0
         
 def send(address, amount):
     # Double check the amount and address -- the command line may be
@@ -841,7 +740,7 @@ if hashrate > 0 and coin != "riecoin":
 
     output.append(["Average payout", str(coinsperday) + " " + currency[coin] + "/day"])
 
-    fiatprice = coin_price(coin)    
+    fiatprice = coin_price(currency[coin])    
 
     if fiatprice > 0:
 
