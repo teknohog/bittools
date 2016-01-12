@@ -53,6 +53,12 @@ cnfo.py
 A work in progress to replicate coinfo.py for Cryptonote coins.
 
 
+etherinfo.py
+============
+
+Ditto for Ethereum.
+
+
 Info examples
 -------------
 
