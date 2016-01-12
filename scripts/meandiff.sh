@@ -59,7 +59,7 @@ POS=false
 SET=false
 PROJECT=bitcoin
 VERBOSE=false
-while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvXxYyz opt; do
+while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvwXxYyz opt; do
     case "$opt" in
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
@@ -97,6 +97,7 @@ while getopts aBcDEFGgHIjKLlMmnOoPpSsTUVvXxYyz opt; do
         U) PROJECT=universalmolecule ;;
 	V) PROJECT=virtacoin ;;
 	v) VERBOSE=true ;;
+	w) PROJECT=ethereum ;;
 	X) PROJECT=cryptonite ;;
 	x) PROJECT=dirac ;;
 	Y) PROJECT=lithium ;;
@@ -131,6 +132,9 @@ if $SET; then
     case $PROJECT in
 	bitmonero|boolberry)
 	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
+	    ;;
+	ethereum)
+	    DIFF=$(etherinfo.py | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	*)
 	    # Note: we could just use coinfo.py similarly here, but
