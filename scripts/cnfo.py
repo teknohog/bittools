@@ -104,13 +104,13 @@ output.append(["blockreward", str(blockreward)])
 diff = lasthead["difficulty"]
 output.append(["difficulty", str(diff)])
 
-meandiff = meandiff(options.coin)
-if meandiff > 0:
-    output.append(["meandiff", str(meandiff)])
+md = meandiff(options.coin)
+if md > 0:
+    output.append(["meandiff", str(md)])
 
 if options.hashrate > 0:
-    if meandiff > 0:
-        diff = meandiff
+    if md > 0:
+        diff = md
     
     time = diff / options.hashrate
 

@@ -31,36 +31,31 @@ def get_balance(addr):
 def send(fromaddr, toaddr, amount):
     print("Sending " + str(amount) + " ether to " + toaddr)
 
-    # Make some time for Ctrl-C
-    #for i in range(10, 0, -1):
-    #    print(str(i))
-    #    sleep(1)
-    
+    # Save the balance file after sending. The balance won't be
+    # updated immediately, so estimate this -- will be less due to
+    # transfer fees and whatnot.
+    bal = get_balance(fromaddr) - amount
+
     daemon.eth_sendTransaction({"from": fromaddr, "to": toaddr, "value": tohexwei(amount)})
 
-def lastsend(fromaddr, toaddr, fraction, minsend):
-    # This choice will be useful for bitcoin-backup.sh
     balfile = os.path.expanduser("~/.ethereum/keystore/" + fromaddr + ".balance")
-
+    # Newline makes a manual cat cleaner for the shell
+    WriteFile(balfile, str(bal) + "\n")
+    
+def lastsend(fromaddr, toaddr, fraction, minsend):
+    balfile = os.path.expanduser("~/.ethereum/keystore/" + fromaddr + ".balance")
     if os.path.exists(balfile):
         oldbal = float(ReadLines(balfile)[0].strip())
     else:
         oldbal = 0
-
+    
     newbal = get_balance(fromaddr)
     amount = (newbal - oldbal) * fraction
     
     if amount >= minsend:
         send(fromaddr, toaddr, amount)
-        #bal = get_balance(fromaddr)
-
-        # The balance won't be updated immediately, so estimate this -- will be less due to transfer fees and whatnot
-        bal = newbal - amount
-
-        # Newline makes a manual cat cleaner for the shell
-        WriteFile(balfile, str(bal) + "\n")
     else:
-        print("Not enough new funds received")
+        print("Not enough new funds received: got " + str(newbal - oldbal) + ", need " + str(minsend / fraction))
 
 def dictprint(a):
     # prettyprint for dictionaries
@@ -122,9 +117,9 @@ if options.account_id > -1:
         # Just add that address into general info
         info["account " + str(aid) + " address"] = fromaddr
         
-meandiff = meandiff("ethereum")
-if meandiff > 0:
-    info["meandiff"] = meandiff
+md = meandiff("ethereum")
+if md > 0:
+    info["meandiff"] = md
 
 if options.hashrate:
     info["hashrate"] = options.hashrate
@@ -136,8 +131,8 @@ output = []
 
 # Don't tax the price server if not calculating full profit
 if info["hashrate"] > 0 and options.kwhprice and options.watts:
-    if meandiff > 0:
-        diff = meandiff
+    if md > 0:
+        diff = md
     else:
         diff = info["difficulty"]
     
