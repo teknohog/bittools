@@ -114,3 +114,42 @@ def meandiff(coin):
     else:
         return 0
 
+def profit(blocktime, reward, cur, watts, kwhprice):
+    # The conventions are slightly different between coin families, so
+    # try to make this general enough while factoring out everything
+    # in common
+    
+    output = []
+    
+    tp = timeprint(blocktime)
+    output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
+    
+    coinsperday = reward / blocktime * 86400
+
+    output.append(["Average payout", str(coinsperday) + " " + cur + "/day"])
+
+    fiatprice = coin_price(cur)
+
+    if fiatprice > 0:
+        fiatpay = coinsperday * fiatprice
+
+        output.append(["1 " + cur, str(fiatprice) + " EUR"])
+        output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
+
+        if watts > 0 and kwhprice > 0:
+            cost = kwhprice * watts / 1000 * 24
+        
+            if cost > 0:
+                pratio = fiatpay / cost
+                
+                if pratio > 2:
+                    emo = ":D"
+                elif pratio > 1:
+                    emo = ":)"
+                else:
+                    emo = ":("
+
+                output.append(["Payout/cost", str(pratio) + " " + emo])
+                output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
+
+    return output

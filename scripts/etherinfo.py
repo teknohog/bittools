@@ -136,39 +136,9 @@ if info["hashrate"] > 0 and options.kwhprice and options.watts:
     else:
         diff = info["difficulty"]
     
-    time = diff / info["hashrate"]
+    blocktime = diff / info["hashrate"]
 
-    tp = timeprint(time)
-    output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
-    
-    coinsperday = blockreward / time * 86400
-
-    output.append(["Average payout", str(coinsperday) + " ETH/day"])
-
-    fiatprice = coin_price("ETH")
-
-    if fiatprice > 0:
-
-        fiatpay = coinsperday * fiatprice
-
-        output.append(["1 ETH", str(fiatprice) + " EUR"])
-        output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
-
-        if options.watts > 0 and options.kwhprice > 0:
-            cost = options.kwhprice * options.watts / 1000 * 24
-        
-            if cost > 0:
-                pratio = fiatpay / cost
-                
-                if pratio > 2:
-                    emo = ":D"
-                elif pratio > 1:
-                    emo = ":)"
-                else:
-                    emo = ":("
-
-                output.append(["Payout/cost", str(pratio) + " " + emo])
-                output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
+    output += profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice)
 
     prettyprint(output)
 

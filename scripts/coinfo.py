@@ -332,7 +332,7 @@ parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin
 
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
 
-parser.add_option("-d", "--difficulty", dest="diff", help="Set difficulty for mining calculator")
+parser.add_option("-d", "--difficulty", dest="diff", type = float, help="Set difficulty for mining calculator")
 
 parser.add_option("-D", "--dogecoin", action="store_const", const="dogecoin", dest="coin", default="bitcoin", help="Connect to dogecoind")
 
@@ -376,7 +376,7 @@ parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
-parser.add_option("-r", "--hashrate", dest="hashrate", help="Hashes/sec from external miners, or blocksperday for primecoin")
+parser.add_option("-r", "--hashrate", dest="hashrate", type = float, help="Hashes/sec from external miners, or blocksperday for primecoin")
 
 parser.add_option("-S", "--skeincoin", action="store_const", const="skeincoin", dest="coin", default="bitcoin", help="Connect to skeincoind")
 
@@ -394,9 +394,9 @@ parser.add_option("-V", "--virtacoin", action="store_const", const="virtacoin", 
 
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print more detailed info")
 
-parser.add_option("-W", "--watts", dest="watts", help="Power usage of miners for profitability calculation")
+parser.add_option("-W", "--watts", dest="watts", type = float, help="Power usage of miners for profitability calculation")
 
-parser.add_option("-w", "--kwh-price", dest="kwhprice", help="kWh price in EUR for profitability calculation")
+parser.add_option("-w", "--kwh-price", dest="kwhprice", type = float, help="kWh price in EUR for profitability calculation")
 
 parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite", dest="coin", default="bitcoin", help="Connect to cryptonited")
 
@@ -661,7 +661,7 @@ else:
     keys = ["balance", "testnet"]
 
 if options.diff:
-    diff = float(options.diff)
+    diff = options.diff
 else:
     diff = s.getdifficulty()
 
@@ -686,7 +686,7 @@ if "difficulty" not in keys:
     output.append(["difficulty", str(diff)])
 
 if options.hashrate:
-    hashrate = float(options.hashrate)
+    hashrate = options.hashrate
     # No point in printing this, if supplied manually
 else:
     if coin == "primecoin":
@@ -723,53 +723,21 @@ if hashrate > 0 and coin != "riecoin":
         diff = info['meandiff']
     
     if coin == "primecoin":
-        time = 86400. / hashrate
+        blocktime = 86400. / hashrate
     elif coin == "cryptonite":
         # Guess based on current network hashrate and difficulty
-        time = diff * 2**20 / hashrate
+        blocktime = diff * 2**20 / hashrate
     elif coin == "gapcoin":
         # From http://coinia.net/gapcoin/calc.php
-        time = exp(diff) / hashrate
+        blocktime = exp(diff) / hashrate
     else:
-        time = diff * 2**32 / hashrate
+        blocktime = diff * 2**32 / hashrate
 
-    tp = timeprint(time)
-    output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
-    
-    coinsperday = blockreward(coin, diff, blocks) / time * 86400
-
-    output.append(["Average payout", str(coinsperday) + " " + currency[coin] + "/day"])
-
-    fiatprice = coin_price(currency[coin])    
-
-    if fiatprice > 0:
-
-        fiatpay = coinsperday * fiatprice
-
-        output.append(["1 " + currency[coin], str(fiatprice) + " EUR"])
-        output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
-
-        if options.watts and options.kwhprice:
-            watts = float(options.watts)
-            kwhprice = float(options.kwhprice)
-            cost = kwhprice * watts / 1000 * 24
-        
-            if cost > 0:
-                pratio = fiatpay / cost
-                
-                if pratio > 2:
-                    emo = ":D"
-                elif pratio > 1:
-                    emo = ":)"
-                else:
-                    emo = ":("
-
-                output.append(["Payout/cost", str(pratio) + " " + emo])
-                output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
+    output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice)
 
 if adjustblocks[coin] > 0:
-    time = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
-    tp = timeprint(time)
+    adjtime = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
+    tp = timeprint(adjtime)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
 
 errors = info["errors"]

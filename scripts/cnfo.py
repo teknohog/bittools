@@ -16,7 +16,7 @@
 # the old jsonrpc
 from jsonrpclib import Server
 
-import sys
+from sys import exit
 
 from bittools import *
 
@@ -81,7 +81,7 @@ if options.transactions:
 
     # works, keep for later
     #print(wallet.getbalance()['unlocked_balance'] * baseunit[options.coin])
-    sys.exit()
+    exit()
     
 if len(options.url) > 0:
     url = options.url
@@ -112,39 +112,8 @@ if options.hashrate > 0:
     if md > 0:
         diff = md
     
-    time = diff / options.hashrate
-
-    tp = timeprint(time)
-    output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
-    
-    coinsperday = blockreward / time * 86400
-
-    output.append(["Average payout", str(coinsperday) + " " + currency[options.coin] + "/day"])
-
-    fiatprice = coin_price(currency[options.coin])
-
-    if fiatprice > 0:
-
-        fiatpay = coinsperday * fiatprice
-
-        output.append(["1 " + currency[options.coin], str(fiatprice) + " EUR"])
-        output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
-
-        if options.watts > 0 and options.kwhprice > 0:
-            cost = options.kwhprice * options.watts / 1000 * 24
-        
-            if cost > 0:
-                pratio = fiatpay / cost
-                
-                if pratio > 2:
-                    emo = ":D"
-                elif pratio > 1:
-                    emo = ":)"
-                else:
-                    emo = ":("
-
-                output.append(["Payout/cost", str(pratio) + " " + emo])
-                output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
+    blocktime = diff / options.hashrate
+    output += profit(blocktime, blockreward, currency[options.coin], options.watts, options.kwhprice)
 
 if len(output) > 0:
     prettyprint(output)
