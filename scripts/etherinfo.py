@@ -34,7 +34,7 @@ def send(fromaddr, toaddr, amount):
     # Save the balance file after sending. The balance won't be
     # updated immediately, so estimate this -- will be less due to
     # transfer fees and whatnot.
-    bal = get_balance(fromaddr) - amount
+    bal = get_balance(fromaddr) - amount - 0.001
 
     daemon.eth_sendTransaction({"from": fromaddr, "to": toaddr, "value": tohexwei(amount)})
 
@@ -77,7 +77,7 @@ parser.add_argument("--minsend", "-m", type = float, default = 1, help = "Lower 
 
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, help="Hashes/sec from external miners")
 
-parser.add_argument("--sendto", "-s", nargs = 2, help = "Send toaddress amount in ETH")
+parser.add_argument("--sendto", "-s", nargs = 2, help = "Send toaddress amount in ETH. The account must be unlocked.")
 
 parser.add_argument("-u", "--url", dest="url", default="http://localhost:8545", help="Connect to a different URL, instead of your local Ethereum daemon")
 
@@ -127,10 +127,8 @@ if options.hashrate:
 dictprint(info)
 
 blockreward = 5
-output = []
 
-# Don't tax the price server if not calculating full profit
-if info["hashrate"] > 0 and options.kwhprice and options.watts:
+if info["hashrate"] > 0:
     if md > 0:
         diff = md
     else:
@@ -138,7 +136,7 @@ if info["hashrate"] > 0 and options.kwhprice and options.watts:
     
     blocktime = diff / info["hashrate"]
 
-    output += profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice)
+    output = profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice)
 
     prettyprint(output)
 
