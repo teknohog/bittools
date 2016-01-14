@@ -17,7 +17,7 @@
 # https://github.com/joshmarshall/jsonrpclib
 from jsonrpclib import Server
 
-import sys
+from sys import exit
 from optparse import OptionParser
 import re
 from math import ceil, exp
@@ -48,6 +48,16 @@ def exp_decay(init, blocks, period, base=0.5):
     p = ceil(float(blocks) / float(period - 2))
     return init * base**(p - 1)
 
+def lastreward(blocks):
+    # Use the last block reward as an estimate, need to check for PoW,
+    # should work for several coins. Don't wind back too much in case
+    # of PoS only.
+    for i in range(blocks, blocks - 1000, -1):
+        b = s.getblock(s.getblockhash(i))
+        if b["flags"] == "proof-of-work":
+            return b["mint"]
+    return 0
+
 def blockreward(coin, diff, blocks):
     if coin == "ppcoin":
         # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
@@ -76,6 +86,10 @@ def blockreward(coin, diff, blocks):
         coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
         final_total = (2**64 - 1) * 1e-10
         return 243.1 * coinbase / final_total
+    elif coin == "Vanillacoin":
+        # From reward.cpp until block 325000
+        #return exp_decay(128, blocks, 50000, 5./6.)
+        return lastreward(blocks)
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
@@ -170,46 +184,98 @@ def parse_config(conffile):
     return settings
 
 def exportkeys():
-    # Generate addresses are not available via accounts, even though
-    # they are listed under the "" account. So this way should get us
-    # all possible addresses...
-
+            
+    from os import unlink
+        
     l = []
 
-    # Method not available in ppcoin
     try:
-        g = s.listaddressgroupings()
-        for group in g:
-            for addrline in group:
-                address = addrline[0]
-                privkey = s.dumpprivkey(address)
-
-                if len(addrline) == 3:
-                    account = addrline[2]
-                else:
-                    account = ""
-
-                l.append([privkey, account])
-    except:
-        print("Warning: missing listaddressgroupings method, list of keys may be incomplete\n")
-
-    # ..but the above seems to leave out addresses with zero balance,
-    # so use the old way too, and check for dupes.
-
-    # EXCL: "Accounting API is deprecated and will be removed in future."
-    try:
-        accounts = s.listaccounts()
-
-        for acc in accounts:
-            addresses = s.getaddressesbyaccount(acc)
-            for addr in addresses:
-                privkey = s.dumpprivkey(addr)
-                item = [privkey, acc]
+        # dumpwallet is the best method if available, as it should
+        # give the complete list of keys. Vanillacoin has a different format
+        # -- maybe other coins use csv too?
+        
+        if coin == "Vanillacoin":
+            dumpfile = os.path.expanduser("~/.Vanillacoin/data/wallet.csv")
+            s.dumpwallet(dumpfile)
+            keydump = ReadLines(dumpfile)[1:]
+            unlink(dumpfile)
             
-                if item not in l:
-                    l.append(item)
+            for line in keydump:
+                kat = line.split(",") # Key,Address,Type
+                if len(kat) == 3:
+                    # Could also check for "reserve" addresses which
+                    # might not be essential to save
+                    
+                    if kat[2].strip() == "label":
+                        account = s.getaccount(kat[1])
+                    else:
+                        account = ""
+
+                    l.append([kat[0], account])
+
+        else:
+            dumpfile = os.path.expanduser("~/." + coin + "/walletdump.txt")
+            s.dumpwallet(dumpfile)
+            keydump = ReadLines(dumpfile)
+            unlink(dumpfile)
+
+            for line in keydump:
+                # Check for valid lines first, as they have addr=... in the end
+                m = re.match('.*addr=(\S.*)$', line)
+                if m is None:
+                    continue
+
+                m = re.match('.*label=(\S.*)\s+#.*', line)
+                if m is None:
+                    account = ""
+                else:
+                    account = m.group(1)
+
+                privkey = line.split()[0]
+                    
+                l.append([privkey, account])
+
     except:
-        print("Warning: missing listaccounts method, list of keys may be incomplete\n")
+        print("No dumpwallet method available, list of keys may be incomplete")
+        
+        # Generate addresses are not available via accounts, even though
+        # they are listed under the "" account. So this way should get us
+        # all possible addresses...
+        
+        # Method not available in ppcoin
+        try:
+            g = s.listaddressgroupings()
+            for group in g:
+                for addrline in group:
+                    address = addrline[0]
+                    privkey = s.dumpprivkey(address)
+                    
+                    if len(addrline) == 3:
+                        account = addrline[2]
+                    else:
+                        account = ""
+                        
+                    l.append([privkey, account])
+        except:
+            print("Warning: missing listaddressgroupings method, list of keys may be incomplete\n")
+
+        # ..but the above seems to leave out addresses with zero balance,
+        # so use the old way too, and check for dupes.
+
+        # EXCL: "Accounting API is deprecated and will be removed in future."
+        try:
+            accounts = s.listaccounts()
+
+            for acc in accounts:
+                addresses = s.getaddressesbyaccount(acc)
+                for addr in addresses:
+                    privkey = s.dumpprivkey(addr)
+                    item = [privkey, acc]
+            
+                    if item not in l:
+                        l.append(item)
+        except:
+            print("Warning: missing listaccounts method, list of keys may be incomplete\n")
 
     prettyprint(l)
 
@@ -318,6 +384,29 @@ def send(address, amount):
     else:
         print("Confirmation failed, not sending.")
 
+def meandiff2(coin):
+    # Alternative for testing: use blockchain data instead of saved
+    # logfiles. A nice idea but notably slower :-/
+    ndata = 10
+    blockint = blocksperhour[coin]
+    data = []
+
+    # Start from top block and work backwards
+    i = info["blocks"]
+    for n in range(ndata):
+        # PoW only coins for now, see lastreward() for PoW/PoS flags
+        b = s.getblock(s.getblockhash(i))
+        data.append([b["time"], b["difficulty"]])
+        i -= blockint
+
+    if len(data) >= ndata/2:
+        ab = linear_regression(data)
+
+        # Estimate a current diff
+        return ab[0] + ab[1] * time()
+    else:
+        return 0
+        
 parser = OptionParser()
 
 parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_true", default=False, help="List accounts with balances")
@@ -353,6 +442,8 @@ parser.add_option("-H", "--photon", action="store_const", const="photon", dest="
 parser.add_option("-I", "--riecoin", action="store_const", const="riecoin", dest="coin", default="bitcoin", help="Connect to riecoind")
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
+
+parser.add_option("-J", "--Vanillacoin", action="store_const", const="Vanillacoin", dest="coin", default="bitcoin", help="Connect to Vanillacoind")
 
 parser.add_option("-j", "--primio", action="store_const", const="primio", dest="coin", default="bitcoin", help="Connect to primiod")
 
@@ -442,6 +533,7 @@ currency = {
     "SlothCoin": "Sloth",
     "TjcoinV2": "TJC",
     "universalmolecule": "UMO",
+    "Vanillacoin": "VNL",
     "vertcoin": "VTC",
     "virtacoin": "VTA",
 }
@@ -497,6 +589,7 @@ blocksperhour = {
     "SlothCoin": 24,
     "TjcoinV2": 24,
     "universalmolecule": 30,
+    "Vanillacoin": 25, # Mean?
     "vertcoin": 24,
     "virtacoin": 60,
 }
@@ -531,6 +624,7 @@ adjustblocks = {
     "SlothCoin": 2,
     "TjcoinV2": 336,
     "universalmolecule": 20,
+    "Vanillacoin": 0, # ?4
     "vertcoin": 0,
     "virtacoin": 0,
 }
@@ -600,12 +694,16 @@ rpcport = {
     "SlothCoin": "5108",
     "TjcoinV2": "9178",
     "universalmolecule": "19738",
+    "Vanillacoin": "9195",
     "vertcoin": "5888",
     "virtacoin": "22815",
 }
 
 if len(options.url) > 0:
     url = options.url
+elif coin == "Vanillacoin":
+    # No login credentials needed
+    url = "http://localhost:9195/"
 else:
     configfile = "~/." + coin + "/" + coin + ".conf"
 
@@ -620,42 +718,48 @@ else:
 s = Server(url)
 
 if options.byaccount:
-    for addr in s.getaddressesbyaccount(options.byaccount):
-        print(addr)
-    sys.exit()
+    if coin == "Vanillacoin":
+        print(s.getaccountaddress(options.byaccount))
+    else:
+        for addr in s.getaddressesbyaccount(options.byaccount):
+            print(addr)
+    exit()
 
 if options.export:
     exportkeys()
-    sys.exit()
+    exit()
 
 if options.importfile:
     importkeys(options.importfile)
-    sys.exit()
+    exit()
 
 if options.listaccounts:
     listaccounts()
-    sys.exit()
+    exit()
 
 if options.listreceived:
     listreceived()
-    sys.exit()
+    exit()
 
 if options.newaddress:
     print(s.getnewaddress(args[0]))
-    sys.exit()
+    exit()
 
 if options.sendto:
     send(options.sendto, float(args[0]))
-    sys.exit()
+    exit()
 
 if options.transactions:
     listtransactions(args)
-    sys.exit()
+    exit()
 
 info = s.getinfo()
 
 if options.verbose:
     keys = info.keys()
+elif coin == "Vanillacoin":
+    # No testnet in info
+    keys = ["balance"]
 else:
     # Primecoin does not provide difficulty in getinfo, only separately
     keys = ["balance", "testnet"]
@@ -691,7 +795,6 @@ if options.hashrate:
 else:
     if coin == "primecoin":
         hashrate = s.getmininginfo()["blocksperday"]
-
         if options.verbose:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
@@ -701,10 +804,13 @@ else:
         # EXCL: not available
         # Bitcoin: removed in 0.11.0
         hashrate = 0
+    elif coin == "Vanillacoin":
+        hashrate = s.getmininginfo()["hashespersec"]
     else:
         hashrate = s.gethashespersec()
-        if options.verbose:
-            output.append(["hashespersec", str(hashrate)])
+
+if coin != "primecoin" and options.verbose:
+    output.append(["hashespersec", str(hashrate)])
 
 blocks = info["blocks"]
 
@@ -740,9 +846,8 @@ if adjustblocks[coin] > 0:
     tp = timeprint(adjtime)
     output.append(["\nNext difficulty expected in", str(tp[0]) + " " + tp[1]])
 
-errors = info["errors"]
-if len(errors) > 0:
-    output.append(["\nError", errors])
+if "errors" in info and len(info["errors"]) > 0:
+    output.append(["\nError", info["errors"]])
 
 if len(output) > 0:
     prettyprint(output)
