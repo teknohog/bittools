@@ -1,8 +1,10 @@
-bittools -- command line tools for various cryptocurrency daemons
-(AuroraCoin, Bitcoin, BlakeBitcoin, Blakecoin, CHNcoin, Cryptonite,
-Darkcoin, Dirac, Dogecoin, eCoin, Electron, Gapcoin, GroestlCoin, Litecoin,
-Maxcoin, Namecoin, Photon, PPCoin, Primecoin, Primio, Riecoin, ShibeCoin,
-Skeincoin, Slothcoin, Universalmolecule, Virtacoin)
+bittools -- unix command line tools for various cryptocurrency daemons
+(AuroraCoin, Bitcoin, BlakeBitcoin, Blakecoin, Boolberry, CHNcoin,
+Cryptonite, Dash, Dirac, Dogecoin, eCoin, Electron, Ethereum,
+ExclusiveCoin, Gapcoin, GroestlCoin, Litecoin, Lithium, Maxcoin,
+Monero, Namecoin, Photon, PPCoin, Primecoin, Primio, Riecoin,
+ShibeCoin, Skeincoin, Slothcoin, Universalmolecule, Tjcoin,
+Vanillacoin, Vertcoin, Virtacoin, WhatDidIMissUseTheSource)
 
 by Risto A. Paju / teknohog
 BTC: 1HkL2iLLQe3KJuNCgKPc8ViZs83NJyyQDM
@@ -50,13 +52,20 @@ The script is fairly self-documenting with the -h or --help option.
 cnfo.py
 =======
 
-A work in progress to replicate coinfo.py for Cryptonote coins.
+A work in progress to replicate coinfo.py for Cryptonote coins. Note
+that wallets are not accessible from the main daemon, so this only
+provides info for applications such as profit estimation.
+
+(The simplewallet also provides its own RPC interface, but its command
+line also suffices for common tasks.)
 
 
 etherinfo.py
 ============
 
-Ditto for Ethereum.
+For Ethereum. Handles wallets/accounts too, with the difference to
+coinfo.py that the 'from' address for sends must be specified, and
+here a simple index is used.
 
 
 Info examples
@@ -171,7 +180,8 @@ meandiff.sh
 
 For some coins, the difficulty jumps around considerably during a
 single day, making it hard to estimate long-term returns. This script
-is used to maintain a sliding average.
+is used to maintain a sliding average. In addition, the linear
+regression provides a short-term trend (use -v).
 
 To first collect the difficulty history, have something like this in
 crontab:
@@ -181,9 +191,12 @@ crontab:
 Later, meandiff.sh -B will show the average. Coin identifiers are the
 same as in other scripts, so this example is for Blakecoin.
 
-For Cryptonote coins, the difficulties are already logged by the
-daemon. There is no need to collect them explicitly, and this script
-parses the original log for averaging the last 10 numbers.
+The RPC scripts cnfo.py, coinfo.py, etherinfo.py will use the meandiff
+log for calculations if available.
+
+Of course, the difficulties of past blocks could be dug from the
+blockchain; see meandiff2() in coinfo.py for an
+implementation. However, this is notably slower in practice.
 
 
 random_id.py
