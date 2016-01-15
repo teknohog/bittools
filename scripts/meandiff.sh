@@ -74,7 +74,7 @@ while getopts aBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
 	    ;;
         H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
-	J) PROJECT=Vanillacoin ;;
+	J) PROJECT=vanillacoin ;;
 	j) PROJECT=primio ;;
 	K) PROJECT=dash ;;
 	L) PROJECT=Slothcoin ;;
@@ -123,12 +123,33 @@ case $PROJECT in
     Tjcoin)
 	LOGFILE=~/.TjcoinV2/difflog
 	;;
+    vanillacoin)
+	LOGFILE=~/.Vanillacoin/difflog
+	;;
     *)
 	LOGFILE=~/.$PROJECT/difflog
 	;;
 esac
 
 if $SET; then
+    # 2016-01-15
+    case $PROJECT in
+	boolberry)
+	    PROCESS=boolbd
+	    ;;
+	ethereum)
+	    PROCESS=geth
+	    ;;
+	*)
+	    PROCESS=${PROJECT}d
+	    ;;
+    esac
+
+    # pgrep fails for names > 15 chars
+    if [ -z "$(ps ax | grep $PROCESS | grep -v grep)" ]; then
+	exit 0
+    fi
+    
     # top up the logfile
     case $PROJECT in
 	bitmonero|boolberry)
@@ -137,7 +158,7 @@ if $SET; then
 	ethereum)
 	    DIFF=$(etherinfo.py | grep -m1 difficulty | awk '{print $2}')
 	    ;;
-	Vanillacoin)
+	vanillacoin)
 	    DIFF=$(coinfo.py -J | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	*)
@@ -168,4 +189,3 @@ if $SET; then
 else
     lin_reg
 fi
-
