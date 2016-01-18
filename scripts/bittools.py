@@ -94,7 +94,8 @@ def meandiff(coin):
 
     # Don't use if more than a few hours old
     if os.path.exists(difflog) and time() - os.path.getmtime(difflog) < 1e4:
-        l = ReadLines(difflog)
+        # unique lines
+        l = set(ReadLines(difflog))
 
         # Meandiff was originally about smoothing random
         # variations. However, if the diff is obviously

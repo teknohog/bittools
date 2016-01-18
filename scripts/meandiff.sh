@@ -5,16 +5,18 @@
 # Collect recent difficulty statistics for the given coin using the -s
 # option. By default, show the average of last $LINES entries.
 
-LINES=10
+LINES=24
 
 function lin_reg () {
+    # Use uniq to avoid dupes; the file should already be sorted
+    
     if $VERBOSE; then
-	cat $LOGFILE
+	uniq $LOGFILE
 	echo
     fi
     
     # Linear regression to estimate a current diff
-    tail -n $LINES $LOGFILE | \
+    uniq $LOGFILE | tail -n $LINES | \
 	awk '{n = n + 1
 sx = sx + $1
 sy = sy + $2
@@ -23,8 +25,12 @@ sx2 = sx2 + $1**2
 sy2 = sy2 + $2**2}
 END{b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
 a = (sy - b*sx) / n
+avg = sy/n
 estimate = a + b*systime()
-print "pct_hourly " b/estimate * 3600 * 100
+r = (n*sxy - sx*sy) / ((n*sx2 - sx**2)*(n*sy2 - sy**2))**0.5
+print "correlation " r
+print "pct_hourly " b/avg * 3600 * 100
+print "average " avg
 print "estimate " estimate}'
 }
 
