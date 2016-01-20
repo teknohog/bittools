@@ -109,7 +109,7 @@ if options.account_id > -1:
         send(fromaddr, toaddr, amount)
         exit()
 
-    elif len(options.lastsend) > 0:
+    elif options.lastsend:
         lastsend(fromaddr, options.lastsend, options.fraction, options.minsend)
         exit()
 
