@@ -299,18 +299,22 @@ case $PROJECT in
 	cd build/release/src
 	;;
     cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin)
-	if [ $PROJECT == "gapcoin" ]; then
-	    git submodule init
-	    git submodule update
-	fi
+	EXTRACONFIG=""
+
+	case $PROJECT in
+	    dogecoin)
+		EXTRACONFIG="--with-incompatible-bdb"
+		;;
+	    gapcoin)
+		git submodule init
+		git submodule update
+		;;
+	    skeincoin)
+		CFLAGS="$CFLAGS -fPIC"
+		;;
+	esac
 	
 	sh autogen.sh
-
-	if [ $PROJECT == "dogecoin" ]; then
-	    EXTRACONFIG="--with-incompatible-bdb"
-	else
-	    EXTRACONFIG=""
-	fi
 
 	if [ -z "$(echo $UPNP | grep [01])" ]; then
 	    EXTRACONFIG="$EXTRACONFIG --without-miniupnpc"
