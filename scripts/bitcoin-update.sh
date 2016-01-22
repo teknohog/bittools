@@ -312,7 +312,7 @@ case $PROJECT in
 	    EXTRACONFIG=""
 	fi
 
-	if [ -z "echo $UPNP | grep [01]" ]; then
+	if [ -z "$(echo $UPNP | grep [01])" ]; then
 	    EXTRACONFIG="$EXTRACONFIG --without-miniupnpc"
 	fi
 	
