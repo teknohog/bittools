@@ -415,6 +415,8 @@ parser.add_option("-a", "--AuroraCoin", action="store_const", const="AuroraCoin"
 
 parser.add_option("-B", "--blakecoin", action="store_const", const="blakecoin", dest="coin", default="bitcoin", help="Connect to blakecoind")
 
+parser.add_option("--backupwallet", dest="backupwallet", help="Backup wallet to the given file; use a full pathname")
+
 parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
 parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin", default="bitcoin", help="Connect to bitcoind")
@@ -719,6 +721,7 @@ s = Server(url)
 
 if options.byaccount:
     if coin == "Vanillacoin":
+        # Only one address; at least dumpwallet will give them all
         print(s.getaccountaddress(options.byaccount))
     else:
         for addr in s.getaddressesbyaccount(options.byaccount):
@@ -753,6 +756,10 @@ if options.transactions:
     listtransactions(args)
     exit()
 
+if options.backupwallet:
+    s.backupwallet(options.backupwallet)
+    exit()
+    
 info = s.getinfo()
 
 if options.verbose:
@@ -799,19 +806,28 @@ else:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
         hashrate = s.getprimespersec()
-    elif coin in ["bitcoin", "litecoin", "ExclusiveCoin"]:
+    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available
         # Bitcoin: removed in 0.11.0
         hashrate = 0
-    elif coin == "Vanillacoin":
-        hashrate = s.getmininginfo()["hashespersec"]
     else:
-        hashrate = s.gethashespersec()
+        try:
+            hashrate = s.getmininginfo()["hashespersec"]
+        except:
+            hashrate = s.gethashespersec()
 
+try:
+    networkhashrate = s.getmininginfo()["networkhashps"]
+except:
+    networkhashrate = 0
+            
 if coin != "primecoin" and options.verbose:
     output.append(["hashespersec", str(hashrate)])
 
+    if networkhashrate > 0:
+        output.append(["networkhashrate", str(networkhashrate)])
+        
 blocks = info["blocks"]
 
 if options.verbose:
@@ -822,6 +838,10 @@ prettyprint(output)
 if options.verbose:
     own_share(coin, blocks, info)
 
+    if networkhashrate > 0 and hashrate > 0:
+        share = hashrate / networkhashrate
+        print("\nYour hashrate represents about " + str(share * 100) + " % or 1/" + str(int(round(1/share))) + " of the network")
+    
 output = []
 
 if hashrate > 0 and coin != "riecoin":
