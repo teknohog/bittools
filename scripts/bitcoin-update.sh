@@ -155,7 +155,8 @@ case $PROJECT in
 	GITURL=https://github.com/skeincoin/skeincoin.git
 	;;
     Slothcoin)
-	GITURL=https://github.com/thimod/Slothcoin
+	#GITURL=https://github.com/thimod/Slothcoin
+	GITURL=https://github.com/oldambtster/Slothcoin
 	;;
     Tjcoin)
 	GITURL=https://github.com/TaojingCoin-pd/TjcoinV2
@@ -373,7 +374,7 @@ case $PROJECT in
 	fi
 	
 	make clean
-	nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" \
+	nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" CXXFLAGS="$CFLAGS" \
 	    OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
 	;;
 esac

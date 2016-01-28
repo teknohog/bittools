@@ -453,7 +453,7 @@ parser.add_option("-K", "--dash", action="store_const", const="dash", dest="coin
 
 parser.add_option("-k", "--blakebitcoin", action="store_const", const="blakebitcoin", dest="coin", default="bitcoin", help="Connect to blakebitcoind")
 
-parser.add_option("-L", "--SlothCoin", action="store_const", const="SlothCoin", dest="coin", default="bitcoin", help="Connect to SlothCoind")
+parser.add_option("-L", "--Slothcoin", action="store_const", const="Slothcoin", dest="coin", default="bitcoin", help="Connect to Slothcoind")
 
 parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
 
@@ -532,7 +532,7 @@ currency = {
     "riecoin": "RIC",
     "ShibeCoin": "Shibe",
     "skeincoin": "SKC",
-    "SlothCoin": "Sloth",
+    "Slothcoin": "Sloth",
     "TjcoinV2": "TJC",
     "universalmolecule": "UMO",
     "Vanillacoin": "VNL",
@@ -556,7 +556,7 @@ blockhalve = {
     "riecoin": 840000,
     "ShibeCoin": 0,
     "skeincoin": 262800,
-    "SlothCoin": 100000,
+    "Slothcoin": 100000,
     "TjcoinV2": 840000,
     "universalmolecule": 0,
     "vertcoin": 840000,
@@ -588,7 +588,7 @@ blocksperhour = {
     "riecoin": 24,
     "ShibeCoin": 60,
     "skeincoin": 30,
-    "SlothCoin": 24,
+    "Slothcoin": 24,
     "TjcoinV2": 24,
     "universalmolecule": 30,
     "Vanillacoin": 25, # Mean?
@@ -623,7 +623,7 @@ adjustblocks = {
     "riecoin": 288,
     "ShibeCoin": 0,
     "skeincoin": 0,
-    "SlothCoin": 2,
+    "Slothcoin": 2,
     "TjcoinV2": 336,
     "universalmolecule": 20,
     "Vanillacoin": 0, # ?4
@@ -647,7 +647,7 @@ initcoins = {
     "riecoin": 50,
     "ShibeCoin": 0, # Not meaningful for mostly proof of stake coin
     "skeincoin": 32,
-    "SlothCoin": 500000,
+    "Slothcoin": 500000,
     "TjcoinV2": 50,
     "universalmolecule": 0.1, # Minimum
     "vertcoin": 50,
@@ -693,7 +693,7 @@ rpcport = {
     "riecoin": "28332",
     "ShibeCoin": "18812",
     "skeincoin": "21230",
-    "SlothCoin": "5108",
+    "Slothcoin": "5108",
     "TjcoinV2": "9178",
     "universalmolecule": "19738",
     "Vanillacoin": "9195",
