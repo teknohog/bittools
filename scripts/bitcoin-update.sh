@@ -321,7 +321,7 @@ case $PROJECT in
 	    EXTRACONFIG="$EXTRACONFIG --without-miniupnpc"
 	fi
 	
-	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS" $EXTRACONFIG
+	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS" --without-gui $EXTRACONFIG
 
 	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
 
