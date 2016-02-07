@@ -65,8 +65,9 @@ POS=false
 SET=false
 PROJECT=bitcoin
 VERBOSE=false
-while getopts aBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
+while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
     case "$opt" in
+	A) PROJECT=aeon ;;
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
 	c) PROJECT=chncoin ;;
@@ -155,7 +156,7 @@ if $SET; then
     
     # top up the logfile
     case $PROJECT in
-	bitmonero|boolberry)
+	aeon|bitmonero|boolberry)
 	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	ethereum)

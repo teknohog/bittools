@@ -18,8 +18,9 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=- # 0 means build with the lib, but don't start by default
-while getopts aBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
+while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
     case "$opt" in
+	A) PROJECT=aeon ;;
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
 	C) CHECKOUT=true ;;
@@ -62,6 +63,11 @@ BINARY=${PROJECT}d
 case $PROJECT in
     AuroraCoin)
 	GITURL=https://github.com/baldurodinsson/auroracoin-project
+	;;
+    aeon)
+	GITURL=https://github.com/aeonix/aeon
+	# For install only
+	BINARY="connectivity_tool aeond simplewallet simpleminer"
 	;;
     blakebitcoin)
 	GITURL=https://github.com/BlakeBitcoin/BlakeBitcoin
@@ -273,6 +279,12 @@ EOF
 fi
 
 case $PROJECT in
+    aeon)
+	sed -Ei 's/-Werror//' CMakeLists.txt
+	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+
+	cd build/release/src
+    ;;
     bitmonero)
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway

@@ -30,7 +30,11 @@ def wallet_server(coin):
 import argparse
 parser = argparse.ArgumentParser()
 
+parser.add_argument("-A", "--aeon", action="store_const", const="aeon", dest="coin", default="boolberry", help="Connect to Aeon daemon")
+
 parser.add_argument("--boolberry", action="store_const", const="boolberry", dest="coin", default="boolberry", help="Connect to Boolberry daemon (default)")
+
+parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
 
 parser.add_argument("-M", "--bitmonero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
 
@@ -47,12 +51,14 @@ parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh p
 options = parser.parse_args()
 
 currency = {
+    "aeon": "AEON",
     "boolberry": "BBR",
     "monero": "XMR",
 }
 
 # Atomic unit of currency
 baseunit = {
+    "aeon": 1e-12,
     "boolberry": 1e-12,
     "monero": 1e-12,
 }
@@ -60,6 +66,7 @@ baseunit = {
 rpcport = {
     "daemon":
     {
+        "aeon": "11181",
         "boolberry": "10102",
         "monero": "18081",
     },
@@ -101,7 +108,10 @@ output.append(["blocks", str(blocks)])
 blockreward = lasthead["reward"] * baseunit[options.coin]
 output.append(["blockreward", str(blockreward)])
 
-diff = lasthead["difficulty"]
+if options.diff > 0:
+    diff = options.diff
+else:
+    diff = lasthead["difficulty"]
 output.append(["difficulty", str(diff)])
 
 md = meandiff(options.coin)
