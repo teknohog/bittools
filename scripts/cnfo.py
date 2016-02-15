@@ -63,6 +63,12 @@ baseunit = {
     "monero": 1e-12,
 }
 
+reward_divisor = {
+    "aeon": 2**18,
+    "boolberry": 2**20,
+    "monero": 2**20,
+}
+
 rpcport = {
     "daemon":
     {
@@ -117,6 +123,11 @@ output.append(["difficulty", str(diff)])
 md = meandiff(options.coin)
 if md > 0:
     output.append(["meandiff", str(md)])
+
+# This is the basic Cryptonote scheme, so it won't work if there's
+# tail emission or something. Also, it's only an estimate.
+moneysupply = (2**64 - 1) * baseunit[options.coin] - blockreward * reward_divisor[options.coin]
+output.append(["moneysupply", str(moneysupply)])
 
 if options.hashrate > 0:
     if md > 0:
