@@ -100,10 +100,9 @@ def ep_enc(x):
 def ep_dec(s):
     return float(s.rstrip('ep'))
 
-def own_share(coin, blocks, info):
+def total_supply(coin, blocks, info):
     total = 0
     final_total = 0
-    printout = []
 
     # This should really be made more generic, like blockhalve, but
     # this will do until more coins come up with different exp bases.
@@ -146,18 +145,31 @@ def own_share(coin, blocks, info):
         coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
         final_total = (2**64 - 1) * 1e-10
         total = final_total - coinbase
-        info["balance"] = ep_dec(info["balance"])
 
-    if total > 0 and info["balance"] > 0:
-        share = info["balance"] / total
-        printout.append([str(share * 100), str(int(round(1/share))) + " of all current " + currency[coin]])
+    return (total, final_total)
 
-    if final_total > 0 and info["balance"] > 0:
-        share = info["balance"] / final_total
-        printout.append([str(share * 100), str(int(round(1/share))) + " of all " + currency[coin] + " ever"])
+def own_share(coin, blocks, info, fiatprice):
+    printout = []
 
-    if len(printout) > 0:
+    (total, final_total) = total_supply(coin, blocks, info)
+    
+    if info["balance"] > 0:
+        if total > 0:
+            share = info["balance"] / total
+            printout.append([str(share * 100), str(int(round(1/share))) + " of all current " + currency[coin]])
+
+        if final_total > 0:
+            share = info["balance"] / final_total
+            printout.append([str(share * 100), str(int(round(1/share))) + " of all " + currency[coin] + " ever"])
+
+    fiat_balance = fiatprice * info["balance"]
+            
+    if len(printout) > 0 or fiat_balance > 0:
         print("\nYour balance represents about")
+        
+        if fiat_balance > 0:
+            print("%f EUR (1 %s = %f EUR)" % (fiat_balance, currency[coin], fiatprice))
+
         prettyprint(printout, " % or 1/")
 
 def parse_config(conffile):
@@ -771,6 +783,9 @@ else:
     # Primecoin does not provide difficulty in getinfo, only separately
     keys = ["balance", "testnet"]
 
+if coin == "cryptonite":
+    info["balance"] = ep_dec(info["balance"])
+    
 if options.diff:
     diff = options.diff
 else:
@@ -836,12 +851,17 @@ if options.verbose:
 prettyprint(output)
 
 if options.verbose:
-    own_share(coin, blocks, info)
+    fiatprice = coin_price(currency[coin])
+    
+    own_share(coin, blocks, info, fiatprice)
 
     if networkhashrate > 0 and hashrate > 0:
         share = hashrate / networkhashrate
         print("\nYour hashrate represents about " + str(share * 100) + " % or 1/" + str(int(round(1/share))) + " of the network")
-    
+else:
+    # Argument for profit() which will call coin_price() again if need be
+    fiatprice = 0
+        
 output = []
 
 if hashrate > 0 and coin != "riecoin":
@@ -859,7 +879,7 @@ if hashrate > 0 and coin != "riecoin":
     else:
         blocktime = diff * 2**32 / hashrate
 
-    output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice)
+    output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice, fiatprice)
 
 if adjustblocks[coin] > 0:
     adjtime = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600

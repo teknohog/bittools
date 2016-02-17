@@ -69,7 +69,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--account_id", "-a", type = int, help = "Index of local account/address, starting from 0 = coinbase, in the order shown in balances")
 
-parser.add_argument("--fraction", "-f", type = float, default = 0.6, help = "Lastsend fraction, default %(default)f")
+parser.add_argument("--fraction", "-f", type = float, default = 0.5, help = "Lastsend fraction, default %(default)f")
 
 parser.add_argument("--lastsend", "-l", help = "Send a fraction (-f) of new income (-a) to this address")
 
@@ -80,6 +80,8 @@ parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, help="Hashe
 parser.add_argument("--sendto", "-s", nargs = 2, help = "Send toaddress amount in ETH. The account must be unlocked.")
 
 parser.add_argument("-u", "--url", dest="url", default="http://localhost:8545", help="Connect to a different URL, instead of your local Ethereum daemon")
+
+parser.add_argument("-v", "--verbose", action = "store_true")
 
 parser.add_argument("-W", "--watts", dest="watts", type=float, help="Power usage of miners for profitability calculation")
 
@@ -128,6 +130,15 @@ dictprint(info)
 
 blockreward = 5
 
+if options.verbose:
+    fiatprice = coin_price("ETH")
+
+    if fiatprice > 0:
+        print("\nYour balance represents about")
+        print("%f EUR (1 ETH = %f EUR)" % (fiatprice * info["total balance"], fiatprice))
+else:
+    fiatprice = 0
+
 if info["hashrate"] > 0:
     if md > 0:
         diff = md
@@ -135,8 +146,8 @@ if info["hashrate"] > 0:
         diff = info["difficulty"]
     
     blocktime = diff / info["hashrate"]
-
-    output = profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice)
+    
+    output = profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice, fiatprice)
 
     prettyprint(output)
 

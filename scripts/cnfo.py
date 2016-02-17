@@ -44,6 +44,8 @@ parser.add_argument("-t", "--transactions", dest="transactions", action="store_t
 
 parser.add_argument("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local daemon")
 
+parser.add_argument("-v", "--verbose", action = "store_true")
+
 parser.add_argument("-W", "--watts", dest="watts", type=float, help="Power usage of miners for profitability calculation")
 
 parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price in EUR for profitability calculation")
@@ -128,6 +130,12 @@ if md > 0:
 # tail emission or something. Also, it's only an estimate.
 moneysupply = (2**64 - 1) * baseunit[options.coin] - blockreward * reward_divisor[options.coin]
 output.append(["moneysupply", str(moneysupply)])
+
+if options.verbose:
+    fiatprice = coin_price(currency[options.coin])
+
+    if fiatprice > 0:
+        output.append(["EUR price", str(fiatprice)])
 
 if options.hashrate > 0:
     if md > 0:

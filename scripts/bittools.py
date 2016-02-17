@@ -115,7 +115,7 @@ def meandiff(coin):
     else:
         return 0
 
-def profit(blocktime, reward, cur, watts, kwhprice):
+def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0):
     # The conventions are slightly different between coin families, so
     # try to make this general enough while factoring out everything
     # in common
@@ -129,7 +129,10 @@ def profit(blocktime, reward, cur, watts, kwhprice):
 
     output.append(["Average payout", str(coinsperday) + " " + cur + "/day"])
 
-    fiatprice = coin_price(cur)
+    # We may already have this from balance display, so don't bother
+    # the server. It may still be unavailable, though.
+    if fiatprice <= 0:
+        fiatprice = coin_price(cur)
 
     if fiatprice > 0:
         fiatpay = coinsperday * fiatprice
