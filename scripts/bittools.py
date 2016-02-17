@@ -17,14 +17,16 @@ def printlength(s):
 
 def prettyprint(array, delimiter=" "):
     # I guess this verges on something that should use curses instead
-    columns = len(array[0])
 
-    width = []
-    for column in range(columns):
-        width.append(max(map(lambda x: printlength(x[column]), array)))
+    if len(array) > 0:
+        columns = len(array[0])
 
-    for i in array:
-        print(delimiter.join(map(lambda col: i[col] + " "*(width[col] - printlength(i[col])), range(columns - 1))) + delimiter + i[columns-1])
+        width = []
+        for column in range(columns):
+            width.append(max(map(lambda x: printlength(x[column]), array)))
+
+        for i in array:
+            print(delimiter.join(map(lambda col: i[col] + " "*(width[col] - printlength(i[col])), range(columns - 1))) + delimiter + i[columns-1])
 
 def timeprint(time):
     # This is used more generally, so provide the number as a number,
