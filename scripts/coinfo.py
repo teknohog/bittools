@@ -360,10 +360,19 @@ def listtransactions(args):
 
         prettyprint(output)
         
-def send(address, amount):
+def send(address, amount, new_txfee):
     # Double check the amount and address -- the command line may be
     # split over two lines, making the amount less obvious
-    print("About to send " + currency[coin] + " " + str(amount) + " to " + address)
+
+    # Set transfer fee for this send only
+    default_txfee = s.getinfo()["paytxfee"]
+    if new_txfee >= 0:
+        txfee = new_txfee
+        s.settxfee(txfee)
+    else:
+        txfee = default_txfee
+        
+    print("About to send " + currency[coin] + " " + str(amount) + " to " + address + " with txfee " + str(txfee))
 
     # Warn of potential dupes; sends show up with empty account name
     trans = s.listtransactions('')
@@ -396,6 +405,10 @@ def send(address, amount):
     else:
         print("Confirmation failed, not sending.")
 
+    # Reset the daemon's default txfee, in any case
+    if new_txfee >= 0:
+        s.settxfee(default_txfee)
+        
 def meandiff2(coin):
     # Alternative for testing: use blockchain data instead of saved
     # logfiles. A nice idea but notably slower :-/
@@ -490,6 +503,8 @@ parser.add_option("-s", "--sendto", dest="sendto", help="Send coins to this addr
 parser.add_option("-T", "--TjcoinV2", action="store_const", const="TjcoinV2", dest="coin", default="bitcoin", help="Connect to Tjcoind")
 
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions, optionally filtered by account name (e.g. '' for generates), and optional number (default 10)")
+
+parser.add_option("--txfee", dest="txfee", type = float, default = -1, help="Transaction fee for this send, instead of the daemon default")
 
 parser.add_option("-U", "--universalmolecule", action="store_const", const="universalmolecule", dest="coin", default="bitcoin", help="Connect to universalmoleculed")
 
@@ -761,7 +776,7 @@ if options.newaddress:
     exit()
 
 if options.sendto:
-    send(options.sendto, float(args[0]))
+    send(options.sendto, float(args[0]), options.txfee)
     exit()
 
 if options.transactions:
