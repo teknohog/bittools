@@ -41,9 +41,8 @@ def timeprint(time):
     else:
         return [time, "s"]
 
-def coin_price(cur):
-    # Assume EUR as the base price for now
-    cn_url = "https://www.cryptonator.com/api/ticker/" + cur + "-EUR"
+def coin_price(cur, basecur):
+    cn_url = "https://www.cryptonator.com/api/ticker/" + cur + "-" + basecur
 
     # http://stackoverflow.com/questions/12965203/how-to-get-json-from-webpage-into-python-script
     import urllib, json
@@ -117,7 +116,7 @@ def meandiff(coin):
     else:
         return 0
 
-def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0):
+def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0, basecur = "EUR"):
     # The conventions are slightly different between coin families, so
     # try to make this general enough while factoring out everything
     # in common
@@ -134,13 +133,13 @@ def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0):
     # We may already have this from balance display, so don't bother
     # the server. It may still be unavailable, though.
     if fiatprice <= 0:
-        fiatprice = coin_price(cur)
+        fiatprice = coin_price(cur, basecur)
 
     if fiatprice > 0:
         fiatpay = coinsperday * fiatprice
 
-        output.append(["1 " + cur, str(fiatprice) + " EUR"])
-        output.append(["Fiat payout", str(fiatpay) + " " + "EUR/day"])
+        output.append(["1 " + cur, str(fiatprice) + " " + basecur])
+        output.append(["Fiat payout", str(fiatpay) + " " + basecur + "/day"])
 
         if watts > 0 and kwhprice > 0:
             cost = kwhprice * watts / 1000 * 24
@@ -156,6 +155,6 @@ def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0):
                     emo = ":("
 
                 output.append(["Payout/cost", str(pratio) + " " + emo])
-                output.append(["Net profit", str(fiatpay - cost) + " EUR/day"])
+                output.append(["Net profit", str(fiatpay - cost) + " " + basecur + "/day"])
 
     return output

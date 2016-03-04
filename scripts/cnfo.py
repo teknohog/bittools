@@ -32,6 +32,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-A", "--aeon", action="store_const", const="aeon", dest="coin", default="boolberry", help="Connect to Aeon daemon")
 
+parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
+
 parser.add_argument("--boolberry", action="store_const", const="boolberry", dest="coin", default="boolberry", help="Connect to Boolberry daemon (default)")
 
 parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
@@ -48,7 +50,7 @@ parser.add_argument("-v", "--verbose", action = "store_true")
 
 parser.add_argument("-W", "--watts", dest="watts", type=float, help="Power usage of miners for profitability calculation")
 
-parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price in EUR for profitability calculation")
+parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price for profitability calculation")
 
 options = parser.parse_args()
 
@@ -132,17 +134,17 @@ moneysupply = (2**64 - 1) * baseunit[options.coin] - blockreward * reward_diviso
 output.append(["moneysupply", str(moneysupply)])
 
 if options.verbose:
-    fiatprice = coin_price(currency[options.coin])
+    fiatprice = coin_price(currency[options.coin], options.basecur)
 
     if fiatprice > 0:
-        output.append(["EUR price", str(fiatprice)])
+        output.append([options.basecur + " price", str(fiatprice)])
 
 if options.hashrate > 0:
     if md > 0:
         diff = md
     
     blocktime = diff / options.hashrate
-    output += profit(blocktime, blockreward, currency[options.coin], options.watts, options.kwhprice)
+    output += profit(blocktime, blockreward, currency[options.coin], options.watts, options.kwhprice, 0, options.basecur)
 
 if len(output) > 0:
     prettyprint(output)

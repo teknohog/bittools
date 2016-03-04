@@ -133,8 +133,8 @@ Fiat payout                 1.51591177114 EUR/day
 Payout/cost                 1.83624020187 :)
 Net profit                  0.690359771137 EUR/day
 
-I can implement a switch for USD and other fiat currencies if there is
-enough demand. (Or simply replace EUR by USD everywhere in the script.)
+To use USD (or BTC, or any similar standard) instead of EUR, use
+--basecur USD.
 
 Note:
 

@@ -148,7 +148,7 @@ def total_supply(coin, blocks, info):
 
     return (total, final_total)
 
-def own_share(coin, blocks, info, fiatprice):
+def own_share(coin, blocks, info, fiatprice, basecur):
     printout = []
 
     (total, final_total) = total_supply(coin, blocks, info)
@@ -168,7 +168,7 @@ def own_share(coin, blocks, info, fiatprice):
         print("\nYour balance represents about")
         
         if fiat_balance > 0:
-            print("%f EUR (1 %s = %f EUR)" % (fiat_balance, currency[coin], fiatprice))
+            print("%f %s (1 %s = %f %s)" % (fiat_balance, basecur, currency[coin], fiatprice, basecur))
 
         prettyprint(printout, " % or 1/")
 
@@ -444,6 +444,8 @@ parser.add_option("--backupwallet", dest="backupwallet", help="Backup wallet to 
 
 parser.add_option("-b", "--byaccount", dest="byaccount", help="List addresses by the given account")
 
+parser.add_option("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
+
 parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin", default="bitcoin", help="Connect to bitcoind")
 
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
@@ -516,7 +518,7 @@ parser.add_option("-v", "--verbose", dest="verbose", action="store_true", defaul
 
 parser.add_option("-W", "--watts", dest="watts", type = float, help="Power usage of miners for profitability calculation")
 
-parser.add_option("-w", "--kwh-price", dest="kwhprice", type = float, help="kWh price in EUR for profitability calculation")
+parser.add_option("-w", "--kwh-price", dest="kwhprice", type = float, help="kWh price for profitability calculation")
 
 parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite", dest="coin", default="bitcoin", help="Connect to cryptonited")
 
@@ -866,9 +868,9 @@ if options.verbose:
 prettyprint(output)
 
 if options.verbose:
-    fiatprice = coin_price(currency[coin])
+    fiatprice = coin_price(currency[coin], options.basecur)
     
-    own_share(coin, blocks, info, fiatprice)
+    own_share(coin, blocks, info, fiatprice, options.basecur)
 
     if networkhashrate > 0 and hashrate > 0:
         share = hashrate / networkhashrate
@@ -894,7 +896,7 @@ if hashrate > 0 and coin != "riecoin":
     else:
         blocktime = diff * 2**32 / hashrate
 
-    output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice, fiatprice)
+    output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
 
 if adjustblocks[coin] > 0:
     adjtime = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600

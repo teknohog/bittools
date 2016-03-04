@@ -69,6 +69,8 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--account_id", "-a", type = int, help = "Index of local account/address, starting from 0 = coinbase, in the order shown in balances")
 
+parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
+
 parser.add_argument("--fraction", "-f", type = float, default = 0.5, help = "Lastsend fraction, default %(default)f")
 
 parser.add_argument("--lastsend", "-l", help = "Send a fraction (-f) of new income (-a) to this address")
@@ -85,7 +87,7 @@ parser.add_argument("-v", "--verbose", action = "store_true")
 
 parser.add_argument("-W", "--watts", dest="watts", type=float, help="Power usage of miners for profitability calculation")
 
-parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price in EUR for profitability calculation")
+parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price for profitability calculation")
 
 options = parser.parse_args()
 
@@ -131,11 +133,11 @@ dictprint(info)
 blockreward = 5
 
 if options.verbose:
-    fiatprice = coin_price("ETH")
+    fiatprice = coin_price("ETH", options.basecur)
 
     if fiatprice > 0:
         print("\nYour balance represents about")
-        print("%f EUR (1 ETH = %f EUR)" % (fiatprice * info["total balance"], fiatprice))
+        print("%f %s (1 ETH = %f %s)" % (fiatprice * info["total balance"], options.basecur, fiatprice, options.basecur))
 else:
     fiatprice = 0
 
@@ -147,7 +149,7 @@ if info["hashrate"] > 0:
     
     blocktime = diff / info["hashrate"]
     
-    output = profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice, fiatprice)
+    output = profit(blocktime, blockreward, "ETH", options.watts, options.kwhprice, fiatprice, options.basecur)
 
     prettyprint(output)
 
