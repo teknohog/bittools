@@ -29,15 +29,21 @@ def get_balance(addr):
     return fromhexwei(hwbal)
 
 def send(fromaddr, toaddr, amount):
-    print("Sending " + str(amount) + " ether to " + toaddr)
+    print("About to send " + str(amount) + " ETH to " + toaddr)
 
+    c_input = raw_input("OK (yes/no)? ")
+    if c_input != "yes":
+        exit()
+    
     # Save the balance file after sending. The balance won't be
     # updated immediately, so estimate this -- will be less due to
     # transfer fees and whatnot.
     bal = get_balance(fromaddr) - amount - 0.001
 
-    daemon.eth_sendTransaction({"from": fromaddr, "to": toaddr, "value": tohexwei(amount)})
+    txdata = daemon.eth_sendTransaction({"from": fromaddr, "to": toaddr, "value": tohexwei(amount)})
 
+    print("Transaction sent: " + txdata)
+    
     balfile = os.path.expanduser("~/.ethereum/keystore/" + fromaddr + ".balance")
     # Newline makes a manual cat cleaner for the shell
     WriteFile(balfile, str(bal) + "\n")
@@ -108,7 +114,7 @@ if options.account_id > -1:
 
     if options.sendto:
         toaddr = options.sendto[0]
-        amount = int(options.sendto[1])
+        amount = float(options.sendto[1])
 
         send(fromaddr, toaddr, amount)
         exit()
