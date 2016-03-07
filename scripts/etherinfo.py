@@ -127,7 +127,7 @@ if options.account_id > -1:
         # Just add that address into general info
         info["account " + str(aid) + " address"] = fromaddr
         
-md = meandiff("ethereum")
+md = meandiff("ethereum", info["difficulty"])
 if md > 0:
     info["meandiff"] = md
 

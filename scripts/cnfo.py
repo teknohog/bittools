@@ -124,7 +124,7 @@ else:
     diff = lasthead["difficulty"]
 output.append(["difficulty", str(diff)])
 
-md = meandiff(options.coin)
+md = meandiff(options.coin, diff)
 if md > 0:
     output.append(["meandiff", str(md)])
 

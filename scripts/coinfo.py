@@ -815,7 +815,7 @@ else:
         # Print PoW diff only for simpler parsing on external scripts
         info['difficulty'] = diff
 
-    md = meandiff(coin)
+    md = meandiff(coin, diff)
     if md > 0:
         keys.append('meandiff')
         info['meandiff'] = md

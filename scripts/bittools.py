@@ -84,7 +84,7 @@ def linear_regression(pairs):
 
     return (a, b)
 
-def meandiff(coin):
+def meandiff(coin, diffnow = 0):
     # Use meandiff.sh history if available
     if coin == "boolberry":
         dirname = "boolb"
@@ -108,7 +108,11 @@ def meandiff(coin):
         
         # difflog now contains time, diff pairs
         pairs = map(lambda a: a.split(), l)
-                
+
+        # Current difficulty is a valid, useful data point
+        if diffnow > 0:
+            pairs.append([time(), diffnow])
+
         ab = linear_regression(pairs)
 
         # Estimate a current diff
