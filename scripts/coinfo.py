@@ -564,7 +564,7 @@ currency = {
     "Slothcoin": "Sloth",
     "TjcoinV2": "TJC",
     "universalmolecule": "UMO",
-    "Vanillacoin": "VNL",
+    "Vanillacoin": "XVC",
     "vertcoin": "VTC",
     "virtacoin": "VTA",
 }
