@@ -147,18 +147,16 @@ def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0, basecur = "EU
 
         if watts > 0 and kwhprice > 0:
             cost = kwhprice * watts / 1000 * 24
-        
-            if cost > 0:
-                pratio = fiatpay / cost
+            pratio = fiatpay / cost
                 
-                if pratio > 2:
-                    emo = ":D"
-                elif pratio > 1:
-                    emo = ":)"
-                else:
-                    emo = ":("
+            if pratio > 2:
+                emo = ":D"
+            elif pratio > 1:
+                emo = ":)"
+            else:
+                emo = ":("
 
-                output.append(["Payout/cost", str(pratio) + " " + emo])
-                output.append(["Net profit", str(fiatpay - cost) + " " + basecur + "/day"])
+            output.append(["Payout/cost", str(pratio) + " " + emo])
+            output.append(["Net profit", str(fiatpay - cost) + " " + basecur + "/day"])
 
     return output
