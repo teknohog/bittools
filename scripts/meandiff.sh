@@ -81,7 +81,7 @@ while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
 	    ;;
         H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
-	J) PROJECT=vanillacoin ;;
+	J) PROJECT=vcash ;;
 	j) PROJECT=primio ;;
 	K) PROJECT=dash ;;
 	L) PROJECT=Slothcoin ;;
@@ -127,8 +127,8 @@ case $PROJECT in
     Tjcoin)
 	LOGFILE=~/.TjcoinV2/difflog
 	;;
-    vanillacoin)
-	LOGFILE=~/.Vanillacoin/difflog
+    vcash)
+	LOGFILE=~/.Vcash/difflog
 	;;
     *)
 	LOGFILE=~/.$PROJECT/difflog
@@ -162,7 +162,7 @@ if $SET; then
 	ethereum)
 	    DIFF=$(etherinfo.py | grep -m1 difficulty | awk '{print $2}')
 	    ;;
-	vanillacoin)
+	vcash)
 	    DIFF=$(coinfo.py -J | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	*)

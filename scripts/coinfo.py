@@ -86,7 +86,7 @@ def blockreward(coin, diff, blocks):
         coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
         final_total = (2**64 - 1) * 1e-10
         return 243.1 * coinbase / final_total
-    elif coin == "Vanillacoin":
+    elif coin == "Vcash":
         # From reward.cpp until block 325000
         #return exp_decay(128, blocks, 50000, 5./6.)
         return lastreward(blocks)
@@ -203,11 +203,11 @@ def exportkeys():
 
     try:
         # dumpwallet is the best method if available, as it should
-        # give the complete list of keys. Vanillacoin has a different format
+        # give the complete list of keys. Vcash has a different format
         # -- maybe other coins use csv too?
         
-        if coin == "Vanillacoin":
-            dumpfile = os.path.expanduser("~/.Vanillacoin/data/wallet.csv")
+        if coin == "Vcash":
+            dumpfile = os.path.expanduser("~/.Vcash/data/wallet.csv")
             s.dumpwallet(dumpfile)
             keydump = ReadLines(dumpfile)[1:]
             unlink(dumpfile)
@@ -472,7 +472,7 @@ parser.add_option("-I", "--riecoin", action="store_const", const="riecoin", dest
 
 parser.add_option("-i", "--importkeys", dest="importfile", help="Import private keys from file (see exportkeys output for formatting)")
 
-parser.add_option("-J", "--Vanillacoin", action="store_const", const="Vanillacoin", dest="coin", default="bitcoin", help="Connect to Vanillacoind")
+parser.add_option("-J", "--Vcash", action="store_const", const="Vcash", dest="coin", default="bitcoin", help="Connect to Vcashd")
 
 parser.add_option("-j", "--primio", action="store_const", const="primio", dest="coin", default="bitcoin", help="Connect to primiod")
 
@@ -564,7 +564,7 @@ currency = {
     "Slothcoin": "Sloth",
     "TjcoinV2": "TJC",
     "universalmolecule": "UMO",
-    "Vanillacoin": "XVC",
+    "Vcash": "XVC",
     "vertcoin": "VTC",
     "virtacoin": "VTA",
 }
@@ -620,7 +620,7 @@ blocksperhour = {
     "Slothcoin": 24,
     "TjcoinV2": 24,
     "universalmolecule": 30,
-    "Vanillacoin": 25, # Mean?
+    "Vcash": 25, # Mean?
     "vertcoin": 24,
     "virtacoin": 60,
 }
@@ -655,7 +655,7 @@ adjustblocks = {
     "Slothcoin": 2,
     "TjcoinV2": 336,
     "universalmolecule": 20,
-    "Vanillacoin": 0, # ?4
+    "Vcash": 0, # ?4
     "vertcoin": 0,
     "virtacoin": 0,
 }
@@ -725,14 +725,14 @@ rpcport = {
     "Slothcoin": "5108",
     "TjcoinV2": "9178",
     "universalmolecule": "19738",
-    "Vanillacoin": "9195",
+    "Vcash": "9195",
     "vertcoin": "5888",
     "virtacoin": "22815",
 }
 
 if len(options.url) > 0:
     url = options.url
-elif coin == "Vanillacoin":
+elif coin == "Vcash":
     # No login credentials needed
     url = "http://localhost:9195/"
 else:
@@ -749,7 +749,7 @@ else:
 s = Server(url)
 
 if options.byaccount:
-    if coin == "Vanillacoin":
+    if coin == "Vcash":
         # Only one address; at least dumpwallet will give them all
         print(s.getaccountaddress(options.byaccount))
     else:
@@ -793,7 +793,7 @@ info = s.getinfo()
 
 if options.verbose:
     keys = info.keys()
-elif coin == "Vanillacoin":
+elif coin == "Vcash":
     # No testnet in info
     keys = ["balance"]
 else:
