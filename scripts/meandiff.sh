@@ -144,6 +144,9 @@ if $SET; then
 	ethereum)
 	    PROCESS=geth
 	    ;;
+	vcash)
+	    PROCESS=vanillacoind
+	    ;;
 	*)
 	    PROCESS=${PROJECT}d
 	    ;;
