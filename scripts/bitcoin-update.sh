@@ -281,6 +281,7 @@ fi
 case $PROJECT in
     aeon)
 	sed -Ei 's/-Werror//' CMakeLists.txt
+	make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
@@ -293,7 +294,8 @@ case $PROJECT in
 	# This needs to be cleared if the DB path changes
 	rm build/release/CMakeCache.txt
 	sed -i "s|/usr/include/db.*|$DB_INCPATH|" cmake/FindBerkeleyDB.cmake
-	
+
+	make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/bin
@@ -307,6 +309,7 @@ case $PROJECT in
 	sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' contrib/miniupnpc/CMakeLists.txt
 	
 	# As in bitmonero
+	make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
@@ -337,6 +340,7 @@ case $PROJECT in
 
 	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
 
+	make clean
 	nice make $MAKEOPTS
 
 	cd src
