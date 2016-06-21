@@ -9,12 +9,8 @@ import random
 
 output = ""
 
-hexdigits = list("0123456789ABCDEF")
+# hex(0).strip("0x") gives ""
 for i in range(64):
-    output += random.choice(hexdigits)
-
-# Won't work as hex(0).strip("0x") gives "" for some reason
-#for i in range(64):
-#    output += hex(random.randrange(16)).strip("0x")
+    output += hex(random.randrange(16))[2]
 
 print(output)
