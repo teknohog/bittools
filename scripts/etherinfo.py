@@ -77,6 +77,8 @@ parser.add_argument("--account_id", "-a", type = int, help = "Index of local acc
 
 parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
 
+parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
+
 parser.add_argument("--fraction", "-f", type = float, default = 0.5, help = "Lastsend fraction, default %(default)f")
 
 parser.add_argument("--lastsend", "-l", help = "Send a fraction (-f) of new income (-a) to this address")
@@ -148,7 +150,9 @@ else:
     fiatprice = 0
 
 if info["hashrate"] > 0:
-    if md > 0:
+    if options.diff > 0:
+        diff = options.diff
+    elif md > 0:
         diff = md
     else:
         diff = info["difficulty"]

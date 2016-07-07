@@ -140,7 +140,7 @@ if options.verbose:
         output.append([options.basecur + " price", str(fiatprice)])
 
 if options.hashrate > 0:
-    if md > 0:
+    if md > 0 and not options.diff:
         diff = md
     
     blocktime = diff / options.hashrate

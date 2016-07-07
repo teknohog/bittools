@@ -882,7 +882,7 @@ else:
 output = []
 
 if hashrate > 0 and coin != "riecoin":
-    if 'meandiff' in info.keys():
+    if 'meandiff' in info.keys() and not options.diff:
         diff = info['meandiff']
     
     if coin == "primecoin":
