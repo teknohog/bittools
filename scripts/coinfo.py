@@ -490,6 +490,8 @@ parser.add_option("-m", "--maxcoin", action="store_const", const="maxcoin", dest
 
 parser.add_option("-n", "--namecoin", action="store_const", const="namecoin", dest="coin", default="bitcoin", help="Connect to namecoind")
 
+parser.add_option("--peers", action="store_true", default=False, help="List connections")
+
 parser.add_option("-P", "--primecoin", action="store_const", const="primecoin", dest="coin", default="bitcoin", help="Connect to primecoind")
 
 parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="coin", default="bitcoin", help="Connect to ppcoind")
@@ -787,6 +789,13 @@ if options.transactions:
 
 if options.backupwallet:
     s.backupwallet(options.backupwallet)
+    exit()
+
+if options.peers:
+    peers = s.getpeerinfo()
+    for p in peers:
+        addr = p["addr"].split(":")[0] 
+        print(addr)
     exit()
     
 info = s.getinfo()
