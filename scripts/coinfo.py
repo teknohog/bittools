@@ -792,10 +792,14 @@ if options.backupwallet:
     exit()
 
 if options.peers:
+    # The ip addresses contain occasional dupes
     peers = s.getpeerinfo()
+    peer_ips = set()
     for p in peers:
         addr = p["addr"].split(":")[0] 
-        print(addr)
+        peer_ips.add(addr)
+    for ip in peer_ips:
+        print(ip)
     exit()
     
 info = s.getinfo()
