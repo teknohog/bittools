@@ -216,12 +216,12 @@ A wrapper for parsing URLs / QR codes such as
 
 bitcoin:1nvalid4ddressifyoukn0wwh471m34n?amount=3.14&label=foo
 
-for payment with coinfo.py. The need for this arose at a Bitpay
-point-of-sale, but the URL scheme is not limited to Bitpay. In
-addition, most other coins such as litecoin should work.
+for payment. The need for this arose at a Bitpay point-of-sale, but
+the URL scheme is not limited to Bitpay. In addition, most other coins
+such as litecoin should work.
 
 There are no options, the script prompts for the code, which is
 generally copy-pasted from a QR reader or some other application.
 
-Like any payment, this is potentially dangerous. However, coinfo.py
-still does the random verification.
+This now uses the native binary instead of my Python RPC approach,
+with a simple yes/no confirmation dialog.
