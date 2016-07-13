@@ -295,7 +295,7 @@ case $PROJECT in
 	rm build/release/CMakeCache.txt
 	sed -i "s|/usr/include/db.*|$DB_INCPATH|" cmake/FindBerkeleyDB.cmake
 
-	make clean
+	yes y | make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/bin
