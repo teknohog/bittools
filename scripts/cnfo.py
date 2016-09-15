@@ -32,11 +32,15 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-A", "--aeon", action="store_const", const="aeon", dest="coin", default="boolberry", help="Connect to Aeon daemon")
 
+#parser.add_argument("--aliasinfo", default = "", help="BBR alias details")
+
 parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
 
 parser.add_argument("--boolberry", action="store_const", const="boolberry", dest="coin", default="boolberry", help="Connect to Boolberry daemon (default)")
 
 parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
+
+parser.add_argument("--listaliases", const = "listaliases", action="store_const", help="List all BBR aliases")
 
 parser.add_argument("-M", "--bitmonero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
 
@@ -108,6 +112,22 @@ else:
 # https://wiki.bytecoin.org/wiki/Daemon_JSON_RPC_API
 daemon = Server(url)
 
+if options.listaliases:
+    aad = daemon.get_all_alias_details()
+
+    if aad["status"] == "OK":
+        output = []
+        for line in aad["aliases"]:
+            output.append([line["alias"], line["address"]])
+        prettyprint(output)
+
+    exit()
+
+# not working
+#elif options.aliasinfo:
+#    print(daemon.get_alias_details({"alias": options.aliasinfo}))
+#    exit()
+    
 output = []
 
 lasthead = daemon.getlastblockheader()["block_header"]
