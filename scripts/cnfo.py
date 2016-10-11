@@ -42,7 +42,7 @@ parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually fo
 
 parser.add_argument("--listaliases", const = "listaliases", action="store_const", help="List all BBR aliases")
 
-parser.add_argument("-M", "--bitmonero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
+parser.add_argument("-M", "--monero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
 
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, help="Hashes/sec from external miners")
 

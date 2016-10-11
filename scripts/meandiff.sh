@@ -86,7 +86,7 @@ while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
 	K) PROJECT=dash ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
-	M) PROJECT=bitmonero ;;
+	M) PROJECT=monero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
 	O|o)
@@ -156,7 +156,7 @@ if $SET; then
     
     # top up the logfile
     case $PROJECT in
-	aeon|bitmonero|boolberry)
+	aeon|monero|boolberry)
 	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	ethereum)

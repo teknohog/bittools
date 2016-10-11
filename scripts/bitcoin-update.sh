@@ -38,7 +38,7 @@ while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
 	k) PROJECT=blakebitcoin ;;
 	L) PROJECT=Slothcoin ;;
 	l) PROJECT=litecoin ;;
-	M) PROJECT=bitmonero ;;
+	M) PROJECT=monero ;;
 	m) PROJECT=maxcoin ;;
 	n) PROJECT=namecoin ;;
 	O) PROJECT=boolberry-opencl ;;
@@ -78,10 +78,10 @@ case $PROJECT in
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
 	;;
-    bitmonero)
-	GITURL=https://github.com/monero-project/bitmonero
+    monero)
+	GITURL=https://github.com/monero-project/monero
 	# For install only
-	BINARY="connectivity_tool bitmonerod simplewallet simpleminer"
+	BINARY="monero-blockchain-export  monero-blockchain-import  monerod  monero-wallet-cli"
 	;;
     boolberry)
 	GITURL=https://github.com/cryptozoidberg/boolberry
@@ -254,7 +254,7 @@ else
 fi
 
 # leveldb is broken by multi-part compiler names like
-# "ccache distcc g++"... and so is bitmonero, so fix this for everyone
+# "ccache distcc g++"... and so is monero, so fix this for everyone
 if [ "`echo $CXX | wc -w`" -gt 1 ]; then
 
     MYCC=`mktemp`
@@ -286,7 +286,7 @@ case $PROJECT in
 
 	cd build/release/src
     ;;
-    bitmonero)
+    monero)
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway
 	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
@@ -308,7 +308,7 @@ case $PROJECT in
 	# warning "_BSD_SOURCE and _SVID_SOURCE are deprecated, use _DEFAULT_SOURCE"
 	sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' contrib/miniupnpc/CMakeLists.txt
 	
-	# As in bitmonero
+	# As in monero
 	make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
