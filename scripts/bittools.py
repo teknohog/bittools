@@ -88,6 +88,8 @@ def meandiff(coin, diffnow = 0):
     # Use meandiff.sh history if available
     if coin == "boolberry":
         dirname = "boolb"
+    elif coin == "monero":
+        dirname = "bitmonero"
     else:
         dirname = coin
         

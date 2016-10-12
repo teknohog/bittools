@@ -121,6 +121,9 @@ case $PROJECT in
     boolberry)
 	LOGFILE=~/.boolb/difflog
 	;;
+    monero)
+	LOGFILE=~/.bitmonero/difflog
+	;;
     shibecoin)
 	LOGFILE=~/.ShibeCoin/difflog
 	;;
