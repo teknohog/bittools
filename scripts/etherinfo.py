@@ -29,7 +29,7 @@ def get_balance(addr):
     return fromhexwei(hwbal)
 
 def send(fromaddr, toaddr, amount):
-    print("About to send " + str(amount) + " ETH to " + toaddr)
+    print("About to send " + str(amount) + " " + cur + " to " + toaddr)
 
     c_input = raw_input("OK (yes/no)? ")
     if c_input != "yes":
@@ -112,6 +112,11 @@ info = {"hashrate": float(int(daemon.eth_hashrate(), 16)),
 
 info["total balance"] = sum(info["balances"])
 
+if options.classic:
+    cur = "ETC"
+else:
+    cur = "ETH"
+
 if options.account_id > -1:
     aid = options.account_id
     fromaddr = daemon.eth_accounts()[aid]
@@ -141,11 +146,6 @@ if options.hashrate:
 dictprint(info)
 
 blockreward = 5
-
-if options.classic:
-    cur = "ETC"
-else:
-    cur = "ETH"
 
 if options.verbose:
     fiatprice = coin_price(cur, options.basecur)
