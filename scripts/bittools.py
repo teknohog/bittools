@@ -57,7 +57,14 @@ def coin_price(cur, basecur):
             if "cryptonator" in url:
                 return float(data["ticker"]["price"])
             elif "cryptocompare" in url:
-                return float(data["Data"][0]["Price"])
+                if len(data["Data"]) == 0 and "BTC" not in [cur, basecur]:
+                    # For many currencies, only BTC-based price is
+                    # available here, so need two separate fetches
+                    p1 = coin_price(cur, "BTC")
+                    p2 = coin_price("BTC", basecur)
+                    return p1*p2
+                else:
+                    return float(data["Data"][0]["Price"])
         except:
             pass
 
