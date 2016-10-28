@@ -42,18 +42,26 @@ def timeprint(time):
         return [time, "s"]
 
 def coin_price(cur, basecur):
-    cn_url = "https://www.cryptonator.com/api/ticker/" + cur + "-" + basecur
+    api_urls = [
+        "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
+        "https://www.cryptonator.com/api/ticker/" + cur + "-" + basecur,
+    ]
+    
+    import urllib2, json
 
-    # http://stackoverflow.com/questions/12965203/how-to-get-json-from-webpage-into-python-script
-    import urllib, json
+    for url in api_urls:
+        try:
+            response = urllib2.urlopen(url)
+            data = json.loads(response.read())
 
-    try:
-        response = urllib.urlopen(cn_url);
-        data = json.loads(response.read())
+            if "cryptonator" in url:
+                return float(data["ticker"]["price"])
+            elif "cryptocompare" in url:
+                return float(data["Data"][0]["Price"])
+        except:
+            pass
 
-        return float(data["ticker"]["price"])
-    except:
-        return 0
+    return 0
 
 def linear_regression(pairs):
     # Data usually comes in x, y pairs, so choose it as my input format
