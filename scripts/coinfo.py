@@ -90,6 +90,9 @@ def blockreward(coin, diff, blocks):
         # From reward.cpp until block 325000
         #return exp_decay(128, blocks, 50000, 5./6.)
         return lastreward(blocks)
+    elif coin == "zcash":
+        # Linear ramp-up for the first 20000 blocks, then basic halving
+        return min(blocks/2e4, 1) * exp_decay(initcoins[coin], blocks, blockhalve[coin])
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
@@ -532,6 +535,8 @@ parser.add_option("-y", "--vertcoin", action="store_const", const="vertcoin", de
 
 parser.add_option("-z", "--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
 
+parser.add_option("-Z", "--zcash", action="store_const", const="zcash", dest="coin", default="bitcoin", help="Connect to zcashd")
+
 (options, args) = parser.parse_args()
 
 coin = options.coin
@@ -569,6 +574,7 @@ currency = {
     "Vcash": "XVC",
     "vertcoin": "VTC",
     "virtacoin": "VTA",
+    "zcash": "ZEC",
 }
 
 # 0 means no block reward halving
@@ -592,6 +598,7 @@ blockhalve = {
     "universalmolecule": 0,
     "vertcoin": 840000,
     "virtacoin": 10080,
+    "zcash": 840000,
 }
 
 blocksperhour = {
@@ -625,6 +632,7 @@ blocksperhour = {
     "Vcash": 25, # Mean?
     "vertcoin": 24,
     "virtacoin": 60,
+    "zcash": 24,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -660,6 +668,7 @@ adjustblocks = {
     "Vcash": 0, # ?4
     "vertcoin": 0,
     "virtacoin": 0,
+    "zcash": 0,
 }
 
 # For coins with regular block halving
@@ -683,6 +692,7 @@ initcoins = {
     "universalmolecule": 0.1, # Minimum
     "vertcoin": 50,
     "virtacoin": 8000,
+    "zcash": 12.5, # after first 2e5 blocks -- use for total_supply approx
 }
 
 # (list of block limits, list of fixed rewards for those intervals)
@@ -730,6 +740,7 @@ rpcport = {
     "Vcash": "9195",
     "vertcoin": "5888",
     "virtacoin": "22815",
+    "zcash": "8232",
 }
 
 if len(options.url) > 0:
@@ -851,10 +862,11 @@ else:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
         hashrate = s.getprimespersec()
-    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin"]:
+    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin", "zcash"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available
         # Bitcoin: removed in 0.11.0
+        # zcash: no info available despite mining
         hashrate = 0
     else:
         try:
@@ -906,6 +918,9 @@ if hashrate > 0 and coin != "riecoin":
     elif coin == "gapcoin":
         # From http://coinia.net/gapcoin/calc.php
         blocktime = exp(diff) / hashrate
+    elif coin == "zcash":
+        # Guess based on networkhashrate comparisons
+        blocktime = diff * 2**13 / hashrate
     else:
         blocktime = diff * 2**32 / hashrate
 

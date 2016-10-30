@@ -65,7 +65,7 @@ POS=false
 SET=false
 PROJECT=bitcoin
 VERBOSE=false
-while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
+while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
     case "$opt" in
 	A) PROJECT=aeon ;;
 	a) PROJECT=AuroraCoin ;;
@@ -110,6 +110,7 @@ while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyz opt; do
 	x) PROJECT=dirac ;;
 	Y) PROJECT=lithium ;;
 	y) PROJECT=vertcoin ;;
+	Z) PROJECT=zcash ;;
 	z)
 	    PROJECT=ExclusiveCoin
 	    POS=true

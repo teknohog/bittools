@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=- # 0 means build with the lib, but don't start by default
-while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
+while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyZz opt; do
     case "$opt" in
 	A) PROJECT=aeon ;;
 	a) PROJECT=AuroraCoin ;;
@@ -54,6 +54,7 @@ while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyz opt; do
 	x) PROJECT=dirac ;;
 	Y) PROJECT=lithium ;;
 	y) PROJECT=vertcoin ;;
+	Z) PROJECT=zcash ;;
 	z) PROJECT=ExclusiveCoin ;;
     esac
 done
@@ -175,6 +176,10 @@ case $PROJECT in
 	;;
     virtacoin)
 	GITURL=https://github.com/virtacoin/VirtaCoinProject
+	;;
+    zcash)
+	GITURL=https://github.com/zcash/zcash
+	BINARY="zcashd zcash-cli zcash-tx"
 	;;
     *)
 	exit
@@ -346,6 +351,13 @@ case $PROJECT in
 	cd src
 	
 	BINARY="${PROJECT}d ${PROJECT}-cli"
+	;;
+    zcash)
+	# Building per instructions will fetch and build local copies
+	# of libraries such as Boost. Have these guys never heard of
+	# shared libs?
+	./zcutil/build.sh
+	cd src
 	;;
     *)
 	cd src
