@@ -241,10 +241,7 @@ if $CHECKOUT || [ ! -d $BASEDIR/$PROJECTDIR ]; then
 else
     cd $BASEDIR/$PROJECTDIR
 
-    if [ -e CMakeLists.txt ]; then
-	# CMakeLists.txt cannot be updated if we changed it
-	git stash save
-    fi
+    git stash save
 
     # Do not build if there is no source update, but force build from
     # command line if wanted anyway
@@ -356,6 +353,7 @@ case $PROJECT in
 	# Building per instructions will fetch and build local copies
 	# of libraries such as Boost. Have these guys never heard of
 	# shared libs?
+	sed -i 's/\.\/b2/\.\/b2 --ignore-site-config/g' depends/packages/boost.mk
 	./zcutil/build.sh
 	cd src
 	;;
