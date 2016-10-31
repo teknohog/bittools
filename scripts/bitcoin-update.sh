@@ -354,7 +354,7 @@ case $PROJECT in
 	# of libraries such as Boost. Have these guys never heard of
 	# shared libs?
 	sed -i 's/\.\/b2/\.\/b2 --ignore-site-config/g' depends/packages/boost.mk
-	./zcutil/build.sh
+	nice ./zcutil/build.sh -j$(nproc)
 	cd src
 	;;
     *)
