@@ -137,6 +137,12 @@ def total_supply(coin, blocks, info):
 
         final_total = blockhalve[coin] / (1 - base) * initcoins[coin]
 
+        if coin == "zcash":
+            # Deduct the initial ramp-up effect from totals
+            ramp_blocks = min(blocks, 2e4)
+            total -= 12.5 * (2.0 - ramp_blocks/2e4)/2.0 * ramp_blocks
+            final_total -= 12.5 * 2e4 / 2
+        
     elif coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
@@ -912,16 +918,14 @@ if hashrate > 0 and coin != "riecoin":
     
     if coin == "primecoin":
         blocktime = 86400. / hashrate
-    elif coin == "cryptonite":
-        # Guess based on current network hashrate and difficulty
-        blocktime = diff * 2**20 / hashrate
     elif coin == "gapcoin":
         # From http://coinia.net/gapcoin/calc.php
         blocktime = exp(diff) / hashrate
-    elif coin == "zcash":
-        # Guess based on networkhashrate comparisons
-        blocktime = diff * 2**13 / hashrate
+    elif networkhashrate > 0:
+        # Direct comparison needs no coin specifics
+        blocktime = networkhashrate * 3600. / (hashrate * blocksperhour[coin])
     else:
+        # Bitcoin and most derivatives
         blocktime = diff * 2**32 / hashrate
 
     output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
