@@ -4,7 +4,7 @@ Cryptonite, Dash, Dirac, Dogecoin, eCoin, Electron, Ethereum,
 ExclusiveCoin, Gapcoin, GroestlCoin, Litecoin, Lithium, Maxcoin,
 Monero, Namecoin, Photon, PPCoin, Primecoin, Primio, Riecoin,
 ShibeCoin, Skeincoin, Slothcoin, Universalmolecule, Tjcoin,
-Vanillacoin, Vertcoin, Virtacoin, WhatDidIMissUseTheSource)
+Vanillacoin, Vertcoin, Virtacoin, Zcash)
 
 by Risto A. Paju / teknohog
 BTC: 1HkL2iLLQe3KJuNCgKPc8ViZs83NJyyQDM
@@ -173,6 +173,26 @@ Why merge wallets instead of simply sending coins?
 
 * Avoid transaction fees
 * Keep the receiving addresses alive
+
+
+Wallet encryption
+-----------------
+
+Two explicit options for encryption are available in coinfo.py:
+
+--encrypt for initial encryption of the wallet
+--unlock for unlocking the wallet for 1 minute
+
+In addition, the send function will attempt unlocking if initial send
+fails. In that case, the wallet is locked immediately afterwards.
+
+The unlock option is particularly important for exporting keys, as
+there is no simple method of detecting encryption status. Wallet
+backups are not affected, as they will remain encrypted in any case.
+
+Notably, all encryption options will prompt for the passphrase; it is
+never used on the command line, where it could end up in the shell
+history file.
 
 
 meandiff.sh
