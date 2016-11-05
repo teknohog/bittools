@@ -401,16 +401,22 @@ def send(address, amount, new_txfee):
     c_input = raw_input("Please type " + conf + " to confirm the transaction: ")
 
     if c_input == conf:
-        try:
-            if coin == "cryptonite":
-                result = s.sendtoaddress(address, ep_enc(amount))
-            else:
-                result = s.sendtoaddress(address, amount)
+        if coin == "cryptonite":
+            amount = ep_enc(amount)
 
-            print("Sent " + str(amount) + " to " + address + " with txid")
-            print(result)
+        try:
+            result = s.sendtoaddress(address, amount)
         except:
-            print("Send failed")
+            # There's no simple way to detect if the wallet is
+            # encrypted, so just try this
+            print("Initial send failed. Your wallet may be encrypted.")
+            pphrase = raw_input("Enter passphrase: ")
+            s.walletpassphrase(pphrase, 10)
+            result = s.sendtoaddress(address, amount)
+            s.walletlock()
+            
+        print("Sent " + str(amount) + " to " + address + " with txid")
+        print(result)
     else:
         print("Confirmation failed, not sending.")
 
@@ -466,6 +472,9 @@ parser.add_option("-D", "--dogecoin", action="store_const", const="dogecoin", de
 parser.add_option("--ecoin", action="store_const", const="ecoin", dest="coin", default="bitcoin", help="Connect to ecoind")
 
 parser.add_option("-E", "--electron", action="store_const", const="electron", dest="coin", default="bitcoin", help="Connect to electrond")
+
+parser.add_option("--encrypt", action="store_true", help = "Encrypt wallet")
+parser.add_option("--unlock", action="store_true", help = "Unlock encrypted wallet")
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
@@ -808,6 +817,16 @@ if options.backupwallet:
     s.backupwallet(options.backupwallet)
     exit()
 
+if options.encrypt:
+    pphrase = raw_input("Enter passphrase: ")
+    s.encryptwallet(pphrase)
+    exit()
+
+if options.unlock:
+    pphrase = raw_input("Enter passphrase: ")
+    s.walletpassphrase(pphrase, 60)
+    exit()
+    
 if options.peers:
     # The ip addresses contain occasional dupes
     peers = s.getpeerinfo()
