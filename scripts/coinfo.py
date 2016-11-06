@@ -876,7 +876,7 @@ else:
     if md > 0:
         keys.append('meandiff')
         info['meandiff'] = md
-    
+
 output = []
 for key in keys:
     output.append([key, str(info[key])])
@@ -943,14 +943,21 @@ if hashrate > 0 and coin != "riecoin":
     if 'meandiff' in info.keys() and not options.diff:
         diff = info['meandiff']
     
-    if coin == "primecoin":
+    if networkhashrate > 0 and not options.diff:
+        # Direct comparison needs no coin specifics, as long as we use
+        # current difficulty
+        blocktime = networkhashrate * 3600. / (hashrate * blocksperhour[coin])
+    elif coin == "primecoin":
         blocktime = 86400. / hashrate
     elif coin == "gapcoin":
         # From http://coinia.net/gapcoin/calc.php
         blocktime = exp(diff) / hashrate
-    elif networkhashrate > 0:
-        # Direct comparison needs no coin specifics
-        blocktime = networkhashrate * 3600. / (hashrate * blocksperhour[coin])
+    elif coin == "cryptonite":
+        # Guess based on current network hashrate and difficulty
+        blocktime = diff * 2**20 / hashrate
+    elif coin == "zcash":
+        # Guess based on networkhashrate comparisons
+        blocktime = diff * 2**13 / hashrate
     else:
         # Bitcoin and most derivatives
         blocktime = diff * 2**32 / hashrate
