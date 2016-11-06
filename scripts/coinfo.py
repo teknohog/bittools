@@ -818,13 +818,21 @@ if options.backupwallet:
     exit()
 
 if options.encrypt:
+    print("""Encrypting wallet. This cannot be undone, but the passphrase can be
+changed later. You may need to restart the daemon afterwards.""")
     pphrase = raw_input("Enter passphrase: ")
-    s.encryptwallet(pphrase)
+    pphrase2 = raw_input("Confirm p-phrase: ")
+    if pphrase == pphrase2:
+        s.encryptwallet(pphrase)
+    else:
+        print("Passphrases do not match, not encrypting.")
     exit()
 
 if options.unlock:
+    t = 60
+    print("Unlocking an encrypted wallet for %.2f %s" % tuple(timeprint(t)))
     pphrase = raw_input("Enter passphrase: ")
-    s.walletpassphrase(pphrase, 60)
+    s.walletpassphrase(pphrase, t)
     exit()
     
 if options.peers:
