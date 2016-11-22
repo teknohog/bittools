@@ -552,6 +552,8 @@ parser.add_option("-z", "--ExclusiveCoin", action="store_const", const="Exclusiv
 
 parser.add_option("-Z", "--zcash", action="store_const", const="zcash", dest="coin", default="bitcoin", help="Connect to zcashd")
 
+parser.add_option("--zclassic", action="store_const", const="zclassic", dest="coin", default="bitcoin", help="Connect to zclassicd")
+
 (options, args) = parser.parse_args()
 
 coin = options.coin
@@ -590,6 +592,7 @@ currency = {
     "vertcoin": "VTC",
     "virtacoin": "VTA",
     "zcash": "ZEC",
+    "zclassic": "ZCL",
 }
 
 # 0 means no block reward halving
@@ -614,6 +617,7 @@ blockhalve = {
     "vertcoin": 840000,
     "virtacoin": 10080,
     "zcash": 840000,
+    "zclassic": 840000,
 }
 
 blocksperhour = {
@@ -648,6 +652,7 @@ blocksperhour = {
     "vertcoin": 24,
     "virtacoin": 60,
     "zcash": 24,
+    "zclassic": 24,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -684,6 +689,7 @@ adjustblocks = {
     "vertcoin": 0,
     "virtacoin": 0,
     "zcash": 0,
+    "zclassic": 0,
 }
 
 # For coins with regular block halving
@@ -708,6 +714,7 @@ initcoins = {
     "vertcoin": 50,
     "virtacoin": 8000,
     "zcash": 12.5, # after first 2e5 blocks -- use for total_supply approx
+    "zclassic": 12.5, # after first 10 blocks, so practically constant
 }
 
 # (list of block limits, list of fixed rewards for those intervals)
@@ -756,6 +763,7 @@ rpcport = {
     "vertcoin": "5888",
     "virtacoin": "22815",
     "zcash": "8232",
+    "zclassic": "8232",
 }
 
 if len(options.url) > 0:
@@ -895,7 +903,7 @@ else:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
         hashrate = s.getprimespersec()
-    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin", "zcash"]:
+    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin", "zcash", "zclassic"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available
         # Bitcoin: removed in 0.11.0
@@ -955,7 +963,7 @@ if hashrate > 0 and coin != "riecoin":
     elif coin == "cryptonite":
         # Guess based on current network hashrate and difficulty
         blocktime = diff * 2**20 / hashrate
-    elif coin == "zcash":
+    elif coin in ["zcash", "zclassic"]:
         # Guess based on networkhashrate comparisons
         blocktime = diff * 2**13 / hashrate
     else:
