@@ -21,7 +21,7 @@ from sys import exit
 from optparse import OptionParser
 import re
 from math import ceil, exp
-from time import ctime
+from time import ctime, time
 
 from bittools import *
 
@@ -302,30 +302,37 @@ def exportkeys():
 
 def importkeys(file):
     lines = ReadLines(file)
-
-    for line in lines:
+    nlines = len(lines)
+    
+    starttime = time()
+    
+    for i in range(nlines):
+        line = lines[i]
+        
         # Account names may contain spaces, so split only once to get the key
-        l = line.split(" ", 1)
-        privkey = l[0]
+        iargs = map(lambda s: s.strip(), line.split(" ", 1))
+        privkey = iargs[0]
 
-        lineno = lines.index(line) + 1
+        lineno = i + 1
 
         if len(privkey) not in [51, 52]:
             print("Invalid private key %s on line %i ignored" % (privkey, lineno))
             continue
 
-        if len(l) > 1:
-            # There is always a trailing newline to remove; other
-            # leading/trailing spaces will be removed too, which
-            # should be ok
-            acc = l[1].strip()
-            s.importprivkey(privkey, acc)
-        else:
-            # No account specified, which is also allowed
-            s.importprivkey(privkey)
-
-        # bitcoind takes time to import a key, so give some progress indication
-        print("Key # %i imported" % lineno)
+        try:
+            # account is optional, so the list is fine as-is
+            s.importprivkey(*iargs)
+        except:
+            print("Failed to import key %s on line %i" % (privkey, lineno))
+            continue
+            
+        # Succesful imports can take a long time, so give some estimate
+        passed = time() - starttime
+        est_total = passed / lineno * nlines
+        eta = ctime(starttime + est_total)
+        tp = timeprint(passed)
+        
+        print("Key %i/%i imported, %.2f %s passed, ETA %s" % (lineno, nlines, tp[0], tp[1], eta))
 
 def listaccounts():
     acc = s.listaccounts()
