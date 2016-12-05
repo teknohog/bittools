@@ -555,7 +555,9 @@ parser.add_option("-Y", "--lithium", action="store_const", const="lithium", dest
 
 parser.add_option("-y", "--vertcoin", action="store_const", const="vertcoin", dest="coin", default="bitcoin", help="Connect to vertcoind")
 
-parser.add_option("-z", "--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
+parser.add_option("--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
+
+parser.add_option("-z", "--zcoin", action="store_const", const="zcoin", dest="coin", default="bitcoin", help="Connect to zcoind")
 
 parser.add_option("-Z", "--zcash", action="store_const", const="zcash", dest="coin", default="bitcoin", help="Connect to zcashd")
 
@@ -600,6 +602,7 @@ currency = {
     "virtacoin": "VTA",
     "zcash": "ZEC",
     "zclassic": "ZCL",
+    "zcoin": "XZC",
 }
 
 # 0 means no block reward halving
@@ -625,6 +628,7 @@ blockhalve = {
     "virtacoin": 10080,
     "zcash": 840000,
     "zclassic": 840000,
+    "zcoin": 210000,
 }
 
 blocksperhour = {
@@ -660,6 +664,7 @@ blocksperhour = {
     "virtacoin": 60,
     "zcash": 24,
     "zclassic": 24,
+    "zcoin": 6,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -697,6 +702,7 @@ adjustblocks = {
     "virtacoin": 0,
     "zcash": 0,
     "zclassic": 0,
+    "zcoin": 6, # guessed from block explorer
 }
 
 # For coins with regular block halving
@@ -722,6 +728,7 @@ initcoins = {
     "virtacoin": 8000,
     "zcash": 12.5, # after first 2e5 blocks -- use for total_supply approx
     "zclassic": 12.5, # after first 10 blocks, so practically constant
+    "zcoin": 50,
 }
 
 # (list of block limits, list of fixed rewards for those intervals)
@@ -771,6 +778,7 @@ rpcport = {
     "virtacoin": "22815",
     "zcash": "8232",
     "zclassic": "8232",
+    "zcoin": "8888", # found by netstat, not what help says
 }
 
 if len(options.url) > 0:

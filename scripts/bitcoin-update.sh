@@ -55,7 +55,8 @@ while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyZz opt; do
 	Y) PROJECT=lithium ;;
 	y) PROJECT=vertcoin ;;
 	Z) PROJECT=zcash ;;
-	z) PROJECT=ExclusiveCoin ;;
+	#z) PROJECT=ExclusiveCoin ;;
+	z) PROJECT=zcoin ;;
     esac
 done
 
@@ -180,6 +181,9 @@ case $PROJECT in
     zcash)
 	GITURL=https://github.com/zcash/zcash
 	BINARY="zcashd zcash-cli zcash-tx"
+	;;
+    zcoin)
+	GITURL=https://github.com/zcoinofficial/zcoin
 	;;
     *)
 	exit
@@ -354,6 +358,8 @@ case $PROJECT in
 	# of libraries such as Boost. Have these guys never heard of
 	# shared libs?
 	sed -i 's/\.\/b2/\.\/b2 --ignore-site-config/g' depends/packages/boost.mk
+	# The options also affect dependencies, so don't rebuild them
+	# every time by changing into my custom compilers >.<
 	nice ./zcutil/build.sh -j$(nproc)
 	cd src
 	;;

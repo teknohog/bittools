@@ -112,8 +112,9 @@ while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
 	y) PROJECT=vertcoin ;;
 	Z) PROJECT=zcash ;;
 	z)
-	    PROJECT=ExclusiveCoin
-	    POS=true
+	    #PROJECT=ExclusiveCoin
+	    #POS=true
+	    PROJECT=zcoin
 	    ;;
     esac
 done
