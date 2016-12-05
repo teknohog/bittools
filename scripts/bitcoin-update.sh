@@ -287,7 +287,7 @@ fi
 case $PROJECT in
     aeon)
 	sed -Ei 's/-Werror//' CMakeLists.txt
-	make clean
+	yes y | make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
