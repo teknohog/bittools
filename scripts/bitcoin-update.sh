@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=- # 0 means build with the lib, but don't start by default
-while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyZz opt; do
+while getopts AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
     case "$opt" in
 	A) PROJECT=aeon ;;
 	a) PROJECT=AuroraCoin ;;
@@ -33,6 +33,7 @@ while getopts AaBCcDEFfGgHIjKkLlMmnOoPpSTUuVXxYyZz opt; do
 	g) PROJECT=shibecoin ;;
 	H) PROJECT=photon ;;
 	I) PROJECT=riecoin ;;
+	J) PROJECT=vcash ;;
 	j) PROJECT=primio ;;
 	K) PROJECT=dash ;;
 	k) PROJECT=blakebitcoin ;;
@@ -171,6 +172,9 @@ case $PROJECT in
 	;;
     universalmolecule)
 	GITURL=https://github.com/universalmol/universalmol
+	;;
+    vcash)
+	GITURL=https://github.com/openvcash/vcash
 	;;
     vertcoin)
 	GITURL=https://github.com/vertcoin/vertcoin
@@ -352,6 +356,54 @@ case $PROJECT in
 	cd src
 	
 	BINARY="${PROJECT}d ${PROJECT}-cli"
+	;;
+    vcash)
+	# Get the build script and work around its worst bits
+
+	SURL=https://github.com/xCoreDev/vcash-scripts
+	SDIR=$(echo $SURL | sed -Ee 's|.*/([^/.]*)(.git)?$|\1|')
+	
+	SCRIPT=build-linux.sh
+	
+	cd $BASEDIR
+	if [ ! -d $SDIR ]; then
+	    git clone $SURL
+	fi
+
+	cd $SDIR
+	git pull
+	cp $SCRIPT ../$PROJECTDIR/
+
+	cd $BASEDIR/$PROJECTDIR
+	chmod u+x $SCRIPT
+	
+	# Who likes random new dirs in their home? Also, the script
+	# mixes hardcoded ~/vcash/ paths along with $VCASH_ROOT. I
+	# won't even get started with the locally built libs, as in
+	# zcash.
+	sed -Ei 's|~/vcash|$VCASH_ROOT|' $SCRIPT
+	sed -Ei 's/VCASH_ROOT=.*//' $SCRIPT
+	export VCASH_ROOT=$BASEDIR/vcash-build
+
+	# Did I just say something about not even getting started? Or,
+	# who wants to get their usual screen session messed up? Is
+	# this script called "build" or "build and run"? Do daemons
+	# dream of eclectic screen, or could they perhaps run in the
+	# background?
+	sed -Ei 's/.*screen.*//' $SCRIPT
+
+	# Also, what the heck is git for, when we can clone the whole
+	# hog every time? A separate build dir makes some sense,
+	# though, so rsync will probably do.
+	if [ ! -x "$(which rsync)" ]; then
+	    echo Rsync not found.
+	    exit
+	fi
+	sed -Ei 's|git.clone.*|rsync -av $VCASH_ROOT/../vcash/ $VCASH_ROOT/src/|' $SCRIPT
+	
+	nice ./$SCRIPT -j$(nproc)
+
+	BINARY=$VCASH_ROOT/vcashd
 	;;
     zcash)
 	# Building per instructions will fetch and build local copies
