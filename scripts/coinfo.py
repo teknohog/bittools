@@ -763,7 +763,7 @@ rpcport = {
     "lithium": "12000",
     "maxcoin": "8669",
     "namecoin": "8332",
-    "photon": "74532",
+    "photon": "8984",
     "ppcoin": "9902",
     "primecoin": "9912",
     "primio": "1218",
