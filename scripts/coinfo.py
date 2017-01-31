@@ -533,7 +533,7 @@ parser.add_option("-T", "--TjcoinV2", action="store_const", const="TjcoinV2", de
 
 parser.add_option("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions, optionally filtered by account name (e.g. '' for generates), and optional number (default 10)")
 
-parser.add_option("--txfee", dest="txfee", type = float, default = -1, help="Transaction fee for this send, instead of the daemon default")
+parser.add_option("--txfee", dest="txfee", type = float, default = -1, help = "Set transaction fee. When used with --sendto, applies to that send only.")
 
 parser.add_option("-U", "--universalmolecule", action="store_const", const="universalmolecule", dest="coin", default="bitcoin", help="Connect to universalmoleculed")
 
@@ -831,7 +831,13 @@ if options.newaddress:
 if options.sendto:
     send(options.sendto, float(args[0]), options.txfee)
     exit()
-
+elif options.txfee >= 0:
+    # 2017-01-31 Set the default. If used with sendto, there is a
+    # separate temporary setting for that send only.
+    print("Setting default transaction fee to %f %s" % (options.txfee, currency[coin]))
+    s.settxfee(options.txfee)
+    exit()
+    
 if options.transactions:
     listtransactions(args)
     exit()
