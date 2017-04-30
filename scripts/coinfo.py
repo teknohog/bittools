@@ -841,7 +841,7 @@ if options.sendto:
 elif options.txfee >= 0:
     # 2017-01-31 Set the default. If used with sendto, there is a
     # separate temporary setting for that send only.
-    print("Setting default transaction fee to %f BTC" % options.txfee)
+    print("Setting default transaction fee to %f %s" % (options.txfee, currency[coin]))
     s.settxfee(options.txfee)
     exit()
     
