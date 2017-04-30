@@ -781,6 +781,13 @@ rpcport = {
     "zcoin": "8888", # found by netstat, not what help says
 }
 
+# Developer tax in percent. This list is probably incomplete. In some
+# cases the tax is set by miners, and a small tax is just noise in the
+# profit estimation, but some are huge :-/
+devtax = {
+    "zcoin": 20,
+}
+
 if len(options.url) > 0:
     url = options.url
 elif coin == "Vcash":
@@ -834,7 +841,7 @@ if options.sendto:
 elif options.txfee >= 0:
     # 2017-01-31 Set the default. If used with sendto, there is a
     # separate temporary setting for that send only.
-    print("Setting default transaction fee to %f %s" % (options.txfee, currency[coin]))
+    print("Setting default transaction fee to %f BTC" % options.txfee)
     s.settxfee(options.txfee)
     exit()
     
@@ -991,7 +998,11 @@ if hashrate > 0 and coin != "riecoin":
         # Bitcoin and most derivatives
         blocktime = diff * 2**32 / hashrate
 
-    output += profit(blocktime, blockreward(coin, diff, blocks), currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
+    reward = blockreward(coin, diff, blocks)
+    if coin in devtax:
+        reward -= reward * devtax[coin] / 100.0
+        
+    output += profit(blocktime, reward, currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
 
 if adjustblocks[coin] > 0:
     adjtime = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600
