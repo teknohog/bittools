@@ -785,6 +785,7 @@ rpcport = {
 # cases the tax is set by miners, and a small tax is just noise in the
 # profit estimation, but some are huge :-/
 devtax = {
+    "zcash": 20,
     "zcoin": 20,
 }
 
