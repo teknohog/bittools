@@ -96,6 +96,15 @@ def blockreward(coin, diff, blocks):
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
+def devtax_percent(coin, blocks):
+    # Depends on block height so need a proper function
+    if coin in ["zcash", "zcoin"]:
+        # Until first halving only
+        if blocks <= blockhalve[coin]:
+            return 20
+
+    return 0
+    
 # Extended precision float encoding for Cryptonite
 def ep_enc(x):
     return '%.10fep' % x
@@ -781,14 +790,6 @@ rpcport = {
     "zcoin": "8888", # found by netstat, not what help says
 }
 
-# Developer tax in percent. This list is probably incomplete. In some
-# cases the tax is set by miners, and a small tax is just noise in the
-# profit estimation, but some are huge :-/
-devtax = {
-    "zcash": 20,
-    "zcoin": 20,
-}
-
 if len(options.url) > 0:
     url = options.url
 elif coin == "Vcash":
@@ -1000,8 +1001,11 @@ if hashrate > 0 and coin != "riecoin":
         blocktime = diff * 2**32 / hashrate
 
     reward = blockreward(coin, diff, blocks)
-    if coin in devtax:
-        reward -= reward * devtax[coin] / 100.0
+
+    devtax = devtax_percent(coin, blocks)
+    if devtax > 0:
+        print("\nDeveloper tax of %f %% applies" % devtax)
+        reward -= reward * devtax / 100.0
         
     output += profit(blocktime, reward, currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
 
