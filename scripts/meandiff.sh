@@ -70,7 +70,8 @@ while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
 	A) PROJECT=aeon ;;
 	a) PROJECT=AuroraCoin ;;
 	B) PROJECT=blakecoin ;;
-	c) PROJECT=chncoin ;;
+	#c) PROJECT=chncoin ;;
+	c) PROJECT=ethereum-classic ;;
 	D) PROJECT=dogecoin ;;
 	E) PROJECT=electron ;;
 	F) PROJECT=gapcoin ;;
@@ -123,6 +124,9 @@ case $PROJECT in
     boolberry)
 	LOGFILE=~/.boolb/difflog
 	;;
+    ethereum-classic)
+	LOGFILE=~/.$PROJECT/mainnet/difflog
+	;;
     monero)
 	LOGFILE=~/.bitmonero/difflog
 	;;
@@ -146,7 +150,7 @@ if $SET; then
 	boolberry)
 	    PROCESS=boolbd
 	    ;;
-	ethereum)
+	ethereum*)
 	    PROCESS=geth
 	    ;;
 	*)
@@ -164,8 +168,11 @@ if $SET; then
 	aeon|monero|boolberry)
 	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
 	    ;;
-	ethereum)
-	    DIFF=$(etherinfo.py | grep -m1 difficulty | awk '{print $2}')
+	ethereum*)
+	    if [ "$PROJECT" == "ethereum-classic" ]; then
+		COPT="-c"
+	    fi
+	    DIFF=$(etherinfo.py $COPT | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	vcash)
 	    DIFF=$(coinfo.py -J | grep -m1 difficulty | awk '{print $2}')
