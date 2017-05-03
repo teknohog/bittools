@@ -44,12 +44,12 @@ def send(fromaddr, toaddr, amount):
 
     print("Transaction sent: " + txdata)
     
-    balfile = os.path.expanduser("~/.ethereum/keystore/" + fromaddr + ".balance")
+    balfile = os.path.expanduser(basedir + "/keystore/" + fromaddr + ".balance")
     # Newline makes a manual cat cleaner for the shell
     WriteFile(balfile, str(bal) + "\n")
     
 def lastsend(fromaddr, toaddr, fraction, minsend):
-    balfile = os.path.expanduser("~/.ethereum/keystore/" + fromaddr + ".balance")
+    balfile = os.path.expanduser(basedir + "/keystore/" + fromaddr + ".balance")
     if os.path.exists(balfile):
         oldbal = float(ReadLines(balfile)[0].strip())
     else:
@@ -114,8 +114,10 @@ info["total balance"] = sum(info["balances"])
 
 if options.classic:
     cur = "ETC"
+    basedir = "~/.ethereum-classic/mainnet"
 else:
     cur = "ETH"
+    basedir = "~/.ethereum"
 
 if options.account_id > -1:
     aid = options.account_id
