@@ -412,7 +412,9 @@ case $PROJECT in
 	sed -i 's/\.\/b2/\.\/b2 --ignore-site-config/g' depends/packages/boost.mk
 	# The options also affect dependencies, so don't rebuild them
 	# every time by changing into my custom compilers >.<
-	nice ./zcutil/build.sh -j$(nproc)
+
+	# https://github.com/zcash/zcash/issues/2279 disable proton
+	nice ./zcutil/build.sh --disable-proton -j$(nproc)
 	cd src
 	;;
     *)
