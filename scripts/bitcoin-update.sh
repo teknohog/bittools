@@ -414,7 +414,9 @@ case $PROJECT in
 	# every time by changing into my custom compilers >.<
 
 	# https://github.com/zcash/zcash/issues/2279 disable proton
-	nice ./zcutil/build.sh --disable-proton -j$(nproc)
+	# or maybe not https://github.com/zcash/zcash/commit/b04529fefdccffc8921f213a83e407fd346dc84c
+	CMD="nice ./zcutil/build.sh -j$(nproc)"
+	$CMD --disable-proton || $CMD 
 	cd src
 	;;
     *)
