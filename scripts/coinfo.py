@@ -786,7 +786,7 @@ rpcport = {
     "vertcoin": "5888",
     "virtacoin": "22815",
     "zcash": "8232",
-    "zclassic": "8232",
+    "zclassic": "8023",
     "zcoin": "8888", # found by netstat, not what help says
 }
 
