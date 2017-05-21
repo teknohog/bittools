@@ -222,8 +222,8 @@ if [ -f $MAKECONF ]; then
 
     CCACHE=""
     DISTCC=""
-    if [ -n "`echo $FEATURES | grep ccache`" ]; then CCACHE="ccache"; fi
-    if [ -n "`echo $FEATURES | grep distcc`" ]; then DISTCC="distcc"; fi
+    if [ -n "`echo $FEATURES | grep ccache | grep -v -- -ccache`" ]; then CCACHE="ccache"; fi
+    if [ -n "`echo $FEATURES | grep distcc | grep -v -- -distcc`" ]; then DISTCC="distcc"; fi
     
     CC="${CC:-$CCACHE $DISTCC $MACHTYPE-gcc}"
     CXX="${CXX:-$CCACHE $DISTCC $MACHTYPE-g++}"
