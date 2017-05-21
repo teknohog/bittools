@@ -324,7 +324,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin)
+    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin)
 	EXTRACONFIG=""
 
 	case $PROJECT in
