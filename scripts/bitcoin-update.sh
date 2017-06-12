@@ -21,7 +21,8 @@ UPNP=- # 0 means build with the lib, but don't start by default
 while getopts AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
     case "$opt" in
 	A) PROJECT=aeon ;;
-	a) PROJECT=AuroraCoin ;;
+	#a) PROJECT=AuroraCoin ;;
+	a) PROJECT=zen ;;
 	B) PROJECT=blakecoin ;;
 	C) CHECKOUT=true ;;
 	c) PROJECT=chncoin ;;
@@ -188,6 +189,10 @@ case $PROJECT in
 	;;
     zcoin)
 	GITURL=https://github.com/zcoinofficial/zcoin
+	;;
+    zen)
+	GITURL=https://github.com/zencashio/zen
+	BINARY="${PROJECT}d ${PROJECT}-cli ${PROJECT}-tx"
 	;;
     *)
 	exit
@@ -405,7 +410,7 @@ case $PROJECT in
 
 	BINARY=$VCASH_ROOT/vcashd
 	;;
-    zcash)
+    zcash|zen)
 	# Building per instructions will fetch and build local copies
 	# of libraries such as Boost. Have these guys never heard of
 	# shared libs?

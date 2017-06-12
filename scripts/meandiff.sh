@@ -68,7 +68,8 @@ VERBOSE=false
 while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
     case "$opt" in
 	A) PROJECT=aeon ;;
-	a) PROJECT=AuroraCoin ;;
+	#a) PROJECT=AuroraCoin ;;
+	a) PROJECT=zen ;;
 	B) PROJECT=blakecoin ;;
 	#c) PROJECT=chncoin ;;
 	c) PROJECT=ethereum-classic ;;

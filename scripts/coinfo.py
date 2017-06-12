@@ -102,6 +102,8 @@ def devtax_percent(coin, blocks):
         # Until first halving only
         if blocks <= blockhalve[coin]:
             return 20
+    elif coin == "zen":
+        return 8.5
 
     return 0
     
@@ -467,7 +469,9 @@ parser = OptionParser()
 
 parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_true", default=False, help="List accounts with balances")
 
-parser.add_option("-a", "--AuroraCoin", action="store_const", const="AuroraCoin", dest="coin", default="bitcoin", help="Connect to AuroraCoind")
+parser.add_option("--AuroraCoin", action="store_const", const="AuroraCoin", dest="coin", default="bitcoin", help="Connect to AuroraCoind")
+
+parser.add_option("-a", "--zen", action="store_const", const="zen", dest="coin", default="bitcoin", help="Connect to zend")
 
 parser.add_option("-B", "--blakecoin", action="store_const", const="blakecoin", dest="coin", default="bitcoin", help="Connect to blakecoind")
 
@@ -612,6 +616,7 @@ currency = {
     "zcash": "ZEC",
     "zclassic": "ZCL",
     "zcoin": "XZC",
+    "zen": "ZEN",
 }
 
 # 0 means no block reward halving
@@ -638,6 +643,7 @@ blockhalve = {
     "zcash": 840000,
     "zclassic": 840000,
     "zcoin": 210000,
+    "zen": 840000,
 }
 
 blocksperhour = {
@@ -674,6 +680,7 @@ blocksperhour = {
     "zcash": 24,
     "zclassic": 24,
     "zcoin": 6,
+    "zen": 24,
 }
 
 # 0 means dynamic difficulty adjustment without fixed intervals
@@ -712,6 +719,7 @@ adjustblocks = {
     "zcash": 0,
     "zclassic": 0,
     "zcoin": 6, # guessed from block explorer
+    "zen": 0,
 }
 
 # For coins with regular block halving
@@ -738,6 +746,7 @@ initcoins = {
     "zcash": 12.5, # after first 2e5 blocks -- use for total_supply approx
     "zclassic": 12.5, # after first 10 blocks, so practically constant
     "zcoin": 50,
+    "zen": 12.5,
 }
 
 # (list of block limits, list of fixed rewards for those intervals)
@@ -788,6 +797,7 @@ rpcport = {
     "zcash": "8232",
     "zclassic": "8023",
     "zcoin": "8888", # found by netstat, not what help says
+    "zen": "8231",
 }
 
 if len(options.url) > 0:
@@ -933,7 +943,7 @@ else:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
         hashrate = s.getprimespersec()
-    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin", "zcash", "zclassic"]:
+    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin", "zcash", "zclassic", "zen"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available
         # Bitcoin: removed in 0.11.0
@@ -993,7 +1003,7 @@ if hashrate > 0 and coin != "riecoin":
     elif coin == "cryptonite":
         # Guess based on current network hashrate and difficulty
         blocktime = diff * 2**20 / hashrate
-    elif coin in ["zcash", "zclassic"]:
+    elif coin in ["zcash", "zclassic", "zen"]:
         # Guess based on networkhashrate comparisons
         blocktime = diff * 2**13 / hashrate
     else:
