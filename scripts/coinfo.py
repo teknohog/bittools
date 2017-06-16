@@ -327,14 +327,14 @@ def importkeys(file):
         lineno = i + 1
 
         if len(privkey) not in [51, 52]:
-            print("Invalid private key %s on line %i ignored" % (privkey, lineno))
+            print("Key %i/%i ignored: %s" % (lineno, nlines, privkey))
             continue
 
         try:
             # account is optional, so the list is fine as-is
             s.importprivkey(*iargs)
         except:
-            print("Failed to import key %s on line %i" % (privkey, lineno))
+            print("Key %i/%i failed import: %s" % (lineno, nlines, privkey))
             continue
             
         # Succesful imports can take a long time, so give some estimate
