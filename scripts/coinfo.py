@@ -991,11 +991,16 @@ if hashrate > 0 and coin != "riecoin":
     if 'meandiff' in info.keys() and not options.diff:
         diff = info['meandiff']
     
-    if networkhashrate > 0 and not options.diff:
-        # Direct comparison needs no coin specifics, as long as we use
-        # current difficulty
-        blocktime = networkhashrate * 3600. / (hashrate * blocksperhour[coin])
-    elif coin == "primecoin":
+    # Direct comparison needs no coin specifics, as long as we use
+    # current difficulty... but it is simply wrong, as the income
+    # depends on actual difficulty, which is basically averaged from
+    # nethash. Meandiff is a further averaging, which would be
+    # bypassed here too. As a raw data approach it has some academic
+    # interest, so leave here as a warning.
+    #if networkhashrate > 0 and not options.diff:
+    #    blocktime = networkhashrate * 3600. / (hashrate * blocksperhour[coin])
+
+    if coin == "primecoin":
         blocktime = 86400. / hashrate
     elif coin == "gapcoin":
         # From http://coinia.net/gapcoin/calc.php
