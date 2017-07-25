@@ -392,7 +392,7 @@ def send(address, amount, new_txfee):
     # split over two lines, making the amount less obvious
 
     # Set transfer fee for this send only
-    default_txfee = s.getinfo()["paytxfee"]
+    default_txfee = getinfo()["paytxfee"]
     if new_txfee >= 0:
         txfee = new_txfee
         s.settxfee(txfee)
@@ -464,6 +464,30 @@ def meandiff2(coin):
         return ab[0] + ab[1] * time()
     else:
         return 0
+
+def getinfo():
+    # Bitcoin: "deprecation-warning WARNING: getinfo is deprecated and
+    # will be fully removed in 0.16. Projects should transition to
+    # using getblockchaininfo, getnetworkinfo, and getwalletinfo
+    # before upgrading to 0.16"
+
+    try:
+        return s.getinfo()
+    except:
+        info = s.getblockchaininfo()
+        info.update(s.getnetworkinfo())
+        info.update(s.getwalletinfo())
+        
+        # Roughly match old getinfo
+        keys = ["balance", "blocks", "connections", "difficulty", "paytxfee"]
+    
+        output = {}
+        for key in keys:
+            output[key] = info[key]
+
+        output["testnet"] = (info["chain"] != "main")
+        
+        return output
         
 parser = OptionParser()
 
@@ -894,7 +918,7 @@ if options.peers:
         print(ip)
     exit()
     
-info = s.getinfo()
+info = getinfo()
 
 if options.verbose:
     keys = info.keys()
