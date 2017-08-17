@@ -42,6 +42,9 @@ def timeprint(time):
         return [time, "s"]
 
 def coin_price(cur, basecur):
+    if cur == basecur:
+        return 1
+    
     api_urls = [
         "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
         "https://api.cryptonator.com/api/ticker/" + cur + "-" + basecur,
