@@ -44,7 +44,7 @@ def timeprint(time):
 def coin_price(cur, basecur):
     api_urls = [
         "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
-        "https://www.cryptonator.com/api/ticker/" + cur + "-" + basecur,
+        "https://api.cryptonator.com/api/ticker/" + cur + "-" + basecur,
     ]
     
     import urllib2, json
@@ -55,7 +55,10 @@ def coin_price(cur, basecur):
             data = json.loads(response.read())
 
             if "cryptonator" in url:
-                return float(data["ticker"]["price"])
+                if not data["success"] and "BBR" in [cur, basecur]:
+                    return coin_price(cur.replace("BBR", "XBB"), basecur.replace("BBR", "XBB"))
+                else:
+                    return float(data["ticker"]["price"])
             elif "cryptocompare" in url:
                 if len(data["Data"]) == 0 and "BTC" not in [cur, basecur]:
                     # For many currencies, only BTC-based price is
