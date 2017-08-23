@@ -8,6 +8,14 @@
 LINES=24
 
 function lin_reg () {
+    # 2017-08-24 As in Python bittools
+    MTIME=$(date +%s -r $LOGFILE)
+    NOW=$(date +%s)
+    if [ $((NOW - MTIME)) -gt 10000 ]; then
+	echo Warning: stale logfile
+	echo
+    fi
+
     # Use uniq to avoid dupes; the file should already be sorted
     
     if $VERBOSE; then
