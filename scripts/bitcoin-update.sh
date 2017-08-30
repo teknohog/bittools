@@ -98,7 +98,8 @@ case $PROJECT in
 	BINARY="boolbd simplewallet simpleminer"
 	;;
     cryptonite)
-	GITURL=https://github.com/MiniblockchainProject/Cryptonite
+	#GITURL=https://github.com/MiniblockchainProject/Cryptonite
+	GITURL=https://github.com/pallas1/Cryptonite
 	;;
     chncoin)
 	#GITURL=https://github.com/CHNCoin/CHNCoin.git
@@ -191,7 +192,8 @@ case $PROJECT in
 	GITURL=https://github.com/zcoinofficial/zcoin
 	;;
     zen)
-	GITURL=https://github.com/zencashio/zen
+	#GITURL=https://github.com/zencashio/zen
+	GITURL=https://github.com/ZencashOfficial/zen
 	BINARY="${PROJECT}d ${PROJECT}-cli ${PROJECT}-tx"
 	;;
     *)
