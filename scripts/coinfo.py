@@ -36,7 +36,7 @@ def staired_reward(blocks, reward_stairs):
 
 def groestl_reward(blocks):
     if blocks >= 150000:
-        return exp_decay(25, blocks-150000, 10080, 0.99)
+        return max(exp_decay(25, blocks-150000, 10080, 0.99), 5)
 
     if blocks >= 120000:
         return exp_decay(250, blocks-120000, 1440, 0.9)
@@ -967,7 +967,7 @@ else:
             output.append(["blocksperday", str(hashrate)])
     elif coin == "gapcoin":
         hashrate = s.getprimespersec()
-    elif coin in ["bitcoin", "dogecoin", "litecoin", "ExclusiveCoin", "zcash", "zclassic", "zen"]:
+    elif coin in ["bitcoin", "dogecoin", "groestlcoin", "litecoin", "ExclusiveCoin", "zcash", "zclassic", "zen"]:
         # Litecoin: Mining was removed from the client in 0.8
         # EXCL: not available
         # Bitcoin: removed in 0.11.0
