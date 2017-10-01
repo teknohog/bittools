@@ -975,7 +975,11 @@ else:
         hashrate = 0
     else:
         try:
-            hashrate = s.getmininginfo()["hashespersec"]
+            mi = s.getmininginfo()
+            if "hashespersec" in mi:
+                hashrate = mi["hashespersec"]
+            else:
+                hashrate = 0
         except:
             hashrate = s.gethashespersec()
 
