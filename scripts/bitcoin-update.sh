@@ -331,11 +331,11 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin)
+    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin|zcoin)
 	EXTRACONFIG=""
 
 	case $PROJECT in
-	    dogecoin)
+	    dogecoin|zcoin)
 		EXTRACONFIG="--with-incompatible-bdb"
 		;;
 	    gapcoin)
