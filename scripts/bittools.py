@@ -54,7 +54,7 @@ def coin_price(cur, basecur):
 
     for url in api_urls:
         try:
-            response = urllib2.urlopen(url)
+            response = urllib2.urlopen(url, timeout = 5)
             data = json.loads(response.read())
 
             if "cryptonator" in url:
