@@ -319,15 +319,10 @@ case $PROJECT in
 	;;
     boolberry*)
 	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
-
-	sed -i 's/option (UPNPC_BUILD_STATIC "Build static library" TRUE)/option (UPNPC_BUILD_STATIC "Build static library" FALSE)/' contrib/miniupnpc/CMakeLists.txt
-
-	# warning "_BSD_SOURCE and _SVID_SOURCE are deprecated, use _DEFAULT_SOURCE"
-	sed -i 's/_BSD_SOURCE/_DEFAULT_SOURCE/g' contrib/miniupnpc/CMakeLists.txt
 	
 	# As in monero
 	make clean
-	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
+	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS -lpthread"
 
 	cd build/release/src
 	;;
