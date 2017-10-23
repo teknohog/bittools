@@ -276,18 +276,7 @@ def exportkeys():
         
         # Method not available in ppcoin
         try:
-            g = s.listaddressgroupings()
-            for group in g:
-                for addrline in group:
-                    address = addrline[0]
-                    privkey = s.dumpprivkey(address)
-                    
-                    if len(addrline) == 3:
-                        account = addrline[2]
-                    else:
-                        account = ""
-                        
-                    l.append([privkey, account])
+            l += exportaddressgroupings()
         except:
             print("Warning: missing listaddressgroupings method, list of keys may be incomplete\n")
 
@@ -310,6 +299,33 @@ def exportkeys():
             print("Warning: missing listaccounts method, list of keys may be incomplete\n")
 
     prettyprint(l)
+
+def exportaddressgroupings(lowlimit = -1):
+    l = []
+    g = s.listaddressgroupings()
+
+    for group in g:
+        for addrline in group:
+            address = addrline[0]
+            amount = addrline[1]
+            privkey = s.dumpprivkey(address)
+
+            # Default: lowlimit -1 allows all balances
+            if amount > lowlimit:
+                if len(addrline) == 3:
+                    account = addrline[2]
+                else:
+                    account = ""
+                    
+                l.append([privkey, account])
+
+    return l
+
+def exportnonempty():
+    # 2017-10-23 Only export keys that hold value, to minimize
+    # keystore bloat. Beware that you may want to keep donation
+    # addresses etc. alive, even if they have no balance yet.
+    prettyprint(exportaddressgroupings(0))
 
 def importkeys(file):
     lines = ReadLines(file)
@@ -521,6 +537,8 @@ parser.add_option("--encrypt", action="store_true", help = "Encrypt wallet")
 parser.add_option("--unlock", action="store_true", help = "Unlock encrypted wallet")
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
+
+parser.add_option("--exportnonempty", action="store_true", help = "Dump private keys of non-empty addresses")
 
 parser.add_option("-F", "--gapcoin", action="store_const", const="gapcoin", dest="coin", default="bitcoin", help="Connect to gapcoind")
 
@@ -851,6 +869,10 @@ if options.byaccount:
             print(addr)
     exit()
 
+if options.exportnonempty:
+    exportnonempty()
+    exit()
+    
 if options.export:
     exportkeys()
     exit()
