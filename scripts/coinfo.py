@@ -304,6 +304,8 @@ def exportaddressgroupings(lowlimit = -1):
     l = []
     g = s.listaddressgroupings()
 
+    total = 0
+    
     for group in g:
         for addrline in group:
             address = addrline[0]
@@ -319,6 +321,14 @@ def exportaddressgroupings(lowlimit = -1):
                     
                 l.append([privkey, account])
 
+            # Check against total balance, in case addresses are missing
+            total += amount
+
+    if lowlimit == 0:
+        bal = s.getbalance()
+        prettyprint([["Wallet balance", str(bal)], ["Total balance of following addresses", str(total)]])
+        print
+        
     return l
 
 def exportnonempty():
