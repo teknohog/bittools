@@ -46,7 +46,7 @@ while getopts AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
 	O) PROJECT=boolberry-opencl ;;
 	o) PROJECT=boolberry ;;
 	P) PROJECT=primecoin ;;
-	p) PROJECT=ppcoin ;;
+	p) PROJECT=peercoin ;;
 	S) PROJECT=skeincoin ;;
 	T) PROJECT=Tjcoin ;;
 	U) PROJECT=universalmolecule ;;
@@ -138,11 +138,11 @@ case $PROJECT in
     namecoin)
 	GITURL=https://github.com/namecoin/namecoin.git
 	;;
+    peercoin)
+	GITURL=https://github.com/peercoin/peercoin
+	;;
     photon)
 	GITURL=https://github.com/photonproject/photon
-	;;
-    ppcoin)
-	GITURL=https://github.com/ppcoin/ppcoin.git
 	;;
     primecoin)
 	#GITURL=https://github.com/primecoin/primecoin.git

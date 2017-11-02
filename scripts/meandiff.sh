@@ -106,7 +106,7 @@ while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
 	    ;;
 	P) PROJECT=primecoin ;;
 	p)
-	    PROJECT=ppcoin
+	    PROJECT=peercoin
 	    POS=true
 	    ;;
 	S) PROJECT=skeincoin ;;

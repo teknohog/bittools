@@ -59,7 +59,7 @@ def lastreward(blocks):
     return 0
 
 def blockreward(coin, diff, blocks):
-    if coin == "ppcoin":
+    if coin == "peercoin":
         # https://bitcointalk.org/index.php?topic=101820.msg1118737#msg1118737
         # "The block reward for a work block is sqrt(sqrt(9999^4 /
         # difficulty)), rounded down to the next cent boundary."
@@ -274,7 +274,7 @@ def exportkeys():
         # they are listed under the "" account. So this way should get us
         # all possible addresses...
         
-        # Method not available in ppcoin
+        # Method not available in peercoin
         try:
             l += exportaddressgroupings()
         except:
@@ -584,7 +584,7 @@ parser.add_option("--peers", action="store_true", default=False, help="List conn
 
 parser.add_option("-P", "--primecoin", action="store_const", const="primecoin", dest="coin", default="bitcoin", help="Connect to primecoind")
 
-parser.add_option("-p", "--ppcoin", action="store_const", const="ppcoin", dest="coin", default="bitcoin", help="Connect to ppcoind")
+parser.add_option("-p", "--peercoin", action="store_const", const="peercoin", dest="coin", default="bitcoin", help="Connect to peercoind")
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
@@ -653,7 +653,7 @@ currency = {
     "maxcoin": "MAX",
     "namecoin": "NMC",
     "photon": "PHO",
-    "ppcoin": "PPC",
+    "peercoin": "PPC",
     "primecoin": "XPM",
     "primio": "Primio",
     "riecoin": "RIC",
@@ -756,7 +756,7 @@ adjustblocks = {
     "maxcoin": 0,
     "namecoin": 2016,
     "photon": 20,
-    "ppcoin": 0,
+    "peercoin": 0,
     "primecoin": 0,
     "primio": 12,
     "riecoin": 288,
@@ -834,7 +834,7 @@ rpcport = {
     "maxcoin": "8669",
     "namecoin": "8332",
     "photon": "8984",
-    "ppcoin": "9902",
+    "peercoin": "9902",
     "primecoin": "9912",
     "primio": "1218",
     "riecoin": "28332",
