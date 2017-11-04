@@ -262,7 +262,7 @@ else
     # command line if wanted anyway
     STATUSFILE=`mktemp /tmp/XXXXXX.txt`
     git pull | tee $STATUSFILE
-    NOUPDATE="`grep Already.up-to-date $STATUSFILE`"
+    NOUPDATE="`grep Already.up.to.date $STATUSFILE`"
     ERROR="`file $STATUSFILE | grep empty`"
     rm $STATUSFILE
     if ( [ -n "$NOUPDATE" ] || [ -n "$ERROR" ] ) && ! $FORCE; then
