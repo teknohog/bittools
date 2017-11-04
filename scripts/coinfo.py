@@ -902,7 +902,13 @@ if options.listreceived:
     exit()
 
 if options.newaddress:
-    print(s.getnewaddress(args[0]))
+    if coin in ["zcash", "zclassic", "zen"]:
+        if len(args[0]) > 0:
+            print("Accounts are unsupported in %s" % coin)
+            
+        print(s.getnewaddress())
+    else:
+        print(s.getnewaddress(args[0]))
     exit()
 
 if options.sendto:
