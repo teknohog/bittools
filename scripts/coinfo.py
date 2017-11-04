@@ -346,8 +346,10 @@ def importkeys(file):
     for i in range(nlines):
         line = lines[i]
         
-        # Account names may contain spaces, so split only once to get the key
-        iargs = map(lambda s: s.strip(), line.split(" ", 1))
+        # Account names may contain spaces, so split only once to get
+        # the key. Note that the split point may contain multiple
+        # spaces due to prettyprint.
+        iargs = map(lambda s: s.strip(), line.split(None, 1))
         privkey = iargs[0]
 
         lineno = i + 1
