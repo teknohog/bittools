@@ -103,7 +103,7 @@ def devtax_percent(coin, blocks):
         if blocks <= blockhalve[coin]:
             return 20
     elif coin == "zen":
-        return 8.5
+        return 12
 
     return 0
     
