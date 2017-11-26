@@ -42,15 +42,28 @@ def timeprint(time):
         return [time, "s"]
 
 def coin_price(cur, basecur):
+    import urllib2, json
+
     if cur == basecur:
         return 1
+    elif cur == "BBR":
+        # The only market, no price info elsewhere
+        url = "https://stocks.exchange/api2/prices"
+
+        response = urllib2.urlopen(url, timeout = 5)
+        data = json.loads(response.read())
+
+        for item in data:
+            if item["market_name"] == "BBR_BTC":
+                p1 = float(item["sell"])
+                p2 = coin_price("BTC", basecur)
+                return p1*p2
+        
     
     api_urls = [
         "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
         "https://api.cryptonator.com/api/ticker/" + cur + "-" + basecur,
     ]
-    
-    import urllib2, json
 
     for url in api_urls:
         try:
