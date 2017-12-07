@@ -1087,8 +1087,8 @@ if hashrate > 0 and coin != "riecoin":
 
     devtax = devtax_percent(coin, blocks)
     if devtax > 0:
-        print("\nDeveloper tax of %f %% applies" % devtax)
         reward -= reward * devtax / 100.0
+        print("\nMiners' share %f %s per block after %f %% developer tax" % (reward, currency[options.coin], devtax))
         
     output += profit(blocktime, reward, currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
 
