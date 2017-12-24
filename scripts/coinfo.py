@@ -98,10 +98,17 @@ def blockreward(coin, diff, blocks):
 
 def devtax_percent(coin, blocks):
     # Depends on block height so need a proper function
-    if coin in ["zcash", "zcoin"]:
+    if coin == "zcash":
         # Until first halving only
         if blocks <= blockhalve[coin]:
             return 20
+    elif coin == "zcoin":
+        # Znodes -- making money centralized again
+        tax = 30
+        # Until first halving only
+        if blocks <= blockhalve[coin]:
+            tax += 14
+        return tax
     elif coin == "zen":
         return 12
 
