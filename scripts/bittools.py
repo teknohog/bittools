@@ -3,7 +3,8 @@
 # Common functions for bittools Python scripts
 
 import os.path
-from time import time
+from math import ceil, exp
+from time import ctime, time
 
 def ReadLines(f):
     File = open(f, "r")
@@ -196,3 +197,7 @@ def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0, basecur = "EU
             output.append(["Net profit", str(fiatpay - cost) + " " + basecur + "/day"])
 
     return output
+
+def exp_decay(init, blocks, period, base=0.5):
+    p = ceil(float(blocks) / float(period - 2))
+    return init * base**(p - 1)

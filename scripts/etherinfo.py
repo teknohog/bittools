@@ -115,9 +115,11 @@ info["total balance"] = sum(info["balances"])
 if options.classic:
     cur = "ETC"
     basedir = "~/.ethereum-classic/mainnet"
+    info["blockreward"] = exp_decay(5, info["blocks"], 5000000, 0.8)
 else:
     cur = "ETH"
     basedir = "~/.ethereum"
+    info["blockreward"] = 3
 
 if options.account_id > -1:
     aid = options.account_id
@@ -147,8 +149,6 @@ if options.hashrate:
     
 dictprint(info)
 
-blockreward = 5
-
 if options.verbose:
     fiatprice = coin_price(cur, options.basecur)
 
@@ -168,7 +168,7 @@ if info["hashrate"] > 0:
     
     blocktime = diff / info["hashrate"]
     
-    output = profit(blocktime, blockreward, cur, options.watts, options.kwhprice, fiatprice, options.basecur)
+    output = profit(blocktime, info["blockreward"], cur, options.watts, options.kwhprice, fiatprice, options.basecur)
 
     prettyprint(output)
 

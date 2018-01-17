@@ -20,8 +20,6 @@ from jsonrpclib import Server
 from sys import exit
 from optparse import OptionParser
 import re
-from math import ceil, exp
-from time import ctime, time
 
 from bittools import *
 
@@ -43,10 +41,6 @@ def groestl_reward(blocks):
 
     # Default to old scheme
     return exp_decay(512, blocks, 10080, 0.94)
-
-def exp_decay(init, blocks, period, base=0.5):
-    p = ceil(float(blocks) / float(period - 2))
-    return init * base**(p - 1)
 
 def lastreward(blocks):
     # Use the last block reward as an estimate, need to check for PoW,
