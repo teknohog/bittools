@@ -49,17 +49,24 @@ def coin_price(cur, basecur):
         return 1
     elif cur == "BBR":
         # The only market, no price info elsewhere
-        url = "https://stocks.exchange/api2/prices"
+        #url = "https://stocks.exchange/api2/prices"
 
+        # This would be useful more generally, but it needs a little
+        # work for the scripts as it uses coin name instead of ticker
+        url = "https://api.coinmarketcap.com/v1/ticker/boolberry/"
+        
         response = urllib2.urlopen(url, timeout = 5)
         data = json.loads(response.read())
 
-        for item in data:
-            if item["market_name"] == "BBR_BTC":
-                p1 = float(item["sell"])
-                p2 = coin_price("BTC", basecur)
-                return p1*p2
-        
+        # for item in data:
+        #     if item["market_name"] == "BBR_BTC":
+        #         p1 = float(item["sell"])
+        #         p2 = coin_price("BTC", basecur)
+        #         return p1*p2
+
+        p1 = float(data[0]["price_btc"])
+        p2 = coin_price("BTC", basecur)
+        return p1*p2
     
     api_urls = [
         "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
