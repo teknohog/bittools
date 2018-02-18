@@ -42,60 +42,54 @@ def timeprint(time):
     else:
         return [time, "s"]
 
-def coin_price(cur, basecur):
+def coin_price(coin, basecur):
     import urllib2, json
 
+    # 2018-02-18 Coinmarketcap uses full names instead of tickers, and
+    # it is easier to map coin->ticker here
+    cur = currency[coin]
+    
     if cur == basecur:
         return 1
-    elif cur == "BBR":
-        # The only market, no price info elsewhere
-        #url = "https://stocks.exchange/api2/prices"
-
-        # This would be useful more generally, but it needs a little
-        # work for the scripts as it uses coin name instead of ticker
-        url = "https://api.coinmarketcap.com/v1/ticker/boolberry/"
-        
-        response = urllib2.urlopen(url, timeout = 5)
-        data = json.loads(response.read())
-
-        # for item in data:
-        #     if item["market_name"] == "BBR_BTC":
-        #         p1 = float(item["sell"])
-        #         p2 = coin_price("BTC", basecur)
-        #         return p1*p2
-
-        p1 = float(data[0]["price_btc"])
-        p2 = coin_price("BTC", basecur)
-        return p1*p2
+    elif cur == "BBR" and basecur not in ["BTC", "USD"]:
+        # Coinmarketcap is the only working source of these, but it
+        # only gives BTC or USD pairs
+        return coin_price_via_btc(coin, basecur)
     
     api_urls = [
+        "https://api.coinmarketcap.com/v1/ticker/" + coin + "/", 
         "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
         "https://api.cryptonator.com/api/ticker/" + cur + "-" + basecur,
     ]
-
+    
     for url in api_urls:
         try:
             response = urllib2.urlopen(url, timeout = 5)
             data = json.loads(response.read())
 
-            if "cryptonator" in url:
-                if not data["success"] and "BBR" in [cur, basecur]:
-                    return coin_price(cur.replace("BBR", "XBB"), basecur.replace("BBR", "XBB"))
-                else:
-                    return float(data["ticker"]["price"])
-            elif "cryptocompare" in url:
+            if "coinmarketcap" in url and basecur in ["BTC", "USD"]:
+                return float(data[0]["price_" + basecur.lower()])
+                
+            elif "cryptonator" in url:
+                return float(data["ticker"]["price"])
+
+            elif "cryptocompare" in url and cur != "BBR":
+                # outdated for BBR
+                
                 if len(data["Data"]) == 0 and "BTC" not in [cur, basecur]:
-                    # For many currencies, only BTC-based price is
-                    # available here, so need two separate fetches
-                    p1 = coin_price(cur, "BTC")
-                    p2 = coin_price("BTC", basecur)
-                    return p1*p2
+                    return coin_price_via_btc(coin, basecur)
                 else:
                     return float(data["Data"][0]["Price"])
         except:
             pass
 
     return 0
+
+def coin_price_via_btc(coin, basecur):
+    # Common issue for price APIs, so factor out
+    p1 = coin_price(coin, "BTC")
+    p2 = coin_price("bitcoin", basecur)
+    return p1*p2
 
 def linear_regression(pairs):
     # Data usually comes in x, y pairs, so choose it as my input format
@@ -164,12 +158,14 @@ def meandiff(coin, diffnow = 0):
     else:
         return 0
 
-def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0, basecur = "EUR"):
+def profit(blocktime, reward, coin, watts, kwhprice, fiatprice = 0, basecur = "EUR"):
     # The conventions are slightly different between coin families, so
     # try to make this general enough while factoring out everything
     # in common
     
     output = []
+
+    cur = currency[coin]
     
     tp = timeprint(blocktime)
     output.append(["\nAverage time between blocks", str(tp[0]) + " " + tp[1]])
@@ -181,7 +177,7 @@ def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0, basecur = "EU
     # We may already have this from balance display, so don't bother
     # the server. It may still be unavailable, though.
     if fiatprice <= 0:
-        fiatprice = coin_price(cur, basecur)
+        fiatprice = coin_price(coin, basecur)
 
     if fiatprice > 0:
         fiatpay = coinsperday * fiatprice
@@ -208,3 +204,49 @@ def profit(blocktime, reward, cur, watts, kwhprice, fiatprice = 0, basecur = "EU
 def exp_decay(init, blocks, period, base=0.5):
     p = ceil(float(blocks) / float(period - 2))
     return init * base**(p - 1)
+
+# These need to be available for coin_price so moved here
+currency = {
+    "AuroraCoin": "AUR",
+    "bitcoin": "BTC",
+    "blakebitcoin": "BBTC",
+    "blakecoin": "BLC",
+    "chncoin": "CNC",
+    "cryptonite": "XCN",
+    "dash": "DASH",
+    "dirac": "XDQ",
+    "dogecoin": "DOGE",
+    "ecoin": "ECN",
+    "electron": "ELT",
+    "ExclusiveCoin": "EXCL",
+    "groestlcoin": "GRS",
+    "gapcoin": "GAP",
+    "litecoin": "LTC",
+    "lithium": "LIT",
+    "maxcoin": "MAX",
+    "namecoin": "NMC",
+    "photon": "PHO",
+    "peercoin": "PPC",
+    "primecoin": "XPM",
+    "primio": "Primio",
+    "riecoin": "RIC",
+    "ShibeCoin": "Shibe",
+    "skeincoin": "SKC",
+    "Slothcoin": "Sloth",
+    "TjcoinV2": "TJC",
+    "universalmolecule": "UMO",
+    "Vcash": "XVC",
+    "vertcoin": "VTC",
+    "virtacoin": "VTA",
+    "zcash": "ZEC",
+    "zclassic": "ZCL",
+    "zcoin": "XZC",
+    "zen": "ZEN",
+
+    "aeon": "AEON",
+    "boolberry": "BBR",
+    "monero": "XMR",
+
+    "ethereum": "ETH",
+    "ethereum-classic": "ETC",
+}

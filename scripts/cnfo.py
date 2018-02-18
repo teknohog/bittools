@@ -58,12 +58,6 @@ parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh p
 
 options = parser.parse_args()
 
-currency = {
-    "aeon": "AEON",
-    "boolberry": "BBR",
-    "monero": "XMR",
-}
-
 # Atomic unit of currency
 baseunit = {
     "aeon": 1e-12,
@@ -154,7 +148,7 @@ moneysupply = (2**64 - 1) * baseunit[options.coin] - blockreward * reward_diviso
 output.append(["moneysupply", str(moneysupply)])
 
 if options.verbose:
-    fiatprice = coin_price(currency[options.coin], options.basecur)
+    fiatprice = coin_price(options.coin, options.basecur)
 
     if fiatprice > 0:
         output.append([options.basecur + " price", str(fiatprice)])
@@ -164,7 +158,7 @@ if options.hashrate > 0:
         diff = md
     
     blocktime = diff / options.hashrate
-    output += profit(blocktime, blockreward, currency[options.coin], options.watts, options.kwhprice, 0, options.basecur)
+    output += profit(blocktime, blockreward, options.coin, options.watts, options.kwhprice, 0, options.basecur)
 
 if len(output) > 0:
     prettyprint(output)

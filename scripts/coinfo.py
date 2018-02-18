@@ -636,43 +636,6 @@ parser.add_option("--zclassic", action="store_const", const="zclassic", dest="co
 coin = options.coin
 
 # coin-dependent constants
-currency = {
-    "AuroraCoin": "AUR",
-    "bitcoin": "BTC",
-    "blakebitcoin": "BBTC",
-    "blakecoin": "BLC",
-    "chncoin": "CNC",
-    "cryptonite": "XCN",
-    "dash": "DASH",
-    "dirac": "XDQ",
-    "dogecoin": "DOGE",
-    "ecoin": "ECN",
-    "electron": "ELT",
-    "ExclusiveCoin": "EXCL",
-    "groestlcoin": "GRS",
-    "gapcoin": "GAP",
-    "litecoin": "LTC",
-    "lithium": "LIT",
-    "maxcoin": "MAX",
-    "namecoin": "NMC",
-    "photon": "PHO",
-    "peercoin": "PPC",
-    "primecoin": "XPM",
-    "primio": "Primio",
-    "riecoin": "RIC",
-    "ShibeCoin": "Shibe",
-    "skeincoin": "SKC",
-    "Slothcoin": "Sloth",
-    "TjcoinV2": "TJC",
-    "universalmolecule": "UMO",
-    "Vcash": "XVC",
-    "vertcoin": "VTC",
-    "virtacoin": "VTA",
-    "zcash": "ZEC",
-    "zclassic": "ZCL",
-    "zcoin": "XZC",
-    "zen": "ZEN",
-}
 
 # 0 means no block reward halving
 blockhalve = {
@@ -1043,7 +1006,7 @@ if options.verbose:
 prettyprint(output)
 
 if options.verbose:
-    fiatprice = coin_price(currency[coin], options.basecur)
+    fiatprice = coin_price(coin, options.basecur)
     
     own_share(coin, blocks, info, fiatprice, options.basecur)
 
@@ -1091,7 +1054,7 @@ if hashrate > 0 and coin != "riecoin":
         reward -= reward * devtax / 100.0
         print("\nMiners' share %f %s per block after %f %% developer tax" % (reward, currency[options.coin], devtax))
         
-    output += profit(blocktime, reward, currency[options.coin], options.watts, options.kwhprice, fiatprice, options.basecur)
+    output += profit(blocktime, reward, options.coin, options.watts, options.kwhprice, fiatprice, options.basecur)
 
 if adjustblocks[coin] > 0:
     adjtime = (adjustblocks[coin] - blocks % adjustblocks[coin]) / float(blocksperhour[coin]) * 3600

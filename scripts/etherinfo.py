@@ -77,7 +77,7 @@ parser.add_argument("--account_id", "-a", type = int, help = "Index of local acc
 
 parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
 
-parser.add_argument("-c", "--classic", action = "store_true", help = "Set currency symbol to ETC for the Classic network")
+parser.add_argument("-c", "--classic", action="store_const", const="ethereum-classic", dest="coin", default="ethereum", help="Connect to litecoind")
 
 parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
 
@@ -112,12 +112,10 @@ info = {"hashrate": float(int(daemon.eth_hashrate(), 16)),
 
 info["total balance"] = sum(info["balances"])
 
-if options.classic:
-    cur = "ETC"
+if options.coin == "ethereum-classic":
     basedir = "~/.ethereum-classic/mainnet"
     info["blockreward"] = exp_decay(5, info["blocks"], 5000000, 0.8)
 else:
-    cur = "ETH"
     basedir = "~/.ethereum"
     info["blockreward"] = 3
 
@@ -150,11 +148,11 @@ if options.hashrate:
 dictprint(info)
 
 if options.verbose:
-    fiatprice = coin_price(cur, options.basecur)
+    fiatprice = coin_price(options.coin, options.basecur)
 
     if fiatprice > 0:
         print("\nYour balance represents about")
-        print("%f %s (1 %s = %f %s)" % (fiatprice * info["total balance"], options.basecur, cur, fiatprice, options.basecur))
+        print("%f %s (1 %s = %f %s)" % (fiatprice * info["total balance"], options.basecur, currency[options.coin], fiatprice, options.basecur))
 else:
     fiatprice = 0
 
@@ -168,7 +166,7 @@ if info["hashrate"] > 0:
     
     blocktime = diff / info["hashrate"]
     
-    output = profit(blocktime, info["blockreward"], cur, options.watts, options.kwhprice, fiatprice, options.basecur)
+    output = profit(blocktime, info["blockreward"], options.coin, options.watts, options.kwhprice, fiatprice, options.basecur)
 
     prettyprint(output)
 
