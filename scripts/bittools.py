@@ -51,10 +51,6 @@ def coin_price(coin, basecur):
     
     if cur == basecur:
         return 1
-    elif cur == "BBR" and basecur not in ["BTC", "USD"]:
-        # Coinmarketcap is the only working source of these, but it
-        # only gives BTC or USD pairs
-        return coin_price_via_btc(coin, basecur)
     
     api_urls = [
         "https://api.coinmarketcap.com/v1/ticker/" + coin + "/", 
@@ -67,9 +63,12 @@ def coin_price(coin, basecur):
             response = urllib2.urlopen(url, timeout = 5)
             data = json.loads(response.read())
 
-            if "coinmarketcap" in url and basecur in ["BTC", "USD"]:
-                return float(data[0]["price_" + basecur.lower()])
-                
+            if "coinmarketcap" in url:
+                if basecur in ["BTC", "USD"]:
+                    return float(data[0]["price_" + basecur.lower()])
+                elif "BTC" not in [cur, basecur]:
+                    return coin_price_via_btc(coin, basecur)
+            
             elif "cryptonator" in url:
                 return float(data["ticker"]["price"])
 
