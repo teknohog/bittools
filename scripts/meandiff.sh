@@ -73,8 +73,9 @@ POS=false
 SET=false
 PROJECT=bitcoin
 VERBOSE=false
-while getopts AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
+while getopts 2AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
     case "$opt" in
+	2) PROJECT=btcp ;;
 	A) PROJECT=aeon ;;
 	#a) PROJECT=AuroraCoin ;;
 	a) PROJECT=zen ;;
@@ -132,6 +133,9 @@ done
 case $PROJECT in
     boolberry)
 	LOGFILE=~/.boolb/difflog
+	;;
+    btcp)
+	LOGFILE=~/.btcprivate/difflog
 	;;
     ethereum-classic)
 	LOGFILE=~/.$PROJECT/mainnet/difflog

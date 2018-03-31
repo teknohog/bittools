@@ -18,8 +18,9 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=- # 0 means build with the lib, but don't start by default
-while getopts AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
+while getopts 2AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
     case "$opt" in
+	2) PROJECT=btcp ;;
 	A) PROJECT=aeon ;;
 	#a) PROJECT=AuroraCoin ;;
 	a) PROJECT=zen ;;
@@ -81,6 +82,9 @@ case $PROJECT in
 	;;
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
+	;;
+    btcp)
+	GITURL=https://github.com/BTCPrivate/BitcoinPrivate
 	;;
     monero)
 	GITURL=https://github.com/monero-project/monero
@@ -186,7 +190,6 @@ case $PROJECT in
 	;;
     zcash)
 	GITURL=https://github.com/zcash/zcash
-	BINARY="zcashd zcash-cli zcash-tx"
 	;;
     zcoin)
 	GITURL=https://github.com/zcoinofficial/zcoin
@@ -194,7 +197,6 @@ case $PROJECT in
     zen)
 	#GITURL=https://github.com/zencashio/zen
 	GITURL=https://github.com/ZencashOfficial/zen
-	BINARY="${PROJECT}d ${PROJECT}-cli ${PROJECT}-tx"
 	;;
     *)
 	exit
@@ -407,7 +409,7 @@ case $PROJECT in
 
 	BINARY=$VCASH_ROOT/vcashd
 	;;
-    zcash|zen)
+    zcash|zen|btcp)
 	# Building per instructions will fetch and build local copies
 	# of libraries such as Boost. Have these guys never heard of
 	# shared libs?
@@ -415,9 +417,18 @@ case $PROJECT in
 	# The options also affect dependencies, so don't rebuild them
 	# every time by changing into my custom compilers >.<
 
+	BINARY="${PROJECT}d ${PROJECT}-cli"
+	
+	if [ "$PROJECT" == "btcp" ]; then
+	    BDIR=btcputil
+	else
+	    BINARY+=" ${PROJECT}-tx"
+	    BDIR=zcutil
+	fi
+	
 	# https://github.com/zcash/zcash/issues/2279 disable proton
 	# or maybe not https://github.com/zcash/zcash/commit/b04529fefdccffc8921f213a83e407fd346dc84c
-	CMD="nice ./zcutil/build.sh -j$(nproc)"
+	CMD="nice ./$BDIR/build.sh -j$(nproc)"
 	$CMD --disable-proton || $CMD 
 	cd src
 	;;

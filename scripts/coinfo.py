@@ -520,6 +520,8 @@ def getinfo():
         
 parser = OptionParser()
 
+parser.add_option("-2", "--btcprivate", action="store_const", const="btcprivate", dest="coin", default="bitcoin", help="Connect to btcpd")
+
 parser.add_option("-A", "--listaccounts", dest="listaccounts", action="store_true", default=False, help="List accounts with balances")
 
 parser.add_option("--AuroraCoin", action="store_const", const="AuroraCoin", dest="coin", default="bitcoin", help="Connect to AuroraCoind")
@@ -641,6 +643,7 @@ coin = options.coin
 blockhalve = {
     "AuroraCoin": 420000,
     "bitcoin": 210000,
+    "btcprivate": 210000,
     "blakebitcoin": 210000,
     "chncoin": 2628000,
     "dash": 0,
@@ -667,6 +670,7 @@ blockhalve = {
 blocksperhour = {
     "AuroraCoin": 6,
     "bitcoin": 6,
+    "btcprivate": 24,
     "blakebitcoin": 24,
     "blakecoin": 20,
     "chncoin": 60,
@@ -705,6 +709,7 @@ blocksperhour = {
 adjustblocks = {
     "AuroraCoin": 8,
     "bitcoin": 2016,
+    "btcprivate": 0,
     "blakebitcoin": 8064,
     "blakecoin": 20,
     "chncoin": 0,
@@ -744,6 +749,7 @@ adjustblocks = {
 initcoins = {
     "AuroraCoin": 25,
     "bitcoin": 50,
+    "btcprivate": 3.125, # fork starting at 1.5625 given the halving logic
     "blakecoin": 25,
     "blakebitcoin": 50,
     "chncoin": 88,
@@ -783,6 +789,7 @@ reward_stairs = {
 rpcport = {
     "AuroraCoin": "12341",
     "bitcoin": "8332",
+    "btcprivate": "7932",
     "blakebitcoin": "243",
     "blakecoin": "8772",
     "chncoin": "8108",
@@ -866,8 +873,8 @@ if options.listreceived:
     exit()
 
 if options.newaddress:
-    if coin in ["zcash", "zclassic", "zen"]:
-        if len(args[0]) > 0:
+    if coin in ["btcprivate", "zcash", "zclassic", "zen"]:
+        if len(args) == 0 or len(args[0]) > 0:
             print("Accounts are unsupported in %s" % coin)
             
         print(s.getnewaddress())
@@ -1040,7 +1047,7 @@ if hashrate > 0 and coin != "riecoin":
     elif coin == "cryptonite":
         # Guess based on current network hashrate and difficulty
         blocktime = diff * 2**20 / hashrate
-    elif coin in ["zcash", "zclassic", "zen"]:
+    elif coin in ["btcprivate", "zcash", "zclassic", "zen"]:
         # Guess based on networkhashrate comparisons
         blocktime = diff * 2**13 / hashrate
     else:

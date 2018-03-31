@@ -208,6 +208,7 @@ def exp_decay(init, blocks, period, base=0.5):
 currency = {
     "AuroraCoin": "AUR",
     "bitcoin": "BTC",
+    "btcprivate": "BTCP",
     "blakebitcoin": "BBTC",
     "blakecoin": "BLC",
     "chncoin": "CNC",
