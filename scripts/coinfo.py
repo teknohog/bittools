@@ -351,9 +351,14 @@ def importkeys(file):
         # the key. Note that the split point may contain multiple
         # spaces due to prettyprint.
         iargs = map(lambda s: s.strip(), line.split(None, 1))
-        privkey = iargs[0]
 
         lineno = i + 1
+
+        if len(iargs) > 0:
+            privkey = iargs[0]
+        else:
+            print("Empty line %i ignored" % lineno)
+            continue
 
         if len(privkey) not in [51, 52]:
             print("Key %i/%i ignored: %s" % (lineno, nlines, privkey))
