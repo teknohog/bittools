@@ -310,6 +310,10 @@ case $PROJECT in
 	# ccache/distcc don't seem to take effect anyway
 	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
+	# 2018-05-07 upnp and other builtin libraries
+	git submodule init
+	git submodule update
+	
 	# This needs to be cleared if the DB path changes
 	rm build/release/CMakeCache.txt
 	sed -i "s|/usr/include/db.*|$DB_INCPATH|" cmake/FindBerkeleyDB.cmake
