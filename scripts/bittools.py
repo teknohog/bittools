@@ -33,14 +33,14 @@ def timeprint(time):
     # This is used more generally, so provide the number as a number,
     # and the unit separately
 
-    if time >= 86400:
-        return [time / 86400, "days"]
-    elif time >= 3600:
-        return [time / 3600, "h"]
-    elif time >= 60:
-        return [time / 60, "min"]
-    else:
-        return [time, "s"]
+    # Order is important, so no dictionaries
+    units = ["days", "h", "min"]
+    limits = [86400., 3600., 60.] # floats for automatic conversion
+    for i in range(len(limits)):
+        if time >= limits[i]:
+            return [time / limits[i], units[i]]
+
+    return [time, "s"]
 
 def coin_price(coin, basecur):
     import urllib2, json
