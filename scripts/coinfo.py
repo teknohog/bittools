@@ -417,7 +417,14 @@ def listtransactions(args):
                 address = item["address"]
             else:
                 address = ""
-            output.append([ctime(item["time"]), item["category"][0].upper(), item["account"], str(item["amount"]), unconfirmed * "*", options.verbose * address, options.verbose * str(item["confirmations"])])
+
+            label = ""
+            for i in ["account", "label"]:
+                if i in item.keys():
+                    label = item[i]
+                    break
+                
+            output.append([ctime(item["time"]), item["category"][0].upper(), label, str(item["amount"]), unconfirmed * "*", options.verbose * address, options.verbose * str(item["confirmations"])])
 
         prettyprint(output)
         
@@ -554,7 +561,7 @@ parser.add_option("--ecoin", action="store_const", const="ecoin", dest="coin", d
 parser.add_option("-E", "--electron", action="store_const", const="electron", dest="coin", default="bitcoin", help="Connect to electrond")
 
 parser.add_option("--encrypt", action="store_true", help = "Encrypt wallet")
-parser.add_option("--unlock", action="store_true", help = "Unlock encrypted wallet")
+parser.add_option("--unlock", action="store_true", help = "Unlock encrypted wallet, with optional time in seconds, default 60")
 
 parser.add_option("-e", "--exportkeys", dest="export", action="store_true", default=False, help="Export all private keys, along with account names")
 
@@ -917,7 +924,12 @@ changed later. You may need to restart the daemon afterwards.""")
     exit()
 
 if options.unlock:
-    t = 60
+    # Default to 1 min, no need for extra options, cf. listtransactions
+    if len(args) >= 1:
+        t = int(args[0])
+    else:
+        t = 60
+
     print("Unlocking an encrypted wallet for %.2f %s" % tuple(timeprint(t)))
     pphrase = raw_input("Enter passphrase: ")
     s.walletpassphrase(pphrase, t)
