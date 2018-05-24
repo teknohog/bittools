@@ -298,14 +298,14 @@ EOF
 fi
 
 case $PROJECT in
-    aeon)
+    aeon-legacy)
 	sed -Ei 's/-Werror//' CMakeLists.txt
 	yes y | make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
     ;;
-    monero)
+    monero|aeon)
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway
 	#nice make $MAKEOPTS CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
