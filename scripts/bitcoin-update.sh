@@ -72,7 +72,7 @@ case $PROJECT in
     aeon)
 	GITURL=https://github.com/aeonix/aeon
 	# For install only
-	BINARY="connectivity_tool aeond simplewallet simpleminer"
+	BINARY="aeon-blockchain-blackball aeon-blockchain-export aeon-blockchain-import aeon-blockchain-usage aeond aeon-wallet-cli aeon-wallet-rpc"
 	;;
     blakebitcoin)
 	GITURL=https://github.com/BlakeBitcoin/BlakeBitcoin
@@ -89,7 +89,7 @@ case $PROJECT in
     monero)
 	GITURL=https://github.com/monero-project/monero
 	# For install only
-	BINARY="monero-blockchain-export  monero-blockchain-import  monerod  monero-wallet-cli"
+	BINARY="monero-blockchain-blackball monero-blockchain-export monero-blockchain-import monero-blockchain-usage monerod monero-gen-trusted-multisig monero-wallet-cli monero-wallet-rpc"
 	;;
     boolberry)
 	GITURL=https://github.com/cryptozoidberg/boolberry
