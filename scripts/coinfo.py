@@ -443,7 +443,7 @@ def send(address, amount, new_txfee):
     print("About to send " + currency[coin] + " " + str(amount) + " to " + address + " with txfee " + str(txfee))
 
     # Warn of potential dupes; sends show up with empty account name
-    trans = s.listtransactions('')
+    trans = s.listtransactions()
     if len(trans) > 0:
         for item in trans:
             if "address" in item.keys() and address == item["address"]:

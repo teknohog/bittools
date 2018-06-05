@@ -29,7 +29,7 @@ def get_balance(addr):
     return fromhexwei(hwbal)
 
 def send(fromaddr, toaddr, amount):
-    print("About to send " + str(amount) + " " + cur + " from " + fromaddr + " to " + toaddr)
+    print("About to send " + str(amount) + " " + currency[options.coin] + " from " + fromaddr + " to " + toaddr)
 
     c_input = raw_input("OK (yes/no)? ")
     if c_input != "yes":
