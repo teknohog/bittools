@@ -94,7 +94,7 @@ case $PROJECT in
     boolberry)
 	GITURL=https://github.com/cryptozoidberg/boolberry
 	# For install only
-	BINARY="boolbd simplewallet simpleminer"
+	BINARY="boolbd simplewallet"
 	;;
     boolberry-opencl)
 	GITURL=https://github.com/mbkuperman/boolberry-opencl.git
@@ -336,7 +336,7 @@ case $PROJECT in
 	EXTRACONFIG=""
 
 	case $PROJECT in
-	    dogecoin|zcoin)
+	    bitcoin|dogecoin|litecoin|zcoin)
 		EXTRACONFIG="--with-incompatible-bdb"
 		;;
 	    gapcoin)
@@ -353,7 +353,7 @@ case $PROJECT in
 	if [ -z "$(echo $UPNP | grep [01])" ]; then
 	    EXTRACONFIG="$EXTRACONFIG --without-miniupnpc"
 	fi
-	
+
 	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS" --without-gui $EXTRACONFIG
 
 	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
