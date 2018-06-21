@@ -140,7 +140,8 @@ case $PROJECT in
 	GITURL=https://github.com/Max-Coin/maxcoin
 	;;
     namecoin)
-	GITURL=https://github.com/namecoin/namecoin.git
+	#GITURL=https://github.com/namecoin/namecoin.git
+	GITURL=https://github.com/namecoin/namecoin-core
 	;;
     peercoin)
 	GITURL=https://github.com/peercoin/peercoin
@@ -332,7 +333,7 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|riecoin|skeincoin|virtacoin|zcoin)
+    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|namecoin|riecoin|skeincoin|virtacoin|zcoin)
 	EXTRACONFIG=""
 
 	case $PROJECT in
