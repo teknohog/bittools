@@ -369,7 +369,7 @@ case $PROJECT in
     vcash)
 	# Get the build script and work around its worst bits
 
-	SURL=https://github.com/xCoreDev/vcash-scripts
+	SURL=https://github.com/openvcash/vcash-scripts
 	SDIR=$(echo $SURL | sed -Ee 's|.*/([^/.]*)(.git)?$|\1|')
 	
 	SCRIPT=build-linux.sh
@@ -408,7 +408,8 @@ case $PROJECT in
 	    echo Rsync not found.
 	    exit
 	fi
-	sed -Ei 's|git.clone.*|rsync -av $VCASH_ROOT/../vcash/ $VCASH_ROOT/src/|' $SCRIPT
+	export VCASH_GIT=$BASEDIR/$PROJECTDIR
+	sed -Ei 's|git.clone.*|rsync -av $VCASH_GIT/ $VCASH_ROOT/src/|' $SCRIPT
 	
 	nice ./$SCRIPT -j$(nproc)
 
