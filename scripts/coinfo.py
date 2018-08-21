@@ -104,7 +104,7 @@ def devtax_percent(coin, blocks):
             tax += 14
         return tax
     elif coin == "zen":
-        return 12
+        return 30
 
     return 0
     
