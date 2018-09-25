@@ -322,7 +322,7 @@ case $PROJECT in
 	yes y | make clean
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
-	cd build/release/bin
+	cd build/Linux/master/release/bin || cd build/release/bin
 	;;
     boolberry*)
 	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
