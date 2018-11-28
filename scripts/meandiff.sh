@@ -7,7 +7,9 @@
 
 LINES=24
 
-function lin_reg () {
+function check_stale() {
+    # 2018-11-24 Separated as it's useful for $SET too
+    
     # 2017-08-24 As in Python bittools
     MTIME=$(date +%s -r $LOGFILE)
     NOW=$(date +%s)
@@ -15,8 +17,12 @@ function lin_reg () {
 	echo Warning: stale logfile
 	echo
     fi
+}
 
+function lin_reg () {
     # Use uniq to avoid dupes; the file should already be sorted
+
+    check_stale
     
     if $VERBOSE; then
 	uniq $LOGFILE
@@ -207,8 +213,17 @@ if $SET; then
 	    ;;
     esac
 
+    # 2018-11-24 Remove stale entries; simple by removing the file itself
+    check_stale | grep -i stale && rm $LOGFILE
+    
     # don't ruin the difflog if we have problems
-    if [ -n "$DIFF" ]; then
+
+    # 2018-08-09 Zero diff is an error that sometimes comes out of RPC
+    # scripts, and ruins meandiff calculations. Need integer for Bash
+    # comparison.
+    DIFF_INT=${DIFF//\.*/}
+    
+    if [ -n "$DIFF" ] && [ $DIFF_INT -gt 0 ]; then
 	TIME=$(date +%s)
 	echo $TIME $DIFF >> $LOGFILE
     
