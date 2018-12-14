@@ -713,7 +713,7 @@ blocksperhour = {
     "virtacoin": 60,
     "zcash": 24,
     "zclassic": 24,
-    "zcoin": 6,
+    "zcoin": 12,
     "zen": 24,
 }
 
@@ -781,7 +781,7 @@ initcoins = {
     "virtacoin": 8000,
     "zcash": 12.5, # after first 2e5 blocks -- use for total_supply approx
     "zclassic": 12.5, # after first 10 blocks, so practically constant
-    "zcoin": 50,
+    "zcoin": 25,
     "zen": 12.5,
 }
 
