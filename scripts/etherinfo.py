@@ -77,7 +77,7 @@ parser.add_argument("--account_id", "-a", type = int, help = "Index of local acc
 
 parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
 
-parser.add_argument("-c", "--classic", action="store_const", const="ethereum-classic", dest="coin", default="ethereum", help="Connect to litecoind")
+parser.add_argument("-c", "--classic", action="store_const", const="ethereum-classic", dest="coin", default="ethereum", help="Connect to Ethereum Classic")
 
 parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
 
