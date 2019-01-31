@@ -43,8 +43,15 @@ def timeprint(time):
     return [time, "s"]
 
 def coin_price(coin, basecur):
-    import urllib2, json
+    import json
 
+    try:
+        # python3
+        from urllib.request import urlopen
+    except:
+        # python2
+        from urllib2 import urlopen
+        
     # 2018-02-18 Coinmarketcap uses full names instead of tickers, and
     # it is easier to map coin->ticker here
     cur = currency[coin]
@@ -60,7 +67,7 @@ def coin_price(coin, basecur):
     
     for url in api_urls:
         try:
-            response = urllib2.urlopen(url, timeout = 5)
+            response = urlopen(url, timeout = 5)
             data = json.loads(response.read())
 
             if "coinmarketcap" in url:
@@ -144,7 +151,7 @@ def meandiff(coin, diffnow = 0):
             return 0
         
         # difflog now contains time, diff pairs
-        pairs = map(lambda a: a.split(), l)
+        pairs = list(map(lambda a: a.split(), l))
 
         # Current difficulty is a valid, useful data point
         if diffnow > 0:
