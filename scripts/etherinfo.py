@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # by teknohog 2016-01-03
 
@@ -73,13 +73,13 @@ def dictprint(a):
 import argparse
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--account_id", "-a", type = int, help = "Index of local account/address, starting from 0 = coinbase, in the order shown in balances")
+parser.add_argument("--account_id", "-a", type = int, default = -1, help = "Index of local account/address, starting from 0 = coinbase, in the order shown in balances")
 
 parser.add_argument("--basecur", default = "EUR", help="Base currency for coin and kWh prices, default EUR")
 
 parser.add_argument("-c", "--classic", action="store_const", const="ethereum-classic", dest="coin", default="ethereum", help="Connect to Ethereum Classic")
 
-parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
+parser.add_argument("-d", "--diff", type=float, default = 0, help="Set difficulty manually for mining estimation")
 
 parser.add_argument("--fraction", "-f", type = float, default = 0.5, help = "Lastsend fraction, default %(default)f")
 
@@ -87,7 +87,7 @@ parser.add_argument("--lastsend", "-l", help = "Send a fraction (-f) of new inco
 
 parser.add_argument("--minsend", "-m", type = float, default = 1, help = "Lower limit for lastsend, default %(default)f ETH")
 
-parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, help="Hashes/sec from external miners")
+parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
 
 parser.add_argument("--sendto", "-s", nargs = 2, help = "Send toaddress amount in ETH. The account must be unlocked.")
 
@@ -104,7 +104,7 @@ options = parser.parse_args()
 daemon = Server(options.url)
 
 info = {"hashrate": float(int(daemon.eth_hashrate(), 16)),
-        "balances": map(get_balance, daemon.eth_accounts()),
+        "balances": list(map(get_balance, daemon.eth_accounts())),
         "blocks": int(daemon.eth_blockNumber(), 16),
         "difficulty": float(int(daemon.eth_getBlockByNumber("latest", False)["difficulty"], 16)),
         "peers": int(daemon.net_peerCount(), 16),

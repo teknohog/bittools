@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # by teknohog 2015-05-31
 
@@ -38,13 +38,13 @@ parser.add_argument("--basecur", default = "EUR", help="Base currency for coin a
 
 parser.add_argument("--boolberry", action="store_const", const="boolberry", dest="coin", default="boolberry", help="Connect to Boolberry daemon (default)")
 
-parser.add_argument("-d", "--diff", type=float, help="Set difficulty manually for mining estimation")
+parser.add_argument("-d", "--diff", type=float, default = 0, help="Set difficulty manually for mining estimation")
 
 parser.add_argument("--listaliases", const = "listaliases", action="store_const", help="List all BBR aliases")
 
 parser.add_argument("-M", "--monero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
 
-parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, help="Hashes/sec from external miners")
+parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
 
 parser.add_argument("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
 

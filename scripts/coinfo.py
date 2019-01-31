@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # by teknohog, iki.fi
 
@@ -350,7 +350,7 @@ def importkeys(file):
         # Account names may contain spaces, so split only once to get
         # the key. Note that the split point may contain multiple
         # spaces due to prettyprint.
-        iargs = map(lambda s: s.strip(), line.split(None, 1))
+        iargs = list(map(lambda s: s.strip(), line.split(None, 1)))
 
         lineno = i + 1
 
@@ -552,7 +552,7 @@ parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin
 
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
 
-parser.add_option("-d", "--difficulty", dest="diff", type = float, help="Set difficulty for mining calculator")
+parser.add_option("-d", "--difficulty", dest="diff", type = float, default = 0, help="Set difficulty for mining calculator")
 
 parser.add_option("-D", "--dogecoin", action="store_const", const="dogecoin", dest="coin", default="bitcoin", help="Connect to dogecoind")
 
@@ -605,7 +605,7 @@ parser.add_option("-p", "--peercoin", action="store_const", const="peercoin", de
 
 parser.add_option("-R", "--listreceived", dest="listreceived", action="store_true", default=False, help="List totals received by account/label")
 
-parser.add_option("-r", "--hashrate", dest="hashrate", type = float, help="Hashes/sec from external miners, or blocksperday for primecoin")
+parser.add_option("-r", "--hashrate", dest="hashrate", type = float, default = 0, help="Hashes/sec from external miners, or blocksperday for primecoin")
 
 parser.add_option("-S", "--skeincoin", action="store_const", const="skeincoin", dest="coin", default="bitcoin", help="Connect to skeincoind")
 
