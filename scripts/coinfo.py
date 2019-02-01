@@ -949,7 +949,7 @@ if options.peers:
 info = getinfo()
 
 if options.verbose:
-    keys = info.keys()
+    keys = list(info.keys())
 elif coin == "Vcash":
     # No testnet in info
     keys = ["balance"]
