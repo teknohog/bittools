@@ -456,7 +456,7 @@ def send(address, amount, new_txfee):
     from random import sample, randrange
     import string
     chars = string.ascii_letters + string.digits
-    conf = string.join(sample(chars, randrange(6, 15)), "")
+    conf = "".join(sample(chars, randrange(6, 15)))
     c_input = input("Please type " + conf + " to confirm the transaction: ")
 
     if c_input == conf:
