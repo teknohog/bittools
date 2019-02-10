@@ -6,6 +6,11 @@ import os.path
 from math import ceil, exp
 from time import ctime, time
 
+# https://github.com/joshmarshall/jsonrpclib
+from jsonrpclib import Server
+
+from sys import exit, version_info
+
 def ReadLines(f):
     File = open(f, "r")
     contents = File.readlines()
@@ -45,11 +50,9 @@ def timeprint(time):
 def coin_price(coin, basecur):
     import json
 
-    try:
-        # python3
+    if version_info >= (3, 0):
         from urllib.request import urlopen
-    except:
-        # python2
+    else:
         from urllib2 import urlopen
         
     # 2018-02-18 Coinmarketcap uses full names instead of tickers, and
@@ -211,6 +214,12 @@ def exp_decay(init, blocks, period, base=0.5):
     p = ceil(float(blocks) / float(period - 2))
     return init * base**(p - 1)
 
+if version_info >= (3, 0):
+    # input() is available in python2, but it's more like eval()
+    # python3's input() and python2's raw_input() just return the string
+    def raw_input(s):
+        return input(s)
+    
 # These need to be available for coin_price so moved here
 currency = {
     "AuroraCoin": "AUR",

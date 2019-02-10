@@ -4,12 +4,6 @@
 
 # Rudimentary access to Ethereum json-rpc
 
-# https://github.com/ethereum/wiki/wiki/JSON-RPC
-
-from jsonrpclib import Server
-
-from sys import exit
-
 from bittools import *
 
 def WriteFile(filename, content):
@@ -31,7 +25,7 @@ def get_balance(addr):
 def send(fromaddr, toaddr, amount):
     print("About to send " + str(amount) + " " + currency[options.coin] + " from " + fromaddr + " to " + toaddr)
 
-    c_input = input("OK (yes/no)? ")
+    c_input = raw_input("OK (yes/no)? ")
     if c_input != "yes":
         exit()
     

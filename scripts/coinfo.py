@@ -14,14 +14,10 @@
 # ~/.bitcoin/bitcoin.conf and this connects to localhost. Or provide
 # another complete URL.
 
-# https://github.com/joshmarshall/jsonrpclib
-from jsonrpclib import Server
+from bittools import *
 
-from sys import exit
 from optparse import OptionParser
 import re
-
-from bittools import *
 
 def staired_reward(blocks, reward_stairs):
     (limits, rewards) = reward_stairs
@@ -457,7 +453,8 @@ def send(address, amount, new_txfee):
     import string
     chars = string.ascii_letters + string.digits
     conf = "".join(sample(chars, randrange(6, 15)))
-    c_input = input("Please type " + conf + " to confirm the transaction: ")
+
+    c_input = raw_input("Please type " + conf + " to confirm the transaction: ")
 
     if c_input == conf:
         if coin == "cryptonite":
@@ -469,7 +466,7 @@ def send(address, amount, new_txfee):
             # There's no simple way to detect if the wallet is
             # encrypted, so just try this
             print("Initial send failed. Your wallet may be encrypted.")
-            pphrase = input("Enter passphrase: ")
+            pphrase = raw_input("Enter passphrase: ")
             s.walletpassphrase(pphrase, 10)
             result = s.sendtoaddress(address, amount)
             s.walletlock()
@@ -915,8 +912,8 @@ if options.backupwallet:
 if options.encrypt:
     print("""Encrypting wallet. This cannot be undone, but the passphrase can be
 changed later. You may need to restart the daemon afterwards.""")
-    pphrase = input("Enter passphrase: ")
-    pphrase2 = input("Confirm p-phrase: ")
+    pphrase = raw_input("Enter passphrase: ")
+    pphrase2 = raw_input("Confirm p-phrase: ")
     if pphrase == pphrase2:
         s.encryptwallet(pphrase)
     else:
@@ -931,7 +928,7 @@ if options.unlock:
         t = 60
 
     print("Unlocking an encrypted wallet for %.2f %s" % tuple(timeprint(t)))
-    pphrase = input("Enter passphrase: ")
+    pphrase = raw_input("Enter passphrase: ")
     s.walletpassphrase(pphrase, t)
     exit()
     

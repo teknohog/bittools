@@ -11,13 +11,6 @@
 # separate wallets complicate things a bit, so I now use simple shell
 # wrappers to send money.
 
-# https://github.com/joshmarshall/jsonrpclib
-# Package in Gentoo Portage, seems to work better for Cryptonotes than
-# the old jsonrpc
-from jsonrpclib import Server
-
-from sys import exit
-
 from bittools import *
 
 def wallet_server(coin):
