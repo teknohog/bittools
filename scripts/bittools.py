@@ -254,6 +254,7 @@ currency = {
     "Vcash": "XVC",
     "vertcoin": "VTC",
     "virtacoin": "VTA",
+    "zano": "ZANO", # ?
     "zcash": "ZEC",
     "zclassic": "ZCL",
     "zcoin": "XZC",

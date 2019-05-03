@@ -18,7 +18,7 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=- # 0 means build with the lib, but don't start by default
-while getopts 2AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
+while getopts 2AaBCcDEFfGgHIJjKkLlMmNnOoPpSTUuVXxYyZz opt; do
     case "$opt" in
 	2) PROJECT=btcp ;;
 	A) PROJECT=aeon ;;
@@ -43,6 +43,7 @@ while getopts 2AaBCcDEFfGgHIJjKkLlMmnOoPpSTUuVXxYyZz opt; do
 	l) PROJECT=litecoin ;;
 	M) PROJECT=monero ;;
 	m) PROJECT=maxcoin ;;
+	N) PROJECT=zano ;;
 	n) PROJECT=namecoin ;;
 	O) PROJECT=boolberry-opencl ;;
 	o) PROJECT=boolberry ;;
@@ -189,6 +190,11 @@ case $PROJECT in
     virtacoin)
 	GITURL=https://github.com/virtacoin/VirtaCoinProject
 	;;
+    zano)
+	GITURL=https://github.com/hyle-team/zano
+	# For install only
+	BINARY="${PROJECT}d connectivity_tool simplewallet"
+	;;
     zcash)
 	GITURL=https://github.com/zcash/zcash
 	;;
@@ -324,8 +330,21 @@ case $PROJECT in
 
 	cd build/Linux/master/release/bin || cd build/release/bin
 	;;
-    boolberry*)
+    boolberry*|zano)
 	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
+	# https://bitcointalk.org/index.php?topic=577267.msg47065617#msg47065617
+	#sed -i 's/target_link_libraries(functional_tests/\0 zlibstatic/' tests/CMakeLists.txt
+	#sed -i 's/target_link_libraries(unit_tests/\0 zlibstatic/' tests/CMakeLists.txt
+	#sed -i 's/target_link_libraries(exchange_test/\0 zlibstatic/' tests/CMakeLists.txt
+	# Should be fixed upstream now
+
+	case $PROJECT in
+	    zano)
+		# 2019-04-20 zlib tests are broken, copy a working one
+		# from a related project
+		cp -a $BASEDIR/boolberry/contrib/zlib/* contrib/zlib/
+	    ;;
+	esac
 	
 	# As in monero
 	make clean
@@ -337,15 +356,36 @@ case $PROJECT in
 	EXTRACONFIG=""
 
 	case $PROJECT in
-	    bitcoin|dogecoin|litecoin|zcoin)
+	    bitcoin|dogecoin|litecoin) #|zcoin)
 		EXTRACONFIG="--with-incompatible-bdb"
 		;;
 	    gapcoin)
-		git submodule init
-		git submodule update
+		EXTRACONFIG="--with-incompatible-bdb"
+		
+		#git submodule init
+		#git submodule update
+		git submodule update --init
+		
+		# https://bitcointalk.org/index.php?topic=822498.msg41271486#msg41271486
+		#sed -Ei 's/constexpr double accuracy/const double accuracy/' src/PoWCore/src/PoWUtils.h 
+		sed -Ei 's/get<const CScriptID&>/get<CScriptID>/' src/rpcrawtransaction.cpp
+		sed -Ei 's/const double accuracy/constexpr double accuracy/' src/PoWCore/src/PoWUtils.h
+		#sed -Ei 's/get<CScriptID>/get<const CScriptID&>/' src/rpcrawtransaction.cpp
+
+		CFLAGS+=" -fPIC"
 		;;
 	    skeincoin)
-		CFLAGS="$CFLAGS -fPIC"
+		CFLAGS+=" -fPIC"
+		;;
+	    zcoin)
+		EXTRACONFIG="--with-incompatible-bdb"
+
+		# 2018-09-04 MTP for testnet only for now
+		#git checkout refactor-mtp
+
+		# 2018-09-04 https://github.com/zcoinofficial/zcoin/issues/248
+		#echo 0 > torsetting.dat
+		#alias configure="configure --disable-zstd"
 		;;
 	esac
 	

@@ -79,7 +79,7 @@ POS=false
 SET=false
 PROJECT=bitcoin
 VERBOSE=false
-while getopts 2AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
+while getopts 2AaBcDEFGgHIJjKLlMmNnOoPpSsTUVvwXxYyZz opt; do
     case "$opt" in
 	2) PROJECT=btcp ;;
 	A) PROJECT=aeon ;;
@@ -105,6 +105,7 @@ while getopts 2AaBcDEFGgHIJjKLlMmnOoPpSsTUVvwXxYyZz opt; do
 	l) PROJECT=litecoin ;;
 	M) PROJECT=monero ;;
 	m) PROJECT=maxcoin ;;
+	N) PROJECT=zano ;;
 	n) PROJECT=namecoin ;;
 	O|o)
 	    # The -O distinction for boolberry-opencl only matters for
@@ -158,6 +159,9 @@ case $PROJECT in
     vcash)
 	LOGFILE=~/.Vcash/difflog
 	;;
+    zano)
+	LOGFILE=~/.Zano/difflog
+	;;
     *)
 	LOGFILE=~/.$PROJECT/difflog
 	;;
@@ -184,7 +188,7 @@ if $SET; then
     
     # top up the logfile
     case $PROJECT in
-	aeon|monero|boolberry)
+	aeon|monero|boolberry|zano)
 	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
 	    ;;
 	ethereum*)

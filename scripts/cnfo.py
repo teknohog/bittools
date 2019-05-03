@@ -37,6 +37,8 @@ parser.add_argument("--listaliases", const = "listaliases", action="store_const"
 
 parser.add_argument("-M", "--monero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
 
+parser.add_argument("-N", "--zano", action="store_const", const="zano", dest="coin", default="boolberry", help="Connect to Zano daemon")
+
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
 
 parser.add_argument("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
@@ -56,12 +58,14 @@ baseunit = {
     "aeon": 1e-12,
     "boolberry": 1e-12,
     "monero": 1e-12,
+    "zano": 1e-12, # ?
 }
 
 reward_divisor = {
     "aeon": 2**18,
     "boolberry": 2**20,
     "monero": 2**20,
+    "zano": 2**20, # ?
 }
 
 rpcport = {
@@ -70,6 +74,7 @@ rpcport = {
         "aeon": "11181",
         "boolberry": "10102",
         "monero": "18081",
+        "zano": "11211",
     },
     "wallet":
     {
@@ -128,7 +133,7 @@ output.append(["blockreward", str(blockreward)])
 if options.diff > 0:
     diff = options.diff
 else:
-    diff = lasthead["difficulty"]
+    diff = float(lasthead["difficulty"])
 output.append(["difficulty", str(diff)])
 
 md = meandiff(options.coin, diff)
