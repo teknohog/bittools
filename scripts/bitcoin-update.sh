@@ -332,17 +332,10 @@ case $PROJECT in
 	;;
     boolberry*|zano)
 	sed -i 's/Boost_USE_STATIC_LIBS ON/Boost_USE_STATIC_LIBS OFF/' CMakeLists.txt
-	# https://bitcointalk.org/index.php?topic=577267.msg47065617#msg47065617
-	#sed -i 's/target_link_libraries(functional_tests/\0 zlibstatic/' tests/CMakeLists.txt
-	#sed -i 's/target_link_libraries(unit_tests/\0 zlibstatic/' tests/CMakeLists.txt
-	#sed -i 's/target_link_libraries(exchange_test/\0 zlibstatic/' tests/CMakeLists.txt
-	# Should be fixed upstream now
-
+	
 	case $PROJECT in
 	    zano)
-		# 2019-04-20 zlib tests are broken, copy a working one
-		# from a related project
-		cp -a $BASEDIR/boolberry/contrib/zlib/* contrib/zlib/
+		git submodule init && git submodule update
 	    ;;
 	esac
 	
@@ -388,7 +381,7 @@ case $PROJECT in
 		#alias configure="configure --disable-zstd"
 		;;
 	esac
-	
+
 	sh autogen.sh
 
 	if [ -z "$(echo $UPNP | grep [01])" ]; then
