@@ -132,8 +132,14 @@ output.append(["blockreward", str(blockreward)])
 
 if options.diff > 0:
     diff = options.diff
+elif options.coin == "zano":
+    diff = daemon.getinfo()["pow_difficulty"]
+elif options.coin == "boolberry":
+    diff = daemon.getinfo()["difficulty"]
 else:
-    diff = float(lasthead["difficulty"])
+    #diff = float(lasthead["difficulty"])
+    diff = daemon.get_info()["difficulty"]
+    
 output.append(["difficulty", str(diff)])
 
 md = meandiff(options.coin, diff)
