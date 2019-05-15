@@ -111,7 +111,7 @@ if options.coin == "ethereum-classic":
     info["blockreward"] = exp_decay(5, info["blocks"], 5000000, 0.8)
 else:
     basedir = "~/.ethereum"
-    info["blockreward"] = 3
+    info["blockreward"] = 2
 
 if options.account_id > -1:
     aid = options.account_id
