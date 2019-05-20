@@ -63,6 +63,7 @@ def coin_price(coin, basecur):
         return 1
     
     api_urls = [
+        "https://api.coingecko.com/api/v3/simple/price?ids=" + cur + "&vs_currencies=" + basecur,
         "https://api.coinmarketcap.com/v1/ticker/" + coin + "/", 
         "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
         "https://api.cryptonator.com/api/ticker/" + cur + "-" + basecur,
@@ -73,7 +74,10 @@ def coin_price(coin, basecur):
             response = urlopen(url, timeout = 5)
             data = json.loads(response.read())
 
-            if "coinmarketcap" in url:
+            if "coingecko" in url and len(data[cur.lower()]) > 0:
+                return float(data[cur.lower()][basecur.lower()])
+                
+            elif "coinmarketcap" in url:
                 if basecur in ["BTC", "USD"]:
                     return float(data[0]["price_" + basecur.lower()])
                 elif "BTC" not in [cur, basecur]:
