@@ -124,21 +124,29 @@ output = []
 
 lasthead = daemon.getlastblockheader()["block_header"]
 
-blocks = lasthead["height"]
-output.append(["blocks", str(blocks)])
+# More up-to-date info. This does not contain block reward, so keep
+# lasthead for that for now.
+if options.coin in ["boolberry", "zano"]:
+    info = daemon.getinfo()
+else:
+    info = daemon.get_info()
 
-blockreward = lasthead["reward"] * baseunit[options.coin]
+output.append(["height", str(info["height"])])
+
+if options.coin == "zano":
+    # PoW reward for mining calculations. Lasthead may contain much higher PoS
+    blockreward = 1
+else:
+    blockreward = lasthead["reward"] * baseunit[options.coin]
+
 output.append(["blockreward", str(blockreward)])
 
 if options.diff > 0:
     diff = options.diff
 elif options.coin == "zano":
-    diff = daemon.getinfo()["pow_difficulty"]
-elif options.coin == "boolberry":
-    diff = daemon.getinfo()["difficulty"]
+    diff = info["pow_difficulty"]
 else:
-    #diff = float(lasthead["difficulty"])
-    diff = daemon.get_info()["difficulty"]
+    diff = info["difficulty"]
     
 output.append(["difficulty", str(diff)])
 
