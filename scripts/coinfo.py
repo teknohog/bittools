@@ -406,7 +406,12 @@ def listtransactions(args):
         trans = s.listtransactions()
         
     if len(trans) > 0:
-        output = []
+
+        if options.verbose:
+            output = [["Date", "T", "Label", "Amount", "", "Address", "Confs", "Fee"]]
+        else:
+            output = []
+            
         for item in trans:
             unconfirmed = item["confirmations"] < 1 or item["category"] == "immature"
             if "address" in item.keys():
@@ -419,8 +424,19 @@ def listtransactions(args):
                 if i in item.keys():
                     label = item[i]
                     break
-                
-            output.append([ctime(item["time"]), item["category"][0].upper(), label, str(item["amount"]), unconfirmed * "*", options.verbose * address, options.verbose * str(item["confirmations"])])
+
+            out_line = [ctime(item["time"]), item["category"][0].upper(), label, str(item["amount"]), unconfirmed * "*"]
+
+            if options.verbose:
+                if item["category"] == "send":
+                    feestr = str(abs(item["fee"]))
+                else:
+                    # Filler for the output matrix
+                    feestr = ""
+
+                out_line += [address, str(item["confirmations"]), feestr]
+
+            output.append(out_line)
 
         prettyprint(output)
         
