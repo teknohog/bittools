@@ -73,7 +73,7 @@ def coin_price(coin, basecur):
         try:
             response = urlopen(url, timeout = 5)
             data = json.loads(response.read())
-
+            
             if "coingecko" in url and len(data[cur.lower()]) > 0:
                 return float(data[cur.lower()][basecur.lower()])
                 
@@ -139,6 +139,8 @@ def meandiff(coin, diffnow = 0):
         dirname = "boolb"
     elif coin == "monero":
         dirname = "bitmonero"
+    elif coin == "zano":
+        dirname = "Zano"
     else:
         dirname = coin
         
