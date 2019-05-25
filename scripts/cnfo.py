@@ -145,6 +145,11 @@ if options.diff > 0:
     diff = options.diff
 elif options.coin == "zano":
     diff = info["pow_difficulty"]
+
+    # https://docs.zano.org/docs/proof-of-stake-estimation
+    pos_diff = info["pos_difficulty"]
+    pos_daily_pct = 7.2e16 / float(pos_diff) * 100
+    output.append(["PoS interest rate", "%f %%/day" % pos_daily_pct])
 else:
     diff = info["difficulty"]
     
