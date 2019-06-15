@@ -638,9 +638,9 @@ parser.add_option("-V", "--virtacoin", action="store_const", const="virtacoin", 
 
 parser.add_option("-v", "--verbose", dest="verbose", action="store_true", default=False, help="Print more detailed info")
 
-parser.add_argument("-W", "--watts", dest="watts", type=float, default = 0, help="Power usage of miners for profitability calculation")
+parser.add_option("-W", "--watts", dest="watts", type = float, default = 0, help="Power usage of miners for profitability calculation")
 
-parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, default = 0, help="kWh price for profitability calculation")
+parser.add_option("-w", "--kwh-price", dest="kwhprice", type = float, default = 0, help="kWh price for profitability calculation")
 
 parser.add_option("-X", "--cryptonite", action="store_const", const="cryptonite", dest="coin", default="bitcoin", help="Connect to cryptonited")
 
