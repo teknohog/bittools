@@ -89,9 +89,9 @@ parser.add_argument("-u", "--url", dest="url", default="http://localhost:8545", 
 
 parser.add_argument("-v", "--verbose", action = "store_true")
 
-parser.add_argument("-W", "--watts", dest="watts", type=float, help="Power usage of miners for profitability calculation")
+parser.add_argument("-W", "--watts", dest="watts", type=float, default = 0, help="Power usage of miners for profitability calculation")
 
-parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price for profitability calculation")
+parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, default = 0, help="kWh price for profitability calculation")
 
 options = parser.parse_args()
 

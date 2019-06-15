@@ -41,15 +41,17 @@ parser.add_argument("-N", "--zano", action="store_const", const="zano", dest="co
 
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
 
+parser.add_argument("-S", "--stake", dest="stake", type=float, default = 0, help="Stake amount for PoS mining estimation")
+
 parser.add_argument("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
 
 parser.add_argument("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local daemon")
 
 parser.add_argument("-v", "--verbose", action = "store_true")
 
-parser.add_argument("-W", "--watts", dest="watts", type=float, help="Power usage of miners for profitability calculation")
+parser.add_argument("-W", "--watts", dest="watts", type=float, default = 0, help="Power usage of miners for profitability calculation")
 
-parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, help="kWh price for profitability calculation")
+parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, default = 0, help="kWh price for profitability calculation")
 
 options = parser.parse_args()
 
@@ -148,8 +150,8 @@ elif options.coin == "zano":
 
     # https://docs.zano.org/docs/proof-of-stake-estimation
     pos_diff = info["pos_difficulty"]
-    pos_daily_pct = 7.2e16 / float(pos_diff) * 100
-    output.append(["PoS interest rate", "%f %%/day" % pos_daily_pct])
+    pos_daily_rate = 7.2e16 / float(pos_diff)
+    output.append(["PoS interest rate", "%f %%/day" % (pos_daily_rate * 100)])
 else:
     diff = info["difficulty"]
     
@@ -176,6 +178,10 @@ if options.hashrate > 0:
     
     blocktime = diff / options.hashrate
     output += profit(blocktime, blockreward, options.coin, options.watts, options.kwhprice, 0, options.basecur)
-
+elif options.stake > 0 and options.coin == "zano":
+    # PoS mining estimation. Can use default 0 for watts and kwhprice.
+    blocktime = 86400 / (options.stake * pos_daily_rate)
+    output += profit(blocktime, blockreward, options.coin, options.watts, options.kwhprice, 0, options.basecur)
+    
 if len(output) > 0:
     prettyprint(output)
