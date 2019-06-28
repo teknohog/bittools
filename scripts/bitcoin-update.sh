@@ -345,11 +345,11 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|namecoin|riecoin|skeincoin|virtacoin|zcoin)
+    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|namecoin|peercoin|riecoin|skeincoin|virtacoin|zcoin)
 	EXTRACONFIG=""
 
 	case $PROJECT in
-	    bitcoin|dogecoin|litecoin) #|zcoin)
+	    bitcoin|dogecoin|litecoin|peercoin|zcoin)
 		EXTRACONFIG="--with-incompatible-bdb"
 		;;
 	    gapcoin)
@@ -369,16 +369,6 @@ case $PROJECT in
 		;;
 	    skeincoin)
 		CFLAGS+=" -fPIC"
-		;;
-	    zcoin)
-		EXTRACONFIG="--with-incompatible-bdb"
-
-		# 2018-09-04 MTP for testnet only for now
-		#git checkout refactor-mtp
-
-		# 2018-09-04 https://github.com/zcoinofficial/zcoin/issues/248
-		#echo 0 > torsetting.dat
-		#alias configure="configure --disable-zstd"
 		;;
 	esac
 
@@ -486,10 +476,12 @@ case $PROJECT in
 	
 	cp makefile.unix Makefile
 
-	if [ "$PROJECT" == "Tjcoin" ]; then
-	    sed -i 's/litecoin/Tjcoin/g' Makefile
-	    sed -i 's/scrypt.o/ocean.o/g' Makefile
-	fi
+	case $PROJECT in
+	    Tjcoin)
+		sed -i 's/litecoin/Tjcoin/g' Makefile
+		sed -i 's/scrypt.o/ocean.o/g' Makefile
+		;;
+	esac
     
 	sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
 	sed -i 's/g++/\$(CXX)/g' Makefile
