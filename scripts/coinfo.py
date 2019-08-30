@@ -154,15 +154,17 @@ def total_supply(coin, blocks, info):
     elif coin in ["blakecoin", "photon", "namecoin"]:
         total = blocks * initcoins[coin]
 
-    elif "moneysupply" in info:
-        total = info["moneysupply"]
-
     elif coin == "cryptonite":
         # Coinbase address
         coinbase = ep_dec(s.listbalances(1, ["CGTta3M4t3yXu8uRgkKvaWd2d8DQvDPnpL"])[0]["balance"])
         final_total = (2**64 - 1) * 1e-10
         total = final_total - coinbase
 
+    for i in ["moneysupply", "total_amount"]:
+        if i in info:
+            total = info[i]
+            break
+        
     return (total, final_total)
 
 def own_share(coin, blocks, info, fiatprice, basecur):
@@ -531,9 +533,17 @@ def getinfo():
         info = s.getblockchaininfo()
         info.update(s.getnetworkinfo())
         info.update(s.getwalletinfo())
-        
+
         # Roughly match old getinfo
-        keys = ["balance", "blocks", "connections", "difficulty", "paytxfee"]
+        if coin == "peercoin":
+            # 2019-08-28 For Peercoin total_amount (old moneysupply),
+            # should also work on others... heavy and slow on Bitcoin
+            # so limit to Peercoin for now
+            info.update(s.gettxoutsetinfo())
+        
+            keys = ["balance", "blocks", "connections", "difficulty", "total_amount"]
+        else:
+            keys = ["balance", "blocks", "connections", "difficulty", "paytxfee"]
     
         output = {}
         for key in keys:
