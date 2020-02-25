@@ -922,7 +922,7 @@ if options.byaccount:
         # Only one address; at least dumpwallet will give them all
         print(s.getaccountaddress(options.byaccount))
     else:
-        if coin in ["bitcoin", "litecoin"]:
+        if coin in coins_using_labels:
             alist = s.getaddressesbylabel(options.byaccount)
         else:
             alist = s.getaddressesbyaccount(options.byaccount)
