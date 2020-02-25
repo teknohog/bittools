@@ -188,6 +188,7 @@ def own_share(coin, blocks, info, fiatprice, basecur):
         
         if fiat_balance > 0:
             print("%f %s (1 %s = %f %s)" % (fiat_balance, basecur, currency[coin], fiatprice, basecur))
+            #print("%s %s (1 %s = %s %s)" % (format(fiat_balance, ",f"), basecur, currency[coin], format(fiatprice, ",f"), basecur))
 
         prettyprint(printout, " % or 1/")
 
@@ -284,10 +285,17 @@ def exportkeys():
 
         # EXCL: "Accounting API is deprecated and will be removed in future."
         try:
-            accounts = s.listaccounts()
+            if coin in coins_using_labels:
+                flist = s.listlabels
+                faddr = s.getaddressesbylabel
+            else:
+                flist = s.listaccounts
+                faddr = s.getaddressesbyaccount
+                
+            accounts = flist()
 
             for acc in accounts:
-                addresses = s.getaddressesbyaccount(acc)
+                addresses = faddr(acc)
                 for addr in addresses:
                     privkey = s.dumpprivkey(addr)
                     item = [privkey, acc]
@@ -295,7 +303,7 @@ def exportkeys():
                     if item not in l:
                         l.append(item)
         except:
-            print("Warning: missing listaccounts method, list of keys may be incomplete\n")
+            print("Warning: missing listaccounts/listlabels method, list of keys may be incomplete\n")
 
     prettyprint(l)
 
@@ -378,7 +386,29 @@ def importkeys(file):
         print("Key %i/%i imported, %.2f %s passed, ETA %s" % (lineno, nlines, tp[0], tp[1], eta))
 
 def listaccounts():
-    acc = s.listaccounts()
+    if coin in coins_using_labels:
+        labels = s.listlabels()
+
+        ag = s.listaddressgroupings()
+
+        if len(labels) > 0:
+            ltotals = {}
+
+            for l in labels:
+                ltotals[l] = 0
+                
+                # This looks more nested than expected
+                for ga in ag:
+                    for gb in ga:
+                        if len(gb) > 2 and gb[2] == l:
+                            ltotals[l] += gb[1]
+
+            acc = ltotals
+        else:
+            acc = []
+                
+    else:
+        acc = s.listaccounts()
 
     if len(acc) > 0:
         output = []
@@ -388,12 +418,17 @@ def listaccounts():
         prettyprint(output)
 
 def listreceived():
-    rec = s.listreceivedbyaccount()
+    if coin in coins_using_labels:
+        key = "label"
+        rec = s.listreceivedbylabel()
+    else:
+        key = "account"
+        rec = s.listreceivedbyaccount()
 
     if len(rec) > 0:
         output = []
         for item in rec:
-            output.append([item["account"], str(item["amount"])])
+            output.append([item[key], str(item["amount"])])
     
         prettyprint(output)
 
@@ -860,6 +895,10 @@ rpcport = {
     "zen": "8231",
 }
 
+# "account" changed to "label" in these coins, need different function
+# and key names
+coins_using_labels = ["bitcoin", "groestlcoin", "litecoin"]
+
 if len(options.url) > 0:
     url = options.url
 elif coin == "Vcash":
@@ -883,7 +922,12 @@ if options.byaccount:
         # Only one address; at least dumpwallet will give them all
         print(s.getaccountaddress(options.byaccount))
     else:
-        for addr in s.getaddressesbyaccount(options.byaccount):
+        if coin in ["bitcoin", "litecoin"]:
+            alist = s.getaddressesbylabel(options.byaccount)
+        else:
+            alist = s.getaddressesbyaccount(options.byaccount)
+        
+        for addr in alist:
             print(addr)
     exit()
 
