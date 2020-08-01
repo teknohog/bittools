@@ -91,18 +91,20 @@ def devtax_percent(coin, blocks):
     if coin == "zcash":
         # Until first halving only
         if blocks <= blockhalve[coin]:
-            return 20
+            tax = 20
     elif coin == "zcoin":
         # Znodes -- making money centralized again
-        tax = 30
         # Until first halving only
         if blocks <= blockhalve[coin]:
-            tax += 14
-        return tax
+            tax = 44
+        else:
+            tax = 50
     elif coin == "zen":
-        return 30
-
-    return 0
+        tax = 30
+    else:
+        tax = 0
+        
+    return tax
     
 # Extended precision float encoding for Cryptonite
 def ep_enc(x):
