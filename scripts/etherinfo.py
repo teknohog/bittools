@@ -25,8 +25,7 @@ def get_balance(addr):
 def send(fromaddr, toaddr, amount):
     print("About to send " + str(amount) + " " + currency[options.coin] + " from " + fromaddr + " to " + toaddr)
 
-    c_input = raw_input("OK (yes/no)? ")
-    if c_input != "yes":
+    if not confirm():
         exit()
     
     # Save the balance file after sending. The balance won't be
@@ -37,11 +36,17 @@ def send(fromaddr, toaddr, amount):
     txdata = daemon.eth_sendTransaction({"from": fromaddr, "to": toaddr, "value": tohexwei(amount)})
 
     print("Transaction sent: " + txdata)
-    
-    balfile = os.path.expanduser(basedir + "/keystore/" + fromaddr + ".balance")
-    # Newline makes a manual cat cleaner for the shell
-    WriteFile(balfile, str(bal) + "\n")
-    
+
+    # 2020-01-16 basedir might not be correct, as it may vary with
+    # different clients. This is not essential to regular sends, the
+    # old balance is only kept for lastsend.
+    try:
+        balfile = os.path.expanduser(basedir + "/keystore/" + fromaddr + ".balance")
+        # Newline makes a manual cat cleaner for the shell
+        WriteFile(balfile, str(bal) + "\n")
+    except:
+        print("No base directory defined, balance file not updated.")
+        
 def lastsend(fromaddr, toaddr, fraction, minsend):
     balfile = os.path.expanduser(basedir + "/keystore/" + fromaddr + ".balance")
     if os.path.exists(balfile):
@@ -107,7 +112,12 @@ info = {"hashrate": float(int(daemon.eth_hashrate(), 16)),
 info["total balance"] = sum(info["balances"])
 
 if options.coin == "ethereum-classic":
-    basedir = "~/.ethereum-classic/mainnet"
+    # go-ethereum, multi-geth
+    for bd in ["~/.ethereum-classic/mainnet", "~/.ethereum/classic"]:
+        if os.path.isdir(os.path.expanduser(bd)):
+            basedir = bd
+            break
+
     info["blockreward"] = exp_decay(5, info["blocks"], 5000000, 0.8)
 else:
     basedir = "~/.ethereum"

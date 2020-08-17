@@ -225,6 +225,18 @@ if version_info >= (3, 0):
     # python3's input() and python2's raw_input() just return the string
     def raw_input(s):
         return input(s)
+
+def confirm():
+    # Ask for confirmation by typing/copying a random string
+
+    from random import sample, randrange
+    import string
+    chars = string.ascii_letters + string.digits
+    conf = "".join(sample(chars, randrange(6, 15)))
+
+    c_input = raw_input("Please type " + conf + " to confirm: ")
+
+    return c_input == conf
     
 # These need to be available for coin_price so moved here
 currency = {

@@ -13,15 +13,33 @@
 
 from bittools import *
 
-def wallet_server(coin):
-    # Not needed for all functions, so keep this separate
-    
-    # ./simplewallet --wallet-file wallet.bin --rpc-bind-port=10103 --password xxxx
-    url = "http://127.0.0.1:" + rpcport["wallet"][coin] + "/json_rpc"
-    return Server(url)
-
 import argparse
 parser = argparse.ArgumentParser()
+
+def send(wallet, options):
+    # 2020-08-11 Transfer using RPC to the wallet server. Written for
+    # Zano but should work similarly for other Cryptonote coins.
+    # https://docs.zano.org/reference#transfer-2
+
+    # Simple send, no payment ID for now
+
+    address = options.sendto[0]
+    amount = float(options.sendto[1])
+    txfee = options.txfee
+    mixin = options.mixin
+
+    # List of address+amount pairs. Remember to use number of base
+    # units for amount and fee, with integer type.
+    dest = [{"address": address, "amount": int(amount/baseunit[options.coin])}]
+    
+    print("About to send %s %f to %s with txfee %f and mixin %i" % (currency[options.coin], amount, address, txfee, mixin))
+    
+    if confirm():
+        result = wallet.transfer(destinations = dest, fee = int(txfee/baseunit[options.coin]), mixin = mixin)
+        print(result)
+    else:
+        print("Confirmation failed, not sending.")
+
 
 parser.add_argument("-A", "--aeon", action="store_const", const="aeon", dest="coin", default="boolberry", help="Connect to Aeon daemon")
 
@@ -37,13 +55,19 @@ parser.add_argument("--listaliases", const = "listaliases", action="store_const"
 
 parser.add_argument("-M", "--monero", action="store_const", const="monero", dest="coin", default="boolberry", help="Connect to Monero daemon")
 
+parser.add_argument("--mixin", type = int, default = 2, help="Mixin count for transfer, default %(default)s")
+
 parser.add_argument("-N", "--zano", action="store_const", const="zano", dest="coin", default="boolberry", help="Connect to Zano daemon")
 
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
 
 parser.add_argument("-S", "--stake", dest="stake", type=float, default = 0, help="Stake amount for PoS mining estimation")
 
+parser.add_argument("-s", "--sendto", nargs = 2, help = "Send coins: address followed by amount")
+
 parser.add_argument("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
+
+parser.add_argument("--txfee", type = float, default = 0.01, help="Transfer fee, default %(default)s")
 
 parser.add_argument("-u", "--url", dest="url", default="", help="Connect to a different URL, instead of your local daemon")
 
@@ -52,6 +76,8 @@ parser.add_argument("-v", "--verbose", action = "store_true")
 parser.add_argument("-W", "--watts", dest="watts", type=float, default = 0, help="Power usage of miners for profitability calculation")
 
 parser.add_argument("-w", "--kwhprice", dest="kwhprice", type=float, default = 0, help="kWh price for profitability calculation")
+
+parser.add_argument("--walletport", type=int, default = 0, help="Connect to wallet server on this port")
 
 options = parser.parse_args()
 
@@ -70,38 +96,38 @@ reward_divisor = {
     "zano": 2**20, # ?
 }
 
+# 2020-08-11 Wallet ports may vary much more, so specify daemon ports only
 rpcport = {
-    "daemon":
-    {
-        "aeon": "11181",
-        "boolberry": "10102",
-        "monero": "18081",
-        "zano": "11211",
-    },
-    "wallet":
-    {
-        "boolberry": "10103",
-    },
+    "aeon": "11181",
+    "boolberry": "10102",
+    "monero": "18081",
+    "zano": "11211",
 }
 
-
-if options.transactions:
-    wallet = wallet_server(options.coin)
+if options.walletport > 0:
+    # 2020-08-11 
+    url = "http://127.0.0.1:%i/json_rpc" % options.walletport
+    wallet = Server(url)
     
     # method not found
-    print(wallet.get_transfers())
+    #print(wallet.get_transfers())
     
     # needs payment id
     #print(wallet.get_payments())
 
-    # works, keep for later
-    #print(wallet.getbalance()['unlocked_balance'] * baseunit[options.coin])
+    # Address and balance are good defaults to show in any case
+    print("Address: %s" % wallet.getaddress()['address'])
+    print("Balance: %f" % (wallet.getbalance()['balance'] * baseunit[options.coin]))
+    
+    if options.sendto:
+        send(wallet, options)
+        
     exit()
     
 if len(options.url) > 0:
     url = options.url
 else:
-    url = "http://127.0.0.1:" + rpcport["daemon"][options.coin] + "/json_rpc"
+    url = "http://127.0.0.1:" + rpcport[options.coin] + "/json_rpc"
 
 # https://wiki.bytecoin.org/wiki/Daemon_JSON_RPC_API
 daemon = Server(url)
@@ -161,9 +187,15 @@ md = meandiff(options.coin, diff)
 if md > 0:
     output.append(["meandiff", str(md)])
 
-# This is the basic Cryptonote scheme, so it won't work if there's
-# tail emission or something. Also, it's only an estimate.
-moneysupply = (2**64 - 1) * baseunit[options.coin] - blockreward * reward_divisor[options.coin]
+if options.coin == "zano":
+    # 2019-10-11 Approximate emission: BBR coinswap + premine + one
+    # coin per block, via https://zano.org/finance.html
+    moneysupply = 13.8e6 - 5905009.99 + 3.69e6 + info["height"]
+else:
+    # This is the basic Cryptonote scheme, so it won't work if there's
+    # tail emission or something. Also, it's only an estimate.
+    moneysupply = (2**64 - 1) * baseunit[options.coin] - blockreward * reward_divisor[options.coin]
+
 output.append(["moneysupply", str(moneysupply)])
 
 if options.verbose:

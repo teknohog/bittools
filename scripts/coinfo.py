@@ -503,15 +503,7 @@ def send(address, amount, new_txfee):
 
                 print("Warning! " + str(abs(item["amount"])) + " already sent to this address on " + ctime(item["time"]))
                 
-    # Ask for confirmation by typing/copying a random string
-    from random import sample, randrange
-    import string
-    chars = string.ascii_letters + string.digits
-    conf = "".join(sample(chars, randrange(6, 15)))
-
-    c_input = raw_input("Please type " + conf + " to confirm the transaction: ")
-
-    if c_input == conf:
+    if confirm():
         if coin == "cryptonite":
             amount = ep_enc(amount)
 
