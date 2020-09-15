@@ -727,7 +727,7 @@ blockhalve = {
     "virtacoin": 10080,
     "zcash": 840000,
     "zclassic": 840000,
-    "zcoin": 305000,
+    "zcoin": 302438,
     "zen": 840000,
 }
 
