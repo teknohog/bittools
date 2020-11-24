@@ -64,8 +64,8 @@ def coin_price(coin, basecur):
     
     api_urls = [
         "https://api.coingecko.com/api/v3/simple/price?ids=" + cur + "&vs_currencies=" + basecur,
-        "https://api.coinmarketcap.com/v1/ticker/" + coin + "/", 
-        "https://www.cryptocompare.com/api/data/price?fsym=" + cur + "&tsyms=" + basecur,
+        "https://api.coinmarketcap.com/v1/ticker/" + coin + "/",
+        "https://min-api.cryptocompare.com/data/price?fsym=" + cur + "&tsyms=" + basecur,
         "https://api.cryptonator.com/api/ticker/" + cur + "-" + basecur,
     ]
     
@@ -88,11 +88,11 @@ def coin_price(coin, basecur):
 
             elif "cryptocompare" in url and cur != "BBR":
                 # outdated for BBR
-                
-                if len(data["Data"]) == 0 and "BTC" not in [cur, basecur]:
+
+                if "BTC" not in [cur, basecur]:
                     return coin_price_via_btc(coin, basecur)
                 else:
-                    return float(data["Data"][0]["Price"])
+                    return float(data[basecur])
         except:
             pass
 
@@ -242,6 +242,8 @@ def confirm():
 currency = {
     "AuroraCoin": "AUR",
     "bitcoin": "BTC",
+    "bitcoincash": "BCH",
+    "bitcoin-sv": "BSV",
     "btcprivate": "BTCP",
     "blakebitcoin": "BBTC",
     "blakecoin": "BLC",

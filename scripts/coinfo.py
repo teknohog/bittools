@@ -602,6 +602,10 @@ parser.add_option("--basecur", default = "EUR", help="Base currency for coin and
 
 parser.add_option("--bitcoin", action="store_const", const="bitcoin", dest="coin", default="bitcoin", help="Connect to bitcoind")
 
+parser.add_option("--bitcoincash", action="store_const", const="bitcoincash", dest="coin", default="bitcoin", help="Connect to Bitcoin Cash daemon")
+
+parser.add_option("--bitcoin-sv", action="store_const", const="bitcoin-sv", dest="coin", default="bitcoin", help="Connect to Bitcoin SV daemon")
+
 parser.add_option("-c", "--chncoin", action="store_const", const="chncoin", dest="coin", default="bitcoin", help="Connect to chncoind")
 
 parser.add_option("-d", "--difficulty", dest="diff", type = float, default = 0, help="Set difficulty for mining calculator")
@@ -707,6 +711,8 @@ coin = options.coin
 blockhalve = {
     "AuroraCoin": 420000,
     "bitcoin": 210000,
+    "bitcoincash": 210000,
+    "bitcoin-sv": 210000,
     "btcprivate": 210000,
     "blakebitcoin": 210000,
     "chncoin": 2628000,
@@ -734,6 +740,8 @@ blockhalve = {
 blocksperhour = {
     "AuroraCoin": 6,
     "bitcoin": 6,
+    "bitcoincash": 6,
+    "bitcoin-sv": 6,
     "btcprivate": 24,
     "blakebitcoin": 24,
     "blakecoin": 20,
@@ -773,6 +781,8 @@ blocksperhour = {
 adjustblocks = {
     "AuroraCoin": 8,
     "bitcoin": 2016,
+    "bitcoincash": 2016,
+    "bitcoin-sv": 2016,
     "btcprivate": 0,
     "blakebitcoin": 8064,
     "blakecoin": 20,
@@ -813,6 +823,8 @@ adjustblocks = {
 initcoins = {
     "AuroraCoin": 25,
     "bitcoin": 50,
+    "bitcoincash": 50,
+    "bitcoin-sv": 50,
     "btcprivate": 3.125, # fork starting at 1.5625 given the halving logic
     "blakecoin": 25,
     "blakebitcoin": 50,
@@ -854,6 +866,8 @@ reward_stairs = {
 rpcport = {
     "AuroraCoin": "12341",
     "bitcoin": "8332",
+    "bitcoincash": "8332",
+    "bitcoin-sv": "8332",
     "btcprivate": "7932",
     "blakebitcoin": "243",
     "blakecoin": "8772",
@@ -900,7 +914,13 @@ elif coin == "Vcash":
     # No login credentials needed
     url = "http://localhost:9195/"
 else:
-    configfile = "~/." + coin + "/" + coin + ".conf"
+    if coin in ["bitcoincash", "bitcoin-sv"]:
+        # 2020-10-14 Files are named as in Bitcoin. The coin option is
+        # mainly useful for setting the currency ticker for price
+        # info.
+        configfile = "~/.bitcoin/bitcoin.conf"
+    else:
+        configfile = "~/." + coin + "/" + coin + ".conf"
 
     settings = parse_config(configfile)
 
