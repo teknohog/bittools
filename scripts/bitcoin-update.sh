@@ -18,12 +18,13 @@ CHECKOUT=false
 FORCE=false
 PROJECT=bitcoin
 UPNP=- # 0 means build with the lib, but don't start by default
-while getopts 2AaBCcDEFfGgHIJjKkLlMmNnOoPpSTUuVXxYyZz opt; do
+while getopts 2AaBCcDEFfGgHIJjKkLlMmNnOoPpSsTUuVXxYyZz opt; do
     case "$opt" in
 	2) PROJECT=btcp ;;
 	A) PROJECT=aeon ;;
 	#a) PROJECT=AuroraCoin ;;
-	a) PROJECT=zen ;;
+	#a) PROJECT=zen ;;
+	a) PROJECT=bitcoin-abc ;;
 	B) PROJECT=blakecoin ;;
 	C) CHECKOUT=true ;;
 	c) PROJECT=chncoin ;;
@@ -50,6 +51,7 @@ while getopts 2AaBCcDEFfGgHIJjKkLlMmNnOoPpSTUuVXxYyZz opt; do
 	P) PROJECT=primecoin ;;
 	p) PROJECT=peercoin ;;
 	S) PROJECT=skeincoin ;;
+	s) PROJECT=bitcoin-sv ;;
 	T) PROJECT=Tjcoin ;;
 	U) PROJECT=universalmolecule ;;
 	u) UPNP=1 ;;
@@ -60,7 +62,7 @@ while getopts 2AaBCcDEFfGgHIJjKkLlMmNnOoPpSTUuVXxYyZz opt; do
 	y) PROJECT=vertcoin ;;
 	Z) PROJECT=zcash ;;
 	#z) PROJECT=ExclusiveCoin ;;
-	z) PROJECT=zcoin ;;
+	z) PROJECT=firo ;;
     esac
 done
 
@@ -83,6 +85,15 @@ case $PROJECT in
 	;;
     bitcoin)
 	GITURL=https://github.com/bitcoin/bitcoin.git
+	;;
+    bitcoin-abc)
+	# 2020-10-15 Bitcoin Cash daemon
+	GITURL=https://github.com/Bitcoin-ABC/bitcoin-abc
+	BINARY="bitcoin-cli bitcoin-wallet bitcoind"
+	;;
+    bitcoin-sv)
+	# 2020-10-15 Bitcoin SV
+	GITURL=https://github.com/bitcoin-sv/bitcoin-sv
 	;;
     btcp)
 	GITURL=https://github.com/BTCPrivate/BitcoinPrivate
@@ -126,7 +137,8 @@ case $PROJECT in
 	GITURL=https://github.com/exclusivecoin/Exclusive
 	;;
     gapcoin)
-	GITURL=https://github.com/gapcoin/gapcoin
+	#GITURL=https://github.com/gapcoin/gapcoin
+	GITURL=https://github.com/gjhiggins/gapcoin
 	;;
     groestlcoin)
 	GITURL=https://github.com/GroestlCoin/groestlcoin
@@ -151,10 +163,10 @@ case $PROJECT in
 	GITURL=https://github.com/photonproject/photon
 	;;
     primecoin)
-	#GITURL=https://github.com/primecoin/primecoin.git
+	GITURL=https://github.com/primecoin/primecoin.git
 	#GITURL=https://github.com/Chemisist/primecoin.git
 	#GITURL=https://github.com/mikaelh2/primecoin.git
-	GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
+	#GITURL=https://bitbucket.org/mikaelh/primecoin-hp.git
 	# OpenCL alternative
 	#GITURL=https://github.com/madMAx43v3r/xpmserver
 	#BINARY=primecoind
@@ -198,8 +210,8 @@ case $PROJECT in
     zcash)
 	GITURL=https://github.com/zcash/zcash
 	;;
-    zcoin)
-	GITURL=https://github.com/zcoinofficial/zcoin
+    firo)
+	GITURL=https://github.com/firoorg/firo
 	;;
     zen)
 	#GITURL=https://github.com/zencashio/zen
@@ -281,7 +293,15 @@ fi
 
 # leveldb is broken by multi-part compiler names like
 # "ccache distcc g++"... and so is monero, so fix this for everyone
-if [ "`echo $CXX | wc -w`" -gt 1 ]; then
+if [ "$PROJECT" == "firo" ]; then
+    # 2020-09-03 firo bls-signatures don't like this, so revert to
+    # basic defaults, also noting the leveldb issue
+
+    CC=$MACHTYPE-gcc
+    CXX=$MACHTYPE-g++
+    MAKEOPTS="-j $(nproc)"
+
+elif [ "`echo $CXX | wc -w`" -gt 1 ]; then
 
     MYCC=`mktemp`
     MYCXX=`mktemp`
@@ -311,7 +331,62 @@ case $PROJECT in
 	nice make -j$(nproc) CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS"
 
 	cd build/release/src
-    ;;
+	;;
+    bitcoin-abc)
+	[ -d build ] || mkdir build
+	cd build
+
+	cmake -GNinja -DENABLE_UPNP=OFF -DUSE_JEMALLOC=OFF -DBerkeleyDB_VERSION=6.0 -DBerkeleyDB_INCLUDE_DIR=/usr/include/db6.0 -DENABLE_QRCODE=OFF -DBUILD_BITCOIN_QT=OFF -DBUILD_BITCOIN_ZMQ=OFF ..
+
+	# Default seems to be nproc + 1 or 2, which is a bit much for
+	# my low memory machines
+	ninja -j $(nproc)
+
+	cd src
+	;;
+    blakecoin)
+	# 2020-09-27 Try to compile with alternative, older
+	# Boost. Electron is updated for at least 1.72 so not included
+	# here.
+	BOOST_ROOT=/home/teknohog/distr.projects/boost-1.65.0/usr
+
+	# Disable distcc/ccache as this seems to have remote
+	# compilation issues
+	CC=$MACHTYPE-gcc
+	CXX=$MACHTYPE-g++
+	MAKEOPTS="-j $(nproc)"
+	
+	cd src
+
+	# Some implementations are missing executable perms
+	LDB=leveldb/build_detect_platform
+	if [ -e $LDB ] && [ ! -x $LDB ]; then
+	    chmod u+x $LDB
+	fi
+	
+	cp makefile.unix Makefile
+    
+	sed -i 's/-O[23]/\$(OPTFLAGS)/g' Makefile
+	sed -i 's/g++/\$(CXX)/g' Makefile
+	sed -i 's/Bstatic/Bdynamic/g' Makefile
+	
+	# The general case should work with Blakecoin too
+	sed -i 's/db_cxx-5.1/db_cxx/g' Makefile
+	
+	# *sigh* everyone uses x86?
+	if [ -z "`echo $MACHTYPE | grep 86`" ]; then
+	    sed -i 's/-msse2//g' Makefile
+	    sed -i 's/-DFOURWAYSSE2//g' Makefile
+	    sed -i 's/-march=amdfam10//g' Makefile
+	fi    
+
+	make clean
+	nice make $MAKEOPTS AR="$AR" CC="$CC" CXX="$CXX" CXXFLAGS="$CFLAGS" \
+	     BOOST_INCLUDE_PATH=$BOOST_ROOT/include/boost/ \
+	     BOOST_LIB_PATH=$BOOST_ROOT/lin64/ \
+	     BOOST_LIB_SUFFIX="-mt" \
+	     OPTFLAGS="$CFLAGS" USE_UPNP=$UPNP $BINARY || exit
+	;;
     monero|aeon)
 	# Custom compilers are sometimes problematic here, and
 	# ccache/distcc don't seem to take effect anyway
@@ -336,7 +411,7 @@ case $PROJECT in
 	case $PROJECT in
 	    zano)
 		git submodule init && git submodule update
-	    ;;
+		;;
 	esac
 	
 	# As in monero
@@ -345,15 +420,39 @@ case $PROJECT in
 
 	cd build/release/src
 	;;
-    bitcoin|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|namecoin|peercoin|riecoin|skeincoin|virtacoin|zcoin)
+    bitcoin|bitcoin-sv|cryptonite|dash|dogecoin|gapcoin|groestlcoin|litecoin|namecoin|peercoin|riecoin|skeincoin|virtacoin|firo)
 	EXTRACONFIG=""
 
+	BINARY="${PROJECT}d ${PROJECT}-cli"
+	
 	case $PROJECT in
-	    bitcoin|dogecoin|litecoin|peercoin|zcoin)
+	    dogecoin|peercoin)
 		EXTRACONFIG="--with-incompatible-bdb"
+		
+		# 2020-07-26
+		EXTRACONFIG+=" --with-boost=/home/teknohog/distr.projects/boost-1.71.0/usr/"
+		export BOOST_ROOT=/home/teknohog/distr.projects/boost-1.71.0/usr
+		;;
+	    bitcoin|cryptonite|litecoin|namecoin|skeincoin|firo)
+		EXTRACONFIG="--with-incompatible-bdb"
+		;;
+	    bitcoin-sv)
+		EXTRACONFIG="--with-incompatible-bdb"
+		BINARY="bitcoin-cli bitcoin-seeder bitcoin-tx bitcoind"
 		;;
 	    gapcoin)
 		EXTRACONFIG="--with-incompatible-bdb"
+
+		# gjhiggins/gapcoin updated branch
+		git checkout v0.9.3-gap
+		#git checkout v0.9.4-gap
+		
+		# My current Boost 1.70+ doesn't work?
+		#EXTRACONFIG+=" --with-boost-libdir=/home/teknohog/distr.projects/boost-1.65.0/usr/lib64/"
+		EXTRACONFIG+=" --with-boost=/home/teknohog/distr.projects/boost-1.65.0/usr/"
+		#EXTRACONFIG+=" --with-boost-thread=boost_thread-mt --with-boost-system=boost_system-mt --with-boost-filesystem=boost_filesystem-mt --with-boost-program-options=boost_program_options-mt --with-boost-chrono=boost_chrono-mt --with-boost-unit-test-framework=boost_unit_test_framework-mt"
+		# 2019-12-17 still not working with above, test other ways
+		export BOOST_ROOT=/home/teknohog/distr.projects/boost-1.65.0/usr
 		
 		#git submodule init
 		#git submodule update
@@ -361,8 +460,8 @@ case $PROJECT in
 		
 		# https://bitcointalk.org/index.php?topic=822498.msg41271486#msg41271486
 		#sed -Ei 's/constexpr double accuracy/const double accuracy/' src/PoWCore/src/PoWUtils.h 
-		sed -Ei 's/get<const CScriptID&>/get<CScriptID>/' src/rpcrawtransaction.cpp
-		sed -Ei 's/const double accuracy/constexpr double accuracy/' src/PoWCore/src/PoWUtils.h
+		#sed -Ei 's/get<const CScriptID&>/get<CScriptID>/' src/rpcrawtransaction.cpp
+		#sed -Ei 's/const double accuracy/constexpr double accuracy/' src/PoWCore/src/PoWUtils.h
 		#sed -Ei 's/get<CScriptID>/get<const CScriptID&>/' src/rpcrawtransaction.cpp
 
 		CFLAGS+=" -fPIC"
@@ -371,13 +470,13 @@ case $PROJECT in
 		CFLAGS+=" -fPIC"
 		;;
 	esac
-
+	
 	sh autogen.sh
 
 	if [ -z "$(echo $UPNP | grep [01])" ]; then
 	    EXTRACONFIG="$EXTRACONFIG --without-miniupnpc"
 	fi
-
+	
 	./configure AR="$AR" CC="$CC" CXX="$CXX" CFLAGS="$CFLAGS" CXXFLAGS="$CFLAGS" --without-gui $EXTRACONFIG
 
 	chmod u+x share/genbuild.sh src/leveldb/build_detect_platform
@@ -386,8 +485,7 @@ case $PROJECT in
 	nice make $MAKEOPTS
 
 	cd src
-	
-	BINARY="${PROJECT}d ${PROJECT}-cli"
+
 	;;
     vcash)
 	# Get the build script and work around its worst bits
