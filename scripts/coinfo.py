@@ -92,7 +92,7 @@ def devtax_percent(coin, blocks):
         # Until first halving only
         if blocks <= blockhalve[coin]:
             tax = 20
-    elif coin == "zcoin":
+    elif coin == "firo":
         # Znodes -- making money centralized again
         # Until first halving only
         if blocks <= blockhalve[coin]:
@@ -695,7 +695,7 @@ parser.add_option("-y", "--vertcoin", action="store_const", const="vertcoin", de
 
 parser.add_option("--ExclusiveCoin", action="store_const", const="ExclusiveCoin", dest="coin", default="bitcoin", help="Connect to ExclusiveCoind")
 
-parser.add_option("-z", "--zcoin", action="store_const", const="zcoin", dest="coin", default="bitcoin", help="Connect to zcoind")
+parser.add_option("-z", "--firo", action="store_const", const="firo", dest="coin", default="bitcoin", help="Connect to firod")
 
 parser.add_option("-Z", "--zcash", action="store_const", const="zcash", dest="coin", default="bitcoin", help="Connect to zcashd")
 
@@ -733,7 +733,7 @@ blockhalve = {
     "virtacoin": 10080,
     "zcash": 840000,
     "zclassic": 840000,
-    "zcoin": 302438,
+    "firo": 302438,
     "zen": 840000,
 }
 
@@ -773,7 +773,7 @@ blocksperhour = {
     "virtacoin": 60,
     "zcash": 24,
     "zclassic": 48, # was: 24
-    "zcoin": 12,
+    "firo": 12,
     "zen": 24,
 }
 
@@ -815,7 +815,7 @@ adjustblocks = {
     "virtacoin": 0,
     "zcash": 0,
     "zclassic": 0,
-    "zcoin": 6, # guessed from block explorer
+    "firo": 6, # guessed from block explorer
     "zen": 0,
 }
 
@@ -846,7 +846,7 @@ initcoins = {
     "zcash": 12.5, # after first 2e5 blocks -- use for total_supply approx
     #"zclassic": 12.5, # after first 10 blocks, so practically constant
     "zclassic": 0.78125,
-    "zcoin": 25,
+    "firo": 25,
     "zen": 12.5,
 }
 
@@ -900,7 +900,7 @@ rpcport = {
     "virtacoin": "22815",
     "zcash": "8232",
     "zclassic": "8023",
-    "zcoin": "8888", # found by netstat, not what help says
+    "firo": "8888", # found by netstat, not what help says
     "zen": "8231",
 }
 

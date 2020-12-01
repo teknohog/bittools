@@ -277,7 +277,7 @@ currency = {
     "zano": "ZANO", # ?
     "zcash": "ZEC",
     "zclassic": "ZCL",
-    "zcoin": "XZC",
+    "firo": "XZC",
     "zen": "ZEN",
 
     "aeon": "AEON",

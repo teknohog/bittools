@@ -132,10 +132,15 @@ while getopts 2AaBcDEFGgHIJjKLlMmNnOoPpSsTUVvwXxYyZz opt; do
 	z)
 	    #PROJECT=ExclusiveCoin
 	    #POS=true
-	    PROJECT=zcoin
+	    PROJECT=firo
 	    ;;
     esac
 done
+
+# 2020-01-08 As in bitcoin-backup.sh
+if [ "$PROJECT" == "zcash" ] && [ "$HOSTNAME" == "escher" ]; then
+    PROJECT=zclassic
+fi
 
 case $PROJECT in
     boolberry)
@@ -145,7 +150,15 @@ case $PROJECT in
 	LOGFILE=~/.btcprivate/difflog
 	;;
     ethereum-classic)
-	LOGFILE=~/.$PROJECT/mainnet/difflog
+	#LOGFILE=~/.$PROJECT/mainnet/difflog
+
+        # 2020-01-16 go-ethereum, multi-geth
+	for DIR in ~/.ethereum-classic/mainnet ~/.ethereum/classic; do
+	    if [ -d $DIR ]; then
+		LOGFILE=$DIR/difflog
+		break
+	    fi
+	done
 	;;
     monero)
 	LOGFILE=~/.bitmonero/difflog
