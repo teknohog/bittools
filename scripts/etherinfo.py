@@ -86,6 +86,8 @@ parser.add_argument("--lastsend", "-l", help = "Send a fraction (-f) of new inco
 
 parser.add_argument("--minsend", "-m", type = float, default = 1, help = "Lower limit for lastsend, default %(default)f ETH")
 
+parser.add_argument("-R", "--blockreward", type=float, default = 0, help="Set alternative block reward for mining estimation")
+
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
 
 parser.add_argument("--sendto", "-s", nargs = 2, help = "Send toaddress amount in ETH. The account must be unlocked.")
@@ -123,6 +125,9 @@ else:
     basedir = "~/.ethereum"
     info["blockreward"] = 2
 
+if options.blockreward:
+    info["blockreward"] = options.blockreward
+    
 if options.account_id > -1:
     aid = options.account_id
     fromaddr = daemon.eth_accounts()[aid]
@@ -169,7 +174,7 @@ if info["hashrate"] > 0:
         diff = info["difficulty"]
     
     blocktime = diff / info["hashrate"]
-    
+        
     output = profit(blocktime, info["blockreward"], options.coin, options.watts, options.kwhprice, fiatprice, options.basecur)
 
     prettyprint(output)
