@@ -200,9 +200,15 @@ def profit(blocktime, reward, coin, watts, kwhprice, fiatprice = 0, basecur = "E
         output.append(["1 " + cur, str(fiatprice) + " " + basecur])
         output.append(["Fiat payout", str(fiatpay) + " " + basecur + "/day"])
 
-        if watts > 0 and kwhprice > 0:
+        if watts > 0:
             cost = kwhprice * watts / 1000 * 24
-            pratio = fiatpay / cost
+
+            # 2024-01-29 The price can be zero or negative, so use a
+            # dummy ratio for my other scripts
+            if kwhprice <= 0:
+                pratio = 1000
+            else:
+                pratio = fiatpay / cost
                 
             if pratio > 2:
                 emo = ":D"
@@ -286,4 +292,5 @@ currency = {
 
     "ethereum": "ETH",
     "ethereum-classic": "ETC",
+    "ethereumpow": "ETHW",
 }
