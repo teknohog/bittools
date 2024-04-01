@@ -174,9 +174,13 @@ if options.diff > 0:
 elif options.coin == "zano":
     diff = info["pow_difficulty"]
 
-    # https://docs.zano.org/docs/proof-of-stake-estimation
-    pos_diff = info["pos_difficulty"]
-    pos_daily_rate = 7.2e16 / float(pos_diff)
+    pos_diff = float(info["pos_difficulty"])
+    
+    # https://docs.zano.org/docs/stake/estimating-pos-earning/
+    # The math notation is messed up, but the text suggests this
+    c = pos_diff / 288e12 # Total amount of coins participating in PoS
+    pos_daily_rate = 720 / c # 720 PoS blocks per day
+    
     output.append(["PoS interest rate", "%f %%/day" % (pos_daily_rate * 100)])
 else:
     diff = info["difficulty"]
