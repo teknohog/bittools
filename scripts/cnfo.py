@@ -129,9 +129,9 @@ if options.walletport > 0:
         for tx in res["transfers"][::-1]:
             if tx["is_income"]:
                 if tx["is_mining"]:
-                    t = "PoS"
+                    t = "Mine"
                 else:
-                    t = "Rec"
+                    t = "Recv"
             else:
                 t = "Send"
 
