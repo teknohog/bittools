@@ -65,7 +65,7 @@ parser.add_argument("-S", "--stake", dest="stake", type=float, default = 0, help
 
 parser.add_argument("-s", "--sendto", nargs = 2, help = "Send coins: address followed by amount")
 
-parser.add_argument("-t", "--transactions", dest="transactions", action="store_true", default=False, help="List recent transactions")
+parser.add_argument("-t", "--transactions", dest="transactions", type = int, help="List the number of recent transactions")
 
 parser.add_argument("--txfee", type = float, default = 0.01, help="Transfer fee, default %(default)s")
 
@@ -115,12 +115,37 @@ if options.walletport > 0:
     # needs payment id
     #print(wallet.get_payments())
 
-    # Address and balance are good defaults to show in any case
-    print("Address: %s" % wallet.getaddress()['address'])
-    print("Balance: %f" % (wallet.getbalance()['balance'] * baseunit[options.coin]))
-    
     if options.sendto:
         send(wallet, options)
+    elif options.transactions:
+        # 2024-04-02 Needs nonzero count to show anything meaningful
+        res = wallet.get_recent_txs_and_info(exclude_mining_txs = False, count = options.transactions, exclude_unconfirmed = False)
+
+        output = [["Date", "Type", "Amount"]]
+
+        # The order is reversed for the latest transactions. Don't use
+        # order = "FROM_BEGIN_TO_END" as it will show the first
+        # transactions of the wallet instead.
+        for tx in res["transfers"][::-1]:
+            if tx["is_income"]:
+                if tx["is_mining"]:
+                    t = "PoS"
+                else:
+                    t = "Rec"
+            else:
+                t = "Send"
+
+            output.append([str(ctime(tx["timestamp"])), t, str(baseunit[options.coin]*tx["amount"])])
+            
+        prettyprint(output)
+            
+    else:
+        # Address and balance are good defaults to show in any case
+        print("Address: %s" % wallet.getaddress()['address'])
+        print("Balance: %f" % (wallet.getbalance()['balance'] * baseunit[options.coin]))
+
+        if options.verbose:
+            print("Wallet info: %s" % wallet.get_wallet_info())
         
     exit()
     
