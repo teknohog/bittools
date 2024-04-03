@@ -65,7 +65,7 @@ parser.add_argument("-S", "--stake", dest="stake", type=float, default = 0, help
 
 parser.add_argument("-s", "--sendto", nargs = 2, help = "Send coins: address followed by amount")
 
-parser.add_argument("-t", "--transactions", dest="transactions", type = int, help="List the number of recent transactions")
+parser.add_argument("-t", "--transactions", dest="transactions", type = int, nargs = "?", const = 10, help="List the number of recent transactions, default 10")
 
 parser.add_argument("--txfee", type = float, default = 0.01, help="Transfer fee, default %(default)s")
 
