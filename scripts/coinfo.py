@@ -38,6 +38,17 @@ def groestl_reward(blocks):
     # Default to old scheme
     return exp_decay(512, blocks, 10080, 0.94)
 
+def firo_reward(blocks):
+    # 2022-09-26 Following the hard fork at block 486221. I'm not sure
+    # how the halving period applies after that, but this is a start,
+    # based on firo/src/chainparams.cpp.
+    if blocks < 302438:
+        return 25
+    elif blocks < 486221:
+        return 12.5
+    else:
+        return exp_decay(6.25, blocks - 486221, 840000)
+
 def lastreward(blocks):
     # Use the last block reward as an estimate, need to check for PoW,
     # should work for several coins. Don't wind back too much in case
@@ -83,6 +94,8 @@ def blockreward(coin, diff, blocks):
     elif coin == "zcash":
         # Linear ramp-up for the first 20000 blocks, then basic halving
         return min(blocks/2e4, 1) * exp_decay(initcoins[coin], blocks, blockhalve[coin])
+    elif coin == "firo":
+        return firo_reward(blocks)
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
@@ -95,10 +108,13 @@ def devtax_percent(coin, blocks):
     elif coin == "firo":
         # Znodes -- making money centralized again
         # Until first halving only
-        if blocks <= blockhalve[coin]:
+        # 2022-09-26 New hard fork at block 486221
+        if blocks < 302438:
             tax = 44
-        else:
+        elif blocks < 486221:
             tax = 50
+        else:
+            tax = 75
     elif coin == "zen":
         tax = 30
     else:
@@ -562,7 +578,7 @@ def getinfo():
         info = s.getblockchaininfo()
         info.update(s.getnetworkinfo())
         info.update(s.getwalletinfo())
-
+        
         # Roughly match old getinfo
         if coin == "peercoin":
             # 2019-08-28 For Peercoin total_amount (old moneysupply),
@@ -773,7 +789,7 @@ blocksperhour = {
     "virtacoin": 60,
     "zcash": 24,
     "zclassic": 48, # was: 24
-    "firo": 12,
+    "firo": 24,
     "zen": 24,
 }
 
