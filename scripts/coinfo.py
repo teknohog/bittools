@@ -221,12 +221,12 @@ def parse_config(conffile):
     config = ReadLines(os.path.expanduser(conffile))
     for line in config:
         # skip comment lines
-        m = re.match('\s*#', line)
+        m = re.match(r'\s*#', line)
         if m:
             continue
         
         # parse key=value lines                                         
-        m = re.match('(\w+)\s*=\s*(\S.*)$', line)
+        m = re.match(r'(\w+)\s*=\s*(\S.*)$', line)
         if m is None:
             continue
         settings[m.group(1)] = m.group(2)
@@ -271,11 +271,11 @@ def exportkeys():
 
             for line in keydump:
                 # Check for valid lines first, as they have addr=... in the end
-                m = re.match('.*addr=(\S.*)$', line)
+                m = re.match(r'.*addr=(\S.*)$', line)
                 if m is None:
                     continue
 
-                m = re.match('.*label=(\S.*)\s+#.*', line)
+                m = re.match(r'.*label=(\S.*)\s+#.*', line)
                 if m is None:
                     account = ""
                 else:
