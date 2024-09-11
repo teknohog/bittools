@@ -199,14 +199,8 @@ def own_share(coin, blocks, info, fiatprice, basecur):
             share = info["balance"] / final_total
             printout.append([str(share * 100), str(int(round(1/share))) + " of all " + currency[coin] + " ever"])
 
-    fiat_balance = fiatprice * info["balance"]
-            
-    if len(printout) > 0 or fiat_balance > 0:
+    if len(printout) > 0:
         print("\nYour balance represents about")
-        
-        if fiat_balance > 0:
-            print("%f %s (1 %s = %f %s)" % (fiat_balance, basecur, currency[coin], fiatprice, basecur))
-            #print("%s %s (1 %s = %s %s)" % (format(fiat_balance, ",f"), basecur, currency[coin], format(fiatprice, ",f"), basecur))
 
         prettyprint(printout, " % or 1/")
 
@@ -1125,11 +1119,16 @@ blocks = info["blocks"]
 if options.verbose:
     output.append(["block reward", str(blockreward(coin, diff, blocks)) + " " + currency[coin]])
 
+    fiatprice = coin_price(coin, options.basecur)
+    output.append(["1 %s" % currency[coin], "%f %s" % (fiatprice, options.basecur)])
+
+    fiat_balance = fiatprice * info["balance"]
+    if fiat_balance > 0:
+        output.append(["Fiat balance", "%f %s" % (fiat_balance, options.basecur)])
+    
 prettyprint(output)
 
 if options.verbose:
-    fiatprice = coin_price(coin, options.basecur)
-    
     own_share(coin, blocks, info, fiatprice, options.basecur)
 
     if networkhashrate > 0 and hashrate > 0:
@@ -1138,7 +1137,7 @@ if options.verbose:
 else:
     # Argument for profit() which will call coin_price() again if need be
     fiatprice = 0
-        
+    
 output = []
 
 if hashrate > 0 and coin != "riecoin":
