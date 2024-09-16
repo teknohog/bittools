@@ -86,6 +86,8 @@ parser.add_argument("--lastsend", "-l", help = "Send a fraction (-f) of new inco
 
 parser.add_argument("--minsend", "-m", type = float, default = 1, help = "Lower limit for lastsend, default %(default)f ETH")
 
+parser.add_argument("-p", "--pow", action="store_const", const="ethereumpow", dest="coin", default="ethereum", help="Connect to EthereumPoW")
+
 parser.add_argument("-R", "--blockreward", type=float, default = 0, help="Set alternative block reward for mining estimation")
 
 parser.add_argument("-r", "--hashrate", dest="hashrate", type=float, default = 0, help="Hashes/sec from external miners")
@@ -153,18 +155,19 @@ if md > 0:
 
 if options.hashrate:
     info["hashrate"] = options.hashrate
-    
-dictprint(info)
 
 if options.verbose:
     fiatprice = coin_price(options.coin, options.basecur)
 
     if fiatprice > 0:
-        print("\nYour balance represents about")
-        print("%f %s (1 %s = %f %s)" % (fiatprice * info["total balance"], options.basecur, currency[options.coin], fiatprice, options.basecur))
+        info["1 %s" % currency[options.coin]] = "%f %s" % (fiatprice, options.basecur)
+        info["Fiat balance"] = "%f %s" % (fiatprice * info["total balance"], options.basecur)
+        
 else:
     fiatprice = 0
 
+dictprint(info)
+    
 if info["hashrate"] > 0:
     if options.diff > 0:
         diff = options.diff
