@@ -123,6 +123,9 @@ if options.walletport > 0:
 
         output = [["Date", "Type", "Amount"]]
 
+        if options.verbose:
+            output[0].append("tx_hash")
+        
         # The order is reversed for the latest transactions. Don't use
         # order = "FROM_BEGIN_TO_END" as it will show the first
         # transactions of the wallet instead.
@@ -135,7 +138,12 @@ if options.walletport > 0:
             else:
                 t = "Send"
 
-            output.append([str(ctime(tx["timestamp"])), t, str(baseunit[options.coin]*tx["amount"])])
+            txitem = [str(ctime(tx["timestamp"])), t, str(baseunit[options.coin]*tx["amount"])]
+
+            if options.verbose:
+                txitem.append(tx["tx_hash"])
+            
+            output.append(txitem)
             
         prettyprint(output)
             
@@ -146,6 +154,7 @@ if options.walletport > 0:
 
         if options.verbose:
             print("Wallet info: %s" % wallet.get_wallet_info())
+            #print("Mining history: %s" % wallet.get_mining_history())
         
     exit()
     
