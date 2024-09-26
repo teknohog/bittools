@@ -591,7 +591,15 @@ def getinfo():
         output["testnet"] = (info["chain"] != "main")
         
         return output
-        
+
+def listdesc(args):
+    try:
+        # Optional "true" argument to include private keys
+        ldargs = [True] if len(args) >= 1 and args[0] == "true" else []
+        print(s.listdescriptors(*ldargs))
+    except Exception as e:
+        print(e.args)
+    
 parser = OptionParser()
 
 parser.add_option("-2", "--btcprivate", action="store_const", const="btcprivate", dest="coin", default="bitcoin", help="Connect to btcpd")
@@ -656,6 +664,8 @@ parser.add_option("-k", "--blakebitcoin", action="store_const", const="blakebitc
 parser.add_option("-L", "--Slothcoin", action="store_const", const="Slothcoin", dest="coin", default="bitcoin", help="Connect to Slothcoind")
 
 parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
+
+parser.add_option("--listdesc", dest="listdesc", action="store_true", default=False, help="Export wallet descriptors. Add a \"true\" argument for the private keys (which may need --unlock first)")
 
 parser.add_option("-N", "--newaddress", dest="newaddress", action="store_true", default=False, help="Get new address, optionally for the given account")
 
@@ -972,6 +982,10 @@ if options.listaccounts:
     listaccounts()
     exit()
 
+if options.listdesc:
+    listdesc(args)
+    exit()
+    
 if options.listreceived:
     listreceived()
     exit()
