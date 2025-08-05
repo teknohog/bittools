@@ -73,8 +73,9 @@ def coin_price(coin, basecur):
         try:
             response = urlopen(url, timeout = 5)
             data = json.loads(response.read())
-            
-            if "coingecko" in url and len(data[cur.lower()]) > 0:
+
+            # 2024-11-21 Coingecko has incorrect DOGE price
+            if cur != "DOGE" and "coingecko" in url and len(data[cur.lower()]) > 0:
                 return float(data[cur.lower()][basecur.lower()])
                 
             elif "coinmarketcap" in url:
@@ -268,6 +269,7 @@ currency = {
     "maxcoin": "MAX",
     "namecoin": "NMC",
     "photon": "PHO",
+    "patchcoin": "PTC",
     "peercoin": "PPC",
     "primecoin": "XPM",
     "primio": "Primio",
