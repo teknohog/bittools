@@ -96,6 +96,9 @@ def blockreward(coin, diff, blocks):
         return min(blocks/2e4, 1) * exp_decay(initcoins[coin], blocks, blockhalve[coin])
     elif coin == "firo":
         return firo_reward(blocks)
+    elif coin == "patchcoin":
+        # Proof of Stake only
+        return 0
     else:
         return exp_decay(initcoins[coin], blocks, blockhalve[coin])
 
@@ -288,7 +291,7 @@ def exportkeys():
         
         # Method not available in peercoin
         try:
-            l += exportaddressgroupings()
+            l += listaddressgroupings(True, -1)
         except:
             print("Warning: missing listaddressgroupings method, list of keys may be incomplete\n")
 
@@ -319,7 +322,10 @@ def exportkeys():
 
     prettyprint(l)
 
-def exportaddressgroupings(lowlimit = -1):
+def listaddressgroupings(privkeys = False, lowlimit = -1):
+    # 2025-08-05 Generalize exportaddressgroupings() for listing plain
+    # addresses instead of keys by default, change name accordingly
+    
     l = []
     g = s.listaddressgroupings()
 
@@ -329,16 +335,29 @@ def exportaddressgroupings(lowlimit = -1):
         for addrline in group:
             address = addrline[0]
             amount = addrline[1]
-            privkey = s.dumpprivkey(address)
 
+            # 2025-08-05 Address or key
+            if privkeys:
+                ak = s.dumpprivkey(address)
+            else:
+                ak = address
+                
             # Default: lowlimit -1 allows all balances
             if amount > lowlimit:
                 if len(addrline) == 3:
                     account = addrline[2]
                 else:
                     account = ""
-                    
-                l.append([privkey, account])
+
+                line = [ak, account]
+
+                # The privkeys variant is intended for moving keys
+                # between wallets, so the format matches importkeys()
+                # input
+                if not privkeys:
+                    line.append(str(amount))
+                
+                l.append(line)
 
             # Check against total balance, in case addresses are missing
             total += amount
@@ -354,8 +373,13 @@ def exportnonempty():
     # 2017-10-23 Only export keys that hold value, to minimize
     # keystore bloat. Beware that you may want to keep donation
     # addresses etc. alive, even if they have no balance yet.
-    prettyprint(exportaddressgroupings(0))
+    prettyprint(listaddressgroupings(True, 0))
 
+def listnonempty():
+    # 2025-08-05 Like exportnonempty() but list plain addresses
+    # instead
+    prettyprint(listaddressgroupings(False, 0))
+    
 def importkeys(file):
     lines = ReadLines(file)
     nlines = len(lines)
@@ -574,7 +598,7 @@ def getinfo():
         info.update(s.getwalletinfo())
         
         # Roughly match old getinfo
-        if coin == "peercoin":
+        if coin in ["patchcoin", "peercoin"]:
             # 2019-08-28 For Peercoin total_amount (old moneysupply),
             # should also work on others... heavy and slow on Bitcoin
             # so limit to Peercoin for now
@@ -663,6 +687,8 @@ parser.add_option("-k", "--blakebitcoin", action="store_const", const="blakebitc
 
 parser.add_option("-L", "--Slothcoin", action="store_const", const="Slothcoin", dest="coin", default="bitcoin", help="Connect to Slothcoind")
 
+parser.add_option("--listnonempty", action="store_true", help = "List addresses with non-empty balance")
+
 parser.add_option("-l", "--litecoin", action="store_const", const="litecoin", dest="coin", default="bitcoin", help="Connect to litecoind")
 
 parser.add_option("--listdesc", dest="listdesc", action="store_true", default=False, help="Export wallet descriptors. Add a \"true\" argument for the private keys (which may need --unlock first)")
@@ -675,7 +701,8 @@ parser.add_option("-n", "--namecoin", action="store_const", const="namecoin", de
 
 parser.add_option("--peers", action="store_true", default=False, help="List connections")
 
-parser.add_option("-P", "--primecoin", action="store_const", const="primecoin", dest="coin", default="bitcoin", help="Connect to primecoind")
+#parser.add_option("-P", "--primecoin", action="store_const", const="primecoin", dest="coin", default="bitcoin", help="Connect to primecoind")
+parser.add_option("-P", "--patchcoin", action="store_const", const="patchcoin", dest="coin", default="bitcoin", help="Connect to patchcoind")
 
 parser.add_option("-p", "--peercoin", action="store_const", const="peercoin", dest="coin", default="bitcoin", help="Connect to peercoind")
 
@@ -821,6 +848,7 @@ adjustblocks = {
     "maxcoin": 0,
     "namecoin": 2016,
     "photon": 20,
+    "patchcoin": 0,
     "peercoin": 0,
     "primecoin": 0,
     "primio": 12,
@@ -906,6 +934,7 @@ rpcport = {
     "maxcoin": "8669",
     "namecoin": "8332",
     "photon": "8984",
+    "patchcoin": "7802",
     "peercoin": "9902",
     "primecoin": "9912",
     "primio": "1218",
@@ -926,7 +955,7 @@ rpcport = {
 
 # "account" changed to "label" in these coins, need different function
 # and key names
-coins_using_labels = ["bitcoin", "groestlcoin", "litecoin"]
+coins_using_labels = ["bitcoin", "groestlcoin", "litecoin", "patchcoin", "peercoin"]
 
 if len(options.url) > 0:
     url = options.url
@@ -968,6 +997,10 @@ if options.byaccount:
 
 if options.exportnonempty:
     exportnonempty()
+    exit()
+
+if options.listnonempty:
+    listnonempty()
     exit()
     
 if options.export:
@@ -1069,15 +1102,17 @@ if coin == "cryptonite":
 if options.diff:
     diff = options.diff
 else:
-    diff = s.getdifficulty()
-
     # Hybrid PoW / PoS
-    if type(diff) == dict:
-        diff = diff['proof-of-work']
+    #if type(diff) == dict:
+    if coin == "peercoin":
+        diff = s.getdifficulty()['proof-of-work']
         
         # Print PoW diff only for simpler parsing on external scripts
         info['difficulty'] = diff
-
+    else:
+        # Already here via getinfo(); getdifficulty() doesn't work in Patchcoin
+        diff = info["difficulty"]
+        
     md = meandiff(coin, diff)
     if md > 0:
         keys.append('meandiff')
