@@ -610,7 +610,11 @@ def getinfo():
     
         output = {}
         for key in keys:
-            output[key] = info[key]
+            # 2025-10-14
+            if coin == "groestlcoin" and key == "balance":
+                output["balance"] = s.getbalance()
+            else:
+                output[key] = info[key]
 
         output["testnet"] = (info["chain"] != "main")
         
@@ -955,7 +959,7 @@ rpcport = {
 
 # "account" changed to "label" in these coins, need different function
 # and key names
-coins_using_labels = ["bitcoin", "groestlcoin", "litecoin", "patchcoin", "peercoin"]
+coins_using_labels = ["bitcoin", "bitcoincash", "groestlcoin", "litecoin", "patchcoin", "peercoin"]
 
 if len(options.url) > 0:
     url = options.url
