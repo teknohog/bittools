@@ -63,6 +63,7 @@ def coin_price(coin, basecur):
         return 1
     
     api_urls = [
+        "https://www.binance.com/api/v3/ticker/price?symbol=" + cur + basecur,
         "https://api.coingecko.com/api/v3/simple/price?ids=" + cur + "&vs_currencies=" + basecur,
         "https://api.coinmarketcap.com/v1/ticker/" + coin + "/",
         "https://min-api.cryptocompare.com/data/price?fsym=" + cur + "&tsyms=" + basecur,
@@ -74,8 +75,11 @@ def coin_price(coin, basecur):
             response = urlopen(url, timeout = 5)
             data = json.loads(response.read())
 
+            if "binance" in url:
+                return float(data["price"])
+                
             # 2024-11-21 Coingecko has incorrect DOGE price
-            if cur != "DOGE" and "coingecko" in url and len(data[cur.lower()]) > 0:
+            elif cur != "DOGE" and "coingecko" in url and len(data[cur.lower()]) > 0:
                 return float(data[cur.lower()][basecur.lower()])
                 
             elif "coinmarketcap" in url:
