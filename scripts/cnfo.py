@@ -162,7 +162,7 @@ if len(options.url) > 0:
     url = options.url
 else:
     url = "http://127.0.0.1:" + rpcport[options.coin] + "/json_rpc"
-
+    
 # https://wiki.bytecoin.org/wiki/Daemon_JSON_RPC_API
 daemon = Server(url)
 
@@ -184,21 +184,42 @@ if options.listaliases:
     
 output = []
 
-lasthead = daemon.getlastblockheader()["block_header"]
-
 # More up-to-date info. This does not contain block reward, so keep
 # lasthead for that for now.
-if options.coin in ["boolberry", "zano"]:
-    info = daemon.getinfo()
-else:
-    info = daemon.get_info()
+try:
+    if options.coin in ["boolberry", "zano"]:
+        info = daemon.getinfo()
+    else:
+        info = daemon.get_info()
+except:
+    # Allow profit calculation with meandiff if the daemon is offline
+    print("No connection to daemon")
 
+    # This works for Zano only, as others have varying block rewards
+    if options.coin == "zano" and options.hashrate > 0:
+        md = meandiff(options.coin, 0)
+        if md == 0:
+            exit()
+
+        print("Using meandiff for offline profit estimation")
+
+        # Zano
+        blockreward = 1
+        
+        blocktime = md / options.hashrate
+        output += profit(blocktime, blockreward, options.coin, options.watts, options.kwhprice, 0, options.basecur)
+
+        prettyprint(output)
+        
+    exit()
+        
 output.append(["height", str(info["height"])])
 
 if options.coin == "zano":
     # PoW reward for mining calculations. Lasthead may contain much higher PoS
     blockreward = 1
 else:
+    lasthead = daemon.getlastblockheader()["block_header"]
     blockreward = lasthead["reward"] * baseunit[options.coin]
 
 output.append(["blockreward", str(blockreward)])
