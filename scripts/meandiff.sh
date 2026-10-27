@@ -56,7 +56,7 @@ function find_cmd () {
     # daemon no longer works as an RPC client.
 
     # 2022-09-26 Added distr.projects/${PROJECT}-bin/bin for binary installs
-
+    
     for DIR in ${HOME}/distr.projects/${PROJECT}-git ${HOME}/distr.projects/${PROJECT}-bin/bin /usr/bin; do
 	for BIN in ${PROJECT}-cli ${PROJECT}d; do
 	    if [ -x "$DIR/$BIN" ]; then
@@ -200,11 +200,23 @@ if $SET; then
     if [ -z "$(ps ax | grep $PROCESS | grep -v grep)" ]; then
 	exit 0
     fi
+
+    # 2026-10-23 Empty defaults for safety
+    DIFF_PRICE=""
+    PRICE=""
     
     # top up the logfile
     case $PROJECT in
 	aeon|monero|boolberry|zano)
-	    DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
+	    #DIFF=$(cnfo.py --$PROJECT | grep -m1 difficulty | awk '{print $2}')
+
+	    # 2026-10-23 We could also use this to cache prices for
+	    # profit calc, as they can sometimes be unavailable.
+	    # Adding this third column should not affect the old
+	    # meandiff calculations.
+	    #PRICE=$(coinfo.py --$PROJECT -v | grep -m1 EUR.price | awk '{print $NF}')
+	    # Better get both in one command, noting the output order
+	    DIFF_PRICE=($(cnfo.py -Nv | grep -m2 -E 'difficulty|EUR.price' | awk '{print $NF}'))
 	    ;;
 	ethereum*)
 	    if [ "$PROJECT" == "ethereum-classic" ]; then
@@ -227,11 +239,17 @@ if $SET; then
 		DIFF=$($CMD getdifficulty | grep work | \
 			      sed -Ee 's/.* ([0-9]+\.[0-9]+),.*/\1/')
 	    else
-		DIFF=$($CMD getdifficulty)
+		#DIFF=$($CMD getdifficulty)
+		DIFF_PRICE=$(coinfo.py --$PROJECT -v | grep -m2 -E '^(difficulty|1\s.*\sEUR)' | grep -Eo '\<[0-9\.]+\>' | grep -Ev '\<1\>')
 	    fi
 	    ;;
     esac
 
+    if [ -n "$DIFF_PRICE" ]; then
+	DIFF=${DIFF_PRICE[0]}
+	PRICE=${DIFF_PRICE[1]}
+    fi
+    
     # 2018-11-24 Remove stale entries; simple by removing the file itself
     check_stale | grep -i stale && rm $LOGFILE
     
@@ -244,7 +262,7 @@ if $SET; then
     
     if [ -n "$DIFF" ] && [ $DIFF_INT -gt 0 ]; then
 	TIME=$(date +%s)
-	echo $TIME $DIFF >> $LOGFILE
+	echo $TIME $DIFF $PRICE >> $LOGFILE
     
 	# prune
 	tail -n $LINES $LOGFILE > $LOGFILE.tmp && mv $LOGFILE.tmp $LOGFILE

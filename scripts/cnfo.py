@@ -246,6 +246,10 @@ md = meandiff(options.coin, diff)
 if md > 0:
     output.append(["meandiff", str(md)])
 
+mp = meandiff(options.coin, column = 2)
+if mp > 0:
+    output.append(["meanprice", str(mp)])
+    
 if options.coin == "zano":
     # 2019-10-11 Approximate emission: BBR coinswap + premine + one
     # coin per block, via https://zano.org/finance.html
