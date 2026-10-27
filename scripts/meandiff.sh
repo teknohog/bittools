@@ -54,8 +54,10 @@ function find_cmd () {
     # from bitcoin-backup.sh
     # *-cli binary is preferred to *d. For example, in Bitcoin 0.10.0 the
     # daemon no longer works as an RPC client.
-    
-    for DIR in ${HOME}/distr.projects/${PROJECT}-git /usr/bin; do
+
+    # 2022-09-26 Added distr.projects/${PROJECT}-bin/bin for binary installs
+
+    for DIR in ${HOME}/distr.projects/${PROJECT}-git ${HOME}/distr.projects/${PROJECT}-bin/bin /usr/bin; do
 	for BIN in ${PROJECT}-cli ${PROJECT}d; do
 	    if [ -x "$DIR/$BIN" ]; then
 		CMD=$DIR/$BIN
