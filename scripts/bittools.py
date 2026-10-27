@@ -74,7 +74,7 @@ def coin_price(coin, basecur):
         try:
             response = urlopen(url, timeout = 5)
             data = json.loads(response.read())
-
+            
             if "binance" in url:
                 return float(data["price"])
                 
@@ -109,15 +109,17 @@ def coin_price_via_btc(coin, basecur):
     p2 = coin_price("bitcoin", basecur)
     return p1*p2
 
-def linear_regression(pairs):
+def linear_regression(pairs, column = 1):
     # Data usually comes in x, y pairs, so choose it as my input format
     
     # There should be something clever with zip() etc. but I can't
     # get it working now :-/
     xy = [[], []]
     for p in pairs:
-        for i in [0, 1]:
-            xy[i].append(float(p[i]))
+        #for i in [0, 1]:
+        #    xy[i].append(float(p[i]))
+        xy[0].append(float(p[0]))
+        xy[1].append(float(p[column]))        
 
     n = len(xy[0])
     sx = sum(xy[0])
@@ -125,7 +127,7 @@ def linear_regression(pairs):
     sx2 = sum(map(lambda z: z**2, xy[0]))
     sy2 = sum(map(lambda z: z**2, xy[1]))
     sxy = sum(map(lambda a, b: a*b, xy[0], xy[1]))
-
+    
     # Repeating data points may induce div by zero
     if n*sx2 != sx**2:
         b = (n*sxy - sx*sy) / (n*sx2 - sx**2)
@@ -138,7 +140,7 @@ def linear_regression(pairs):
 
     return (a, b)
 
-def meandiff(coin, diffnow = 0):
+def meandiff(coin, diffnow = 0, column = 1):
     # Use meandiff.sh history if available
     if coin == "boolberry":
         dirname = "boolb"
@@ -161,17 +163,26 @@ def meandiff(coin, diffnow = 0):
         # increasing/decreasing, use that for prediction. If not, this
         # performs the smoothing anyway.
 
-        if len(l) < 2:
+        if len(l) == 0:
             return 0
         
         # difflog now contains time, diff pairs
         pairs = list(map(lambda a: a.split(), l))
-
+        
         # Current difficulty is a valid, useful data point
         if diffnow > 0:
             pairs.append([time(), diffnow])
 
-        ab = linear_regression(pairs)
+        # 2026-10-23 With the new column argument, some data may be
+        # unavailable, so check each line before passing on
+        pairs = [x for x in pairs if len(x) > column]
+        
+        # 2026-10-23 A single data point is better than nothing,
+        # esp. if the daemon is offline
+        if len(pairs) == 1:
+            return pairs[0][column]
+
+        ab = linear_regression(pairs, column)
 
         # Estimate a current diff
         return ab[0] + ab[1] * time()
@@ -198,7 +209,10 @@ def profit(blocktime, reward, coin, watts, kwhprice, fiatprice = 0, basecur = "E
     # the server. It may still be unavailable, though.
     if fiatprice <= 0:
         fiatprice = coin_price(coin, basecur)
-
+        if fiatprice <= 0:
+            # 2026-10-23 Try cached price data aka meanprice next
+            fiatprice = meandiff(coin, column = 2)
+        
     if fiatprice > 0:
         fiatpay = coinsperday * fiatprice
 
