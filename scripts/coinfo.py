@@ -598,7 +598,7 @@ def getinfo():
         info.update(s.getwalletinfo())
         
         # Roughly match old getinfo
-        if coin in ["patchcoin", "peercoin"]:
+        if coin in ["groestlcoin", "patchcoin", "peercoin"]:
             # 2019-08-28 For Peercoin total_amount (old moneysupply),
             # should also work on others... heavy and slow on Bitcoin
             # so limit to Peercoin for now
@@ -615,7 +615,7 @@ def getinfo():
                 output["balance"] = s.getbalance()
             else:
                 output[key] = info[key]
-
+                    
         output["testnet"] = (info["chain"] != "main")
         
         return output
